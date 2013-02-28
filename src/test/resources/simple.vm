@@ -1,0 +1,16 @@
+== {{int:filedesc}} ==
+
+{{Information
+ | Description = {{mld
+    | fr = $Iptc.captionDescription
+   }}
+ | Source = {{own}}
+ | Date = 2013-02-11 13:00:37
+ | Author = $user.displayName ([[User:$user.login]])
+}}
+
+{{Wikimedia France - Fañch}}
+
+== {{int:license}} ==
+
+{{cc-by-sa-3.0}}
