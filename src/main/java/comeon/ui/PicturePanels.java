@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -31,7 +32,6 @@ final class PicturePanels {
   private final PicturePreviewPanel previewPanel;
   
   public PicturePanels(final Picture picture) {
-//    this.picture = picture;
     final ByteArrayInputStream input = new ByteArrayInputStream(picture.getThumbnail());
     try {
       try {
@@ -42,7 +42,7 @@ final class PicturePanels {
     } catch (final IOException e) {
       LOGGER.warn("Can't load picture thumbnail {}", picture.getFileName(), e);
     }
-    this.previewPanel = new PicturePreviewPanel();
+    this.previewPanel = new PicturePreviewPanel(UI.PREVIEW_PANEL_HEIGHT, 2, 4);
   }
   
   public PicturePreviewPanel getPreviewPanel() {
@@ -53,23 +53,22 @@ final class PicturePanels {
 
     private static final long serialVersionUID = 1L;
     
-    private static final int V_INSETS = 8;
+    private static final int WHITE_LINE_WIDTH = 1;
     
-    private static final int H_INSETS = 4;
+    private final int horizontalBordersWidth;
     
-    private static final int BORDER_WIDTH = 1;
+    private final int verticalBordersWidth;
     
-    private static final int THUMB_HEIGHT = 90;
-    
-    public static final int COMPONENT_HEIGHT = THUMB_HEIGHT + (V_INSETS * 2);
-    
-    public PicturePreviewPanel() {
-      // Minimum size is preferred size is maximum size is thumbnail size + 10 px around
-      final Dimension componentSize = new Dimension((int) (image.getWidth() * ((double) COMPONENT_HEIGHT / image.getHeight())), COMPONENT_HEIGHT);
+    public PicturePreviewPanel(final int thumbHeight, final int horizontalBordersWidth, final int verticalBordersWidth) {
+      final Dimension componentSize = new Dimension((int) (image.getWidth() * ((double) thumbHeight / image.getHeight())), thumbHeight);
       super.setMinimumSize(componentSize);
       super.setPreferredSize(componentSize);
       super.setMaximumSize(componentSize);
-      super.setBackground(UI.NEUTRAL_GREY);
+      this.horizontalBordersWidth = horizontalBordersWidth;
+      this.verticalBordersWidth = verticalBordersWidth;
+      this.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createEmptyBorder(verticalBordersWidth, horizontalBordersWidth, verticalBordersWidth, horizontalBordersWidth),
+          BorderFactory.createLineBorder(Color.WHITE, WHITE_LINE_WIDTH)));
     }
     
     @Override
@@ -78,12 +77,14 @@ final class PicturePanels {
       final Graphics2D g2 = (Graphics2D) g;
       final int componentWidth = (int) size.getWidth();
       final int componentHeight = (int) size.getHeight();
-      g2.setColor(Color.WHITE);
-      g2.fillRect(H_INSETS - BORDER_WIDTH, V_INSETS - BORDER_WIDTH, componentWidth - (H_INSETS * 2) + (BORDER_WIDTH * 2), componentHeight - (V_INSETS * 2) + (BORDER_WIDTH * 2));
       g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
       g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
       g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-      g2.drawImage(image, H_INSETS, V_INSETS, componentWidth - H_INSETS, componentHeight - V_INSETS, 0, 0, image.getWidth(), image.getHeight(), getBackground(), null);
+      g2.drawImage(image,
+          horizontalBordersWidth + WHITE_LINE_WIDTH, verticalBordersWidth + WHITE_LINE_WIDTH,
+          componentWidth - (horizontalBordersWidth + WHITE_LINE_WIDTH), componentHeight - (verticalBordersWidth + WHITE_LINE_WIDTH),
+          0, 0, image.getWidth(), image.getHeight(),
+          getBackground(), null);
     }
   }
   

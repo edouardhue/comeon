@@ -28,6 +28,8 @@ public final class UI extends JFrame {
   public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("comeon.ui.comeon");
   
   public static final Color NEUTRAL_GREY = Color.DARK_GRAY;
+  
+  public static final int PREVIEW_PANEL_HEIGHT = 90;
 
   private final Box previews;
   
@@ -40,7 +42,7 @@ public final class UI extends JFrame {
     this.setMinimumSize(new Dimension(800, 600));
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.previews = new Box(BoxLayout.X_AXIS);
-    this.previews.setMinimumSize(new Dimension(0, PicturePanels.PicturePreviewPanel.COMPONENT_HEIGHT));
+    this.previews.setMinimumSize(new Dimension(0, PREVIEW_PANEL_HEIGHT));
     this.previews.setBackground(NEUTRAL_GREY);
     this.previews.setOpaque(true);
     this.previewsGlue = Box.createHorizontalGlue();
