@@ -1,6 +1,7 @@
 package comeon.ui;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -11,6 +12,7 @@ import java.util.ResourceBundle;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import com.google.common.base.Charsets;
@@ -31,9 +33,13 @@ public final class UI extends JFrame {
   
   public static final int PREVIEW_PANEL_HEIGHT = 90;
 
+  static final int METADATA_PANEL_WIDTH = 200;
+
   private final Box previews;
   
   private final Component previewsGlue;
+  
+  private final JPanel editContainer;
   
   public UI() {
     this.setJMenuBar(new MenuBar());
@@ -41,6 +47,7 @@ public final class UI extends JFrame {
     this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     this.setMinimumSize(new Dimension(800, 600));
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    
     this.previews = new Box(BoxLayout.X_AXIS);
     this.previews.setMinimumSize(new Dimension(0, PREVIEW_PANEL_HEIGHT));
     this.previews.setBackground(NEUTRAL_GREY);
@@ -49,15 +56,23 @@ public final class UI extends JFrame {
     this.previews.add(previewsGlue);
     final JScrollPane scrollablePreviews = new JScrollPane(previews, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     this.add(scrollablePreviews, BorderLayout.SOUTH);
+    
+    this.editContainer = new JPanel(new CardLayout());
+    this.add(editContainer, BorderLayout.CENTER);
+    
     this.setVisible(true);
   }
   
   public void add(final Picture picture) {
     final PicturePanels panels = new PicturePanels(picture);
+    
     this.previews.remove(previewsGlue);
     this.previews.add(panels.getPreviewPanel());
     this.previews.add(previewsGlue);
-    this.previews.invalidate();
+    
+    this.editContainer.add(panels.getEditPanel(), picture.getFileName());
+
+    this.invalidate();
   }
   
   public static void main(final String[] args) throws IOException {

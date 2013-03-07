@@ -12,8 +12,6 @@ public final class UploadPicturesAction extends BaseAction {
   
   @Override
   public void actionPerformed(final ActionEvent e) {
-    // TODO Auto-generated method stub
-
   }
 
 }
