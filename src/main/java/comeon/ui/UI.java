@@ -21,6 +21,7 @@ import comeon.Core;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
+import comeon.ui.pictures.PicturePanels;
 
 public final class UI extends JFrame {
   private static final File TEMPLATE_FILE = new File("/home/sbdd8031/Projets/comeon/workspace/comeon/src/test/resources/simple.vm");
@@ -33,7 +34,7 @@ public final class UI extends JFrame {
   
   public static final int PREVIEW_PANEL_HEIGHT = 90;
 
-  static final int METADATA_PANEL_WIDTH = 200;
+  public static final int METADATA_PANEL_WIDTH = 200;
 
   private final Box previews;
   

@@ -4,17 +4,16 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
-import org.slf4j.LoggerFactory;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
+import comeon.MetadataHelper;
 import comeon.templates.velocity.VelocityTemplates;
 
 public enum TemplateKind {
@@ -35,15 +34,8 @@ public enum TemplateKind {
     context.put("picture", picture);
     context.put("user", user);
     for (final Directory dir : picture.getMetadata().getDirectories()) {
-      final String dirClassName = dir.getClass().getName();
-      final String descriptorClassName = dirClassName.replace("Directory", "Descriptor");
-      try {
-        final Class<?> descriptorClass = Class.forName(descriptorClassName);
-        final TagDescriptor<?> descriptor = (TagDescriptor<?>) descriptorClass.getDeclaredConstructor(dir.getClass()).newInstance(dir);
+        final TagDescriptor<?> descriptor = MetadataHelper.getDescriptor(dir);
         context.put(dir.getName().replaceAll("\\s", ""), descriptor);
-      } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-        LoggerFactory.getLogger(this.getClass()).warn("Can't instantiate tag descriptor for directory {}", dir.getName(), e);
-      }
     }
     return this.doRender(templateText, context);
   }
