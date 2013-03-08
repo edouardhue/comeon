@@ -34,7 +34,7 @@ public final class UI extends JFrame {
   
   public static final int PREVIEW_PANEL_HEIGHT = 90;
 
-  public static final int METADATA_PANEL_WIDTH = 200;
+  public static final int METADATA_PANEL_WIDTH = 280;
 
   private final Box previews;
   
