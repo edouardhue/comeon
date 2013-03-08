@@ -6,6 +6,32 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>ComeOn</name>
   <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
+  <url>https://github.com/edouardhue/comeon</url>
+  <inceptionYear>2013</inceptionYear> 
+  
+  <organization>
+    <name>Édouard Hue</name>
+  </organization>
+  
+  <developers>
+    <developer>
+      <id>edouardhue</id>
+      <name>Édouard Hue</name>
+      <email>edouard.hue@gmail.com</email>
+    </developer>
+  </developers>
+  
+  <scm>
+    <url>scm:git:ssh://github.com/edouardhue/comeon</url>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>Creative Commons Attribution Share Alike 3.0</name>
+      <url>http://www.spdx.org/licenses/CC-BY-SA-3.0</url>
+    </license>
+  </licenses>
+
   <build>
     <plugins>
       <plugin>
@@ -17,8 +43,23 @@
           <target>7</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <compress>true</compress>
+            <index>true</index>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+  
   <dependencies>
     <dependency>
       <groupId>com.drewnoakes</groupId>
