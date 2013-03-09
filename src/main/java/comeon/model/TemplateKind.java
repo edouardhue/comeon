@@ -7,13 +7,11 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.beanutils.DynaBean;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 
-import com.drew.metadata.Directory;
-import com.drew.metadata.TagDescriptor;
-import comeon.MetadataHelper;
 import comeon.templates.velocity.VelocityTemplates;
 
 public enum TemplateKind {
@@ -33,9 +31,9 @@ public enum TemplateKind {
     final Map<String, Object> context = new HashMap<>();
     context.put("picture", picture);
     context.put("user", user);
-    for (final Directory dir : picture.getMetadata().getDirectories()) {
-        final TagDescriptor<?> descriptor = MetadataHelper.getDescriptor(dir);
-        context.put(dir.getName().replaceAll("\\s", ""), descriptor);
+    for (final Map.Entry<String, DynaBean> entry : picture.getMetadata().entrySet()) {
+      final String directoryName = entry.getKey().replaceAll("\\s", "");
+      context.put(directoryName, entry.getValue());
     }
     return this.doRender(templateText, context);
   }

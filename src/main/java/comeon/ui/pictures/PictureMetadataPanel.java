@@ -2,13 +2,15 @@ package comeon.ui.pictures;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.drew.metadata.Directory;
+import org.apache.commons.beanutils.DynaBean;
+
 import comeon.ui.UI;
 
 final class PictureMetadataPanel extends JPanel {
@@ -35,8 +37,8 @@ final class PictureMetadataPanel extends JPanel {
         (previewPanelDimension.height - previewDimension.height) / 2);
     this.add(previewPanel, BorderLayout.NORTH);
     final Box metadataBox = new Box(BoxLayout.Y_AXIS);
-    for (final Directory dir : panels.getPicture().getMetadata().getDirectories()) {
-      final MetadataTable table = new MetadataTable(dir);
+    for (final Map.Entry<String, DynaBean> dir : panels.getPicture().getMetadata().entrySet()) {
+      final MetadataTable table = new MetadataTable(dir.getKey(), dir.getValue());
       metadataBox.add(table);
     }
     final JScrollPane metadataScrollPane = new JScrollPane(metadataBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

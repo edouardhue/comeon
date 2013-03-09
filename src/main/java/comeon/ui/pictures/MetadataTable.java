@@ -1,58 +1,43 @@
 package comeon.ui.pictures;
 
 import java.awt.BorderLayout;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.drew.metadata.Directory;
-import com.drew.metadata.TagDescriptor;
-import comeon.MetadataHelper;
+import org.apache.commons.beanutils.DynaBean;
+import org.apache.commons.beanutils.DynaProperty;
 
 final class MetadataTable extends JPanel {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MetadataTable.class);
-
   private static final long serialVersionUID = 1L;
   
-  public MetadataTable(final Directory dir) {
+  public MetadataTable(final String directoryName, final DynaBean directoryContent) {
     super(new BorderLayout());
-    final JLabel title = new JLabel(dir.getName());
+    final JLabel title = new JLabel(directoryName);
     this.add(title, BorderLayout.NORTH);
-    final JTable table = new JTable(new Model(dir));
+    final JTable table = new JTable(new Model(directoryContent));
+    table.setCellSelectionEnabled(false);
+    table.setColumnSelectionAllowed(false);
     this.add(table, BorderLayout.CENTER);
   }
 
   private static final class Model extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
+
+    private final DynaProperty[] properties;
     
-    private final List<PropertyDescriptor> propDescriptors;
+    private final DynaBean content;
     
-    private final TagDescriptor<?> tagDescriptor;
-    
-    private Model(final Directory dir) {
-      this.tagDescriptor = MetadataHelper.getDescriptor(dir);
-      final PropertyDescriptor[] allPropDescriptors = PropertyUtils.getPropertyDescriptors(tagDescriptor);
-      this.propDescriptors = new ArrayList<>(allPropDescriptors.length);
-      for (final PropertyDescriptor propDescriptor : allPropDescriptors) {
-        if (propDescriptor.getReadMethod() != null && propDescriptor.getReadMethod().getDeclaringClass().equals(tagDescriptor.getClass())) {
-          propDescriptors.add(propDescriptor);
-        }
-      }
+    private Model(final DynaBean directoryContent) {
+      this.properties = directoryContent.getDynaClass().getDynaProperties();
+      this.content = directoryContent;
     }
 
     @Override
     public int getRowCount() {
-      return propDescriptors.size();
+      return properties.length;
     }
 
     @Override
@@ -62,22 +47,17 @@ final class MetadataTable extends JPanel {
 
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex) {
-      Object value;
-      final PropertyDescriptor descriptor = propDescriptors.get(rowIndex);
+      final Object value;
+      final DynaProperty property = this.properties[rowIndex];
       switch (columnIndex) {
       case 0:
-        value = descriptor.getName();
+        value = property.getName();
         break;
       case 1:
-        try {
-          value = descriptor.getReadMethod().invoke(tagDescriptor, new Object[0]);
-        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-          LOGGER.debug("Can't read property {}", descriptor.getName(), e);
-          value = null;
-        }
+        value = content.get(property.getName());
         break;
       default:
-        throw new IndexOutOfBoundsException("Only two columns here");
+         throw new IndexOutOfBoundsException("No such column: " + columnIndex); 
       }
       return value;
     }
