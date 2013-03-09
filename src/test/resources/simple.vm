@@ -2,15 +2,21 @@
 
 {{Information
  | Description = {{mld
-    | fr = $Iptc.captionDescription
+    | fr = $Iptc.CaptionAbstract
    }}
  | Source = {{own}}
  | Date = 2013-02-11 13:00:37
  | Author = $user.displayName ([[User:$user.login]])
 }}
 
+#if ($ExifSubIFD.LensSerialNumber == "000000774f")
 {{Wikimedia France - Fañch}}
+#end
 
 == {{int:license}} ==
 
 {{cc-by-sa-3.0}}
+
+#if ($ExifSubIFD.LensModel == "TS-E17mm f/4L")
+[[Category:Taken with Canon TS-E 17 mm F4L]]
+#end
