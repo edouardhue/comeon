@@ -5,12 +5,15 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -72,6 +75,15 @@ public final class UI extends JFrame {
     this.previews.add(previewsGlue);
     
     this.editContainer.add(panels.getEditPanel(), picture.getFileName());
+    
+    ((JComponent) panels.getPreviewPanel()).addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(final MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+          ((CardLayout) editContainer.getLayout()).show(editContainer, picture.getFileName());
+        }
+      }
+    });
 
     this.invalidate();
   }

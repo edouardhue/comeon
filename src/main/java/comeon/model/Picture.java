@@ -54,6 +54,10 @@ public final class Picture {
     return renderedTemplate;
   }
   
+  public void setRenderedTemplate(final String renderedTemplate) {
+    this.renderedTemplate = renderedTemplate;
+  }
+  
   public Map<String, DynaBean> getMetadata() {
     return metadata;
   }
