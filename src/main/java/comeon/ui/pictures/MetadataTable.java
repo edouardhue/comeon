@@ -1,11 +1,13 @@
 package comeon.ui.pictures;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.DynaProperty;
@@ -17,20 +19,34 @@ final class MetadataTable extends JPanel {
     super(new BorderLayout());
     final JLabel title = new JLabel(directoryName);
     this.add(title, BorderLayout.NORTH);
-    final JTable table = new JTable(new Model(directoryContent));
+    final JTable table = new JTable(new TableModel(directoryContent));
     table.setCellSelectionEnabled(false);
     table.setColumnSelectionAllowed(false);
+    table.getColumnModel().getColumn(0).setCellRenderer(new TooltipCellRenderer());
+    table.getColumnModel().getColumn(1).setCellRenderer(new TooltipCellRenderer());
     this.add(table, BorderLayout.CENTER);
   }
 
-  private static final class Model extends AbstractTableModel {
+  private static final class TooltipCellRenderer extends DefaultTableCellRenderer {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+        int row, int column) {
+      final JLabel comp = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      comp.setToolTipText(String.valueOf(value));
+      return comp;
+    }
+  }
+  
+  private static final class TableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     private final DynaProperty[] properties;
     
     private final DynaBean content;
     
-    private Model(final DynaBean directoryContent) {
+    private TableModel(final DynaBean directoryContent) {
       this.properties = directoryContent.getDynaClass().getDynaProperties();
       this.content = directoryContent;
     }
