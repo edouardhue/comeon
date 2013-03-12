@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
-import org.apache.commons.beanutils.BasicDynaClass;
 import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
 import org.apache.commons.beanutils.DynaProperty;
+import org.apache.commons.beanutils.LazyDynaBean;
+import org.apache.commons.beanutils.LazyDynaClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,16 +98,13 @@ final class Pictures {
             final DynaProperty property = new DynaProperty(tag.getTagName().replaceAll("[^\\w]", ""), String.class);
             properties.add(property);
           }
-          final DynaClass directoryClass = new BasicDynaClass(directory.getName(), null, properties.toArray(new DynaProperty[properties.size()]));
-          try {
-            final DynaBean directoryMetadata = directoryClass.newInstance();
-            for (final Tag tag : directory.getTags()) {
-              directoryMetadata.set(tag.getTagName().replaceAll("[^\\w]", ""), descriptor.getDescription(tag.getTagType()));
-            }
-            metadata.put(directory.getName(), directoryMetadata);
-          } catch (final IllegalAccessException | InstantiationException e) {
-            LOGGER.warn("Can't instantiate DynaClass", e);
+          final LazyDynaClass directoryClass = new LazyDynaClass(directory.getName(), null, properties.toArray(new DynaProperty[properties.size()]));
+          directoryClass.setReturnNull(true);
+          final DynaBean directoryMetadata = new LazyDynaBean(directoryClass);
+          for (final Tag tag : directory.getTags()) {
+            directoryMetadata.set(tag.getTagName().replaceAll("[^\\w]", ""), descriptor.getDescription(tag.getTagType()));
           }
+          metadata.put(directory.getName(), directoryMetadata);
         }
         final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
         picture.renderTemplate(user);
