@@ -33,6 +33,10 @@ public final class Core {
     return pictures;
   }
   
+  public Users getUsers() {
+    return users;
+  }
+  
   public static Core getInstance() {
     return INSTANCE;
   }

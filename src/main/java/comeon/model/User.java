@@ -13,6 +13,12 @@ public final class User {
     this.password = password;
     this.displayName = displayName;
   }
+  
+  public User(final User template) {
+    this.login = template.login;
+    this.password = template.password;
+    this.displayName = template.displayName;
+  }
 
   public String getLogin() {
     return login;

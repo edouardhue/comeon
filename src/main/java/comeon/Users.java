@@ -11,7 +11,7 @@ public final class Users {
   /**
    * @throws UserNotSetException
    */
-  User getUser() {
+  public User getUser() {
     if (this.user == null) {
       this.user = loadUser();
     }
