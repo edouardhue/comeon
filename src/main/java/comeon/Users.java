@@ -1,5 +1,6 @@
 package comeon;
 
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import comeon.model.User;
@@ -17,12 +18,21 @@ public final class Users {
     }
     return user;
   }
+  
+  public void setUser(final User user) throws BackingStoreException {
+    this.user = user;
+    final Preferences userPrefs = getUserPreferences();
+    userPrefs.put(PreferencesKeys.LOGIN.name(), user.getLogin());
+    userPrefs.put(PreferencesKeys.PASSWORD.name(), user.getPassword());
+    userPrefs.put(PreferencesKeys.DISPLAY_NAME.name(), user.getDisplayName());
+    userPrefs.flush();
+  }
 
   /**
    * @throws UserNotSetException
    */
   private User loadUser() {
-    final Preferences userPrefs = Preferences.userNodeForPackage(Core.class).node("user");
+    final Preferences userPrefs = getUserPreferences();
     final String login = userPrefs.get(PreferencesKeys.LOGIN.name(), null);
     final String password = userPrefs.get(PreferencesKeys.PASSWORD.name(), null);
     final String displayName = userPrefs.get(PreferencesKeys.DISPLAY_NAME.name(), null);
@@ -35,6 +45,10 @@ public final class Users {
       user = new User(login, password, displayName);
     }
     return user;
+  }
+
+  private Preferences getUserPreferences() {
+    return Preferences.userNodeForPackage(Core.class).node("user");
   }
   
   private enum PreferencesKeys {

@@ -129,6 +129,10 @@ final class UserSettingsPanel extends JPanel {
     passwordLabel.setLabelFor(passwordField);
     this.add(passwordField);
 
-    SpringUtilities.makeCompactGrid(this, 2, 2, 6, 6, 6, 6);
+    SpringUtilities.makeCompactGrid(this, 3, 2, 6, 6, 6, 6);
+  }
+  
+  public User getUser() {
+    return user;
   }
 }

@@ -41,7 +41,7 @@ public final class Core {
     return INSTANCE;
   }
   
-  ExecutorService getPool() {
+  public ExecutorService getPool() {
     return pool;
   }
   

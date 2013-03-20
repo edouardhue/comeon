@@ -17,6 +17,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -96,9 +97,14 @@ public final class UI extends JFrame {
     }
     final String templateText = Files.toString(TEMPLATE_FILE, Charsets.UTF_8);
     core.addPictures(files, new Template("DEFAULT", "DEFAULT", TEMPLATE_FILE, templateText, TemplateKind.VELOCITY));
-    final UI ui = new UI();
-    for (final Picture picture : core.getPictures()) {
-      ui.add(picture);
-    }
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        final UI ui = new UI();
+        for (final Picture picture : core.getPictures()) {
+          ui.add(picture);
+        }
+      }
+    });
   }
 }
