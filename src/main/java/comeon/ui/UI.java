@@ -22,13 +22,15 @@ import javax.swing.SwingUtilities;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import comeon.Core;
+import comeon.UserNotSetException;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 import comeon.ui.pictures.PicturePanels;
 
 public final class UI extends JFrame {
-  private static final File TEMPLATE_FILE = new File("/home/sbdd8031/Projets/comeon/workspace/comeon/src/test/resources/simple.vm");
+  @Deprecated
+  public static final File TEMPLATE_FILE = new File("/home/sbdd8031/Projets/comeon/workspace/comeon/src/test/resources/simple.vm");
 
   private static final long serialVersionUID = 1L;
 
@@ -47,7 +49,7 @@ public final class UI extends JFrame {
   private final JPanel editContainer;
   
   public UI() {
-    this.setJMenuBar(new MenuBar());
+    this.setJMenuBar(new MenuBar(this));
     this.setLayout(new BorderLayout());
     this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     this.setMinimumSize(new Dimension(800, 600));
@@ -68,7 +70,20 @@ public final class UI extends JFrame {
     this.setVisible(true);
   }
   
-  public void add(final Picture picture) {
+  public void refreshPictures() {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        previews.removeAll();
+        editContainer.removeAll();
+        for (final Picture picture : Core.getInstance().getPictures()) {
+          add(picture);
+        }
+      }
+    });
+  }
+  
+  private void add(final Picture picture) {
     final PicturePanels panels = new PicturePanels(picture);
     
     this.previews.remove(previewsGlue);
@@ -89,7 +104,7 @@ public final class UI extends JFrame {
     this.invalidate();
   }
   
-  public static void main(final String[] args) throws IOException {
+  public static void main(final String[] args) throws IOException, UserNotSetException {
     final Core core = Core.getInstance();
     final File[] files = new File[args.length];
     for (int i = 0; i < args.length; i++) {

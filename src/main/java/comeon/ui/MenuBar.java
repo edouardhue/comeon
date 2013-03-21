@@ -16,17 +16,17 @@ final class MenuBar extends JMenuBar {
 
   private static final long serialVersionUID = 1L;
 
-  public MenuBar() {
-    this.add(new FileMenu());
-    this.add(new EditMenu());
-    this.add(new HelpMenu());
+  public MenuBar(final UI ui) {
+    this.add(new FileMenu(ui));
+    this.add(new EditMenu(ui));
+    this.add(new HelpMenu(ui));
   }
 
   protected abstract class BaseMenu extends JMenu {
 
     private static final long serialVersionUID = 1L;
     
-    private BaseMenu(final String bundleKey) {
+    private BaseMenu(final String bundleKey, final UI ui) {
       super(UI.BUNDLE.getString("menu." + bundleKey + ".title"));
       final char mnemo = UI.BUNDLE.getString("menu." + bundleKey + ".mnemo").charAt(0);
       this.setMnemonic(mnemo);
@@ -37,32 +37,32 @@ final class MenuBar extends JMenuBar {
   private class FileMenu extends BaseMenu {
     private static final long serialVersionUID = 1L;
 
-    public FileMenu() {
-      super("file");
-      this.add(new JMenuItem(new AddPicturesAction()));
-      this.add(new JMenuItem(new UploadPicturesAction()));
+    public FileMenu(final UI ui) {
+      super("file", ui);
+      this.add(new JMenuItem(new AddPicturesAction(ui)));
+      this.add(new JMenuItem(new UploadPicturesAction(ui)));
       this.add(new JSeparator());
-      this.add(new JMenuItem(new QuitAction()));
+      this.add(new JMenuItem(new QuitAction(ui)));
     }
   }
 
   private class EditMenu extends BaseMenu {
     private static final long serialVersionUID = 1L;
 
-    public EditMenu() {
-      super("edit");
-      this.add(new JMenuItem(new PreferencesAction()));
+    public EditMenu(final UI ui) {
+      super("edit", ui);
+      this.add(new JMenuItem(new PreferencesAction(ui)));
     }
   }
 
   private class HelpMenu extends BaseMenu {
     private static final long serialVersionUID = 1L;
 
-    public HelpMenu() {
-      super("help");
-      this.add(new JMenuItem(new HelpManualAction()));
+    public HelpMenu(final UI ui) {
+      super("help", ui);
+      this.add(new JMenuItem(new HelpManualAction(ui)));
       this.add(new JSeparator());
-      this.add(new JMenuItem(new AboutAction()));
+      this.add(new JMenuItem(new AboutAction(ui)));
     }
   }
 }

@@ -2,12 +2,14 @@ package comeon.ui.actions;
 
 import java.awt.event.ActionEvent;
 
+import comeon.ui.UI;
+
 public final class AboutAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
 
-  public AboutAction() {
-    super("about");
+  public AboutAction(final UI ui) {
+    super("about", ui);
   }
   
   @Override

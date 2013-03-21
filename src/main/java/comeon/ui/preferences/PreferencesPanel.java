@@ -30,7 +30,6 @@ public final class PreferencesPanel extends JDialog {
     this.add(userSettingsPanel, BorderLayout.CENTER);
     this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     this.setMinimumSize(new Dimension(300, 200));
-    this.setVisible(true);
   }
   
   private final class Buttons extends JPanel {

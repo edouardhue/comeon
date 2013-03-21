@@ -11,14 +11,18 @@ import comeon.ui.UI;
 abstract class BaseAction extends AbstractAction {
 
   private static final long serialVersionUID = 1L;
+  
+  protected final UI ui;
 
-  protected BaseAction(final String bundleKey) {
+  protected BaseAction(final String bundleKey, final UI ui) {
     super(UI.BUNDLE.getString("action." + bundleKey + ".title"));
+    this.ui = ui;
     this.setKeys(bundleKey, null);
   }
   
-  protected BaseAction(final String bundleKey, final KeyStroke accelerator) {
+  protected BaseAction(final String bundleKey, final KeyStroke accelerator, final UI ui) {
     super(UI.BUNDLE.getString("action." + bundleKey + ".title"));
+    this.ui = ui;
     this.setKeys(bundleKey, accelerator);
   }
   

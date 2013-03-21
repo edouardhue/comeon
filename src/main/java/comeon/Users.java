@@ -12,7 +12,7 @@ public final class Users {
   /**
    * @throws UserNotSetException
    */
-  public User getUser() {
+  public User getUser() throws UserNotSetException {
     if (this.user == null) {
       this.user = loadUser();
     }
@@ -31,16 +31,14 @@ public final class Users {
   /**
    * @throws UserNotSetException
    */
-  private User loadUser() {
+  private User loadUser() throws UserNotSetException {
     final Preferences userPrefs = getUserPreferences();
     final String login = userPrefs.get(PreferencesKeys.LOGIN.name(), null);
     final String password = userPrefs.get(PreferencesKeys.PASSWORD.name(), null);
     final String displayName = userPrefs.get(PreferencesKeys.DISPLAY_NAME.name(), null);
     final User user;
     if (login == null || password == null || displayName == null) {
-      // XXX Ugly hack
-//      throw new UserNotSetException();
-      user = new User("EdouardHue", "xxx", "Édouard Hue");
+      throw new UserNotSetException();
     } else {
       user = new User(login, password, displayName);
     }

@@ -24,9 +24,10 @@ public final class Core {
     this.users = new Users();
   }
   
-  public void addPictures(final File[] files, final Template defautTemplate) {
-    final Pictures pictures = new Pictures(files, defautTemplate, pool);
-    this.pictures.addAll(pictures.readFiles(users.getUser()).getPictures());
+  public void addPictures(final File[] files, final Template defautTemplate) throws UserNotSetException {
+    final Pictures picturesReader = new Pictures(files, defautTemplate, pool);
+    final List<Picture> newPictures = picturesReader.readFiles(users.getUser()).getPictures();
+    this.pictures.addAll(newPictures);
   }
   
   public List<Picture> getPictures() {
@@ -44,5 +45,4 @@ public final class Core {
   public ExecutorService getPool() {
     return pool;
   }
-  
 }

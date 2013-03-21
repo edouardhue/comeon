@@ -21,14 +21,13 @@ import com.google.common.io.Files;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
-import comeon.model.User;
 
 public final class ComeOn {
   private static final Logger LOGGER = LoggerFactory.getLogger(ComeOn.class);
 
   private static final File TEMPLATE_FILE = new File("/home/sbdd8031/Projets/comeon/workspace/comeon/src/test/resources/simple.vm");
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException, UserNotSetException {
     final Core core = Core.getInstance();
     final File[] files = new File[args.length];
     for (int i = 0; i < args.length; i++) {
