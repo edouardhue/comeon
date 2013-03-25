@@ -1,6 +1,7 @@
 package comeon;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +33,14 @@ public final class Core {
   
   public List<Picture> getPictures() {
     return pictures;
+  }
+  
+  public void uploadPictures() throws UserNotSetException, NotLoggedInException, FailedLoginException, FailedUploadException, IOException, FailedLogoutException {
+    final Commons commons = new Commons(users.getUser());
+    for (final Picture picture : this.pictures) {
+      commons.upload(picture);
+    }
+    commons.logout();
   }
   
   public Users getUsers() {
