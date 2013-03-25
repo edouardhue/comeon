@@ -52,8 +52,8 @@ public final class AddPicturesAction extends BaseAction {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            // TODO i18n
-            JOptionPane.showMessageDialog(ui, "User not set, please update preferences", "User not set", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(ui, UI.BUNDLE.getString("error.usernotset.message"),
+                UI.BUNDLE.getString("error.usernotset.title"), JOptionPane.ERROR_MESSAGE);
             new PreferencesPanel(JOptionPane.getRootFrame()).setVisible(true);
           }
         });
@@ -61,8 +61,8 @@ public final class AddPicturesAction extends BaseAction {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            // TODO i18n
-            JOptionPane.showMessageDialog(ui, "Can't read template", "Template error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(ui, UI.BUNDLE.getString("error.unreadabletemplate.message"),
+                UI.BUNDLE.getString("error.unreadabletemplate.title"), JOptionPane.ERROR_MESSAGE);
           }
         });
       }
