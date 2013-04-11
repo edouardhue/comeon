@@ -9,14 +9,13 @@
  | Author = $user.displayName ([[User:$user.login]])
 }}
 
-#if ($ExifSubIFD.LensSerialNumber == "000000774f" || $ExifSubIFD.LensSerialNumber == "0000428c7c")
-{{Wikimedia France - Fañch}}
-#end
-
 == {{int:license}} ==
 
 {{cc-by-sa-3.0}}
 
+#if ($ExifSubIFD.LensSerialNumber == "000000774f" || $ExifSubIFD.LensSerialNumber == "0000428c7c")
+{{Wikimedia France - Fañch}}
+#end
 #if ($ExifSubIFD.LensModel == "TS-E17mm f/4L")
 [[Category:Taken with Canon TS-E 17 mm F4L]]
 #end
@@ -28,5 +27,12 @@
 #end
 #if ($ExifIFD0.Model == "Canon EOS 60D")
 [[Category:Taken with Canon EOS 60D]]
+#end
+#foreach ($keyword in $keywords)
+#if ($keyword.startsWith("Category:"))
+[[$keyword]]
+#elseif ($keyword.matches("[PI]A[0-9]{8}"))
+{{Mérimée|2=$keyword}}
+#end
 #end
 [[Category:Files by $user.login]]

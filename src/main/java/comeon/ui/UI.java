@@ -49,6 +49,7 @@ public final class UI extends JFrame {
   private final JPanel editContainer;
   
   public UI() {
+    super("ComeOn!");
     this.setJMenuBar(new MenuBar(this));
     this.setLayout(new BorderLayout());
     this.setExtendedState(JFrame.MAXIMIZED_BOTH);

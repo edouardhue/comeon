@@ -37,9 +37,11 @@ final class PictureMetadataPanel extends JPanel {
         (previewPanelDimension.height - previewDimension.height) / 2);
     this.add(previewPanel, BorderLayout.NORTH);
     final Box metadataBox = new Box(BoxLayout.Y_AXIS);
-    for (final Map.Entry<String, DynaBean> dir : panels.getPicture().getMetadata().entrySet()) {
-      final MetadataTable table = new MetadataTable(dir.getKey(), dir.getValue());
-      metadataBox.add(table);
+    for (final Map.Entry<String, Object> dir : panels.getPicture().getMetadata().entrySet()) {
+      if (dir.getValue() instanceof DynaBean) {
+        final MetadataTable table = new MetadataTable(dir.getKey(), (DynaBean) dir.getValue());
+        metadataBox.add(table);
+      }
     }
     final JScrollPane metadataScrollPane = new JScrollPane(metadataBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     this.add(metadataScrollPane, BorderLayout.CENTER);

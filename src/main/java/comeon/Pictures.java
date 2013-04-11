@@ -25,6 +25,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
+import com.drew.metadata.iptc.IptcDirectory;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.User;
@@ -90,7 +91,7 @@ final class Pictures {
         } else {
           thumbnail = new byte[0];
         }
-        final Map<String, DynaBean> metadata = new HashMap<>(rawMetadata.getDirectoryCount());
+        final Map<String, Object> metadata = new HashMap<>(rawMetadata.getDirectoryCount());
         for (final Directory directory : rawMetadata.getDirectories()) {
           final TagDescriptor<?> descriptor = MetadataHelper.getDescriptor(directory);
           final List<DynaProperty> properties = new LinkedList<>();
@@ -105,6 +106,10 @@ final class Pictures {
             directoryMetadata.set(tag.getTagName().replaceAll("[^\\w]", ""), descriptor.getDescription(tag.getTagType()));
           }
           metadata.put(directory.getName(), directoryMetadata);
+          if (IptcDirectory.class.equals(directory.getClass())) {
+            final String[] keywords = ((IptcDirectory) directory).getStringArray(IptcDirectory.TAG_KEYWORDS);
+            metadata.put("keywords", keywords);
+          }
         }
         final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
         picture.renderTemplate(user);

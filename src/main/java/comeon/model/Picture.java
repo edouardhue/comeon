@@ -3,8 +3,6 @@ package comeon.model;
 import java.io.File;
 import java.util.Map;
 
-import org.apache.commons.beanutils.DynaBean;
-
 public final class Picture {
   private final File file;
 
@@ -16,11 +14,11 @@ public final class Picture {
 
   private String renderedTemplate;
 
-  private final Map<String, DynaBean> metadata;
+  private final Map<String, Object> metadata;
 
   private final byte[] thumbnail;
 
-  public Picture(final File file, final String fileName, final Template template, final Map<String, DynaBean> metadata, final byte[] thumbnail) {
+  public Picture(final File file, final String fileName, final Template template, final Map<String, Object> metadata, final byte[] thumbnail) {
     super();
     this.file = file;
     this.fileName = fileName;
@@ -58,7 +56,7 @@ public final class Picture {
     this.renderedTemplate = renderedTemplate;
   }
   
-  public Map<String, DynaBean> getMetadata() {
+  public Map<String, Object> getMetadata() {
     return metadata;
   }
 

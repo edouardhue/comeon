@@ -7,7 +7,6 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -31,7 +30,7 @@ public enum TemplateKind {
     final Map<String, Object> context = new HashMap<>();
     context.put("picture", picture);
     context.put("user", user);
-    for (final Map.Entry<String, DynaBean> entry : picture.getMetadata().entrySet()) {
+    for (final Map.Entry<String, Object> entry : picture.getMetadata().entrySet()) {
       final String directoryName = entry.getKey().replaceAll("\\s", "");
       context.put(directoryName, entry.getValue());
     }
