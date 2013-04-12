@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.SwingUtilities;
 
 import comeon.ui.UI;
-import comeon.ui.preferences.PreferencesPanel;
+import comeon.ui.preferences.PreferencesDialog;
 
 public final class PreferencesAction extends BaseAction {
 
@@ -20,8 +20,8 @@ public final class PreferencesAction extends BaseAction {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        final PreferencesPanel panel = new PreferencesPanel(ui);
-        panel.setVisible(true);
+        final PreferencesDialog dialog = new PreferencesDialog(ui);
+        dialog.setVisible(true);
       }
     });
   }

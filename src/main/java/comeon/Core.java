@@ -12,45 +12,53 @@ import comeon.model.Template;
 
 public final class Core {
   private static final Core INSTANCE = new Core();
-  
+
   private List<Picture> pictures;
-  
+
   private ExecutorService pool;
-  
+
   private Users users;
-  
+
+  private Templates templates;
+
   private Core() {
     this.pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     this.pictures = new ArrayList<>();
     this.users = new Users();
+    this.templates = new Templates();
   }
-  
+
   public void addPictures(final File[] files, final Template defautTemplate) throws UserNotSetException {
     final Pictures picturesReader = new Pictures(files, defautTemplate, pool);
     final List<Picture> newPictures = picturesReader.readFiles(users.getUser()).getPictures();
     this.pictures.addAll(newPictures);
   }
-  
+
   public List<Picture> getPictures() {
     return pictures;
   }
-  
-  public void uploadPictures() throws UserNotSetException, NotLoggedInException, FailedLoginException, FailedUploadException, IOException, FailedLogoutException {
+
+  public void uploadPictures() throws UserNotSetException, NotLoggedInException, FailedLoginException,
+      FailedUploadException, IOException, FailedLogoutException {
     final Commons commons = new Commons(users.getUser());
     for (final Picture picture : this.pictures) {
       commons.upload(picture);
     }
     commons.logout();
   }
-  
+
   public Users getUsers() {
     return users;
   }
-  
+
+  public Templates getTemplates() {
+    return templates;
+  }
+
   public static Core getInstance() {
     return INSTANCE;
   }
-  
+
   public ExecutorService getPool() {
     return pool;
   }

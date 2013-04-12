@@ -1,6 +1,7 @@
 package comeon.model;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 public final class Template {
   private final String name;
@@ -9,15 +10,18 @@ public final class Template {
   
   private final File file;
   
+  private final Charset charset;
+  
   private final String templateText;
   
   private final TemplateKind kind;
 
-  public Template(final String name, final String description, final File file, final String templateText, final TemplateKind kind) {
+  public Template(final String name, final String description, final File file, final Charset charset, final String templateText, final TemplateKind kind) {
     super();
     this.name = name;
     this.description = description;
     this.file = file;
+    this.charset = charset;
     this.templateText = templateText;
     this.kind = kind;
   }
@@ -32,6 +36,10 @@ public final class Template {
 
   public File getFile() {
     return file;
+  }
+  
+  public Charset getCharset() {
+    return charset;
   }
 
   public String getTemplateText() {

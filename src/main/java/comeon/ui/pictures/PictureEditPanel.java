@@ -1,10 +1,8 @@
 package comeon.ui.pictures;
 
-import java.awt.BorderLayout;
-
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -19,8 +17,9 @@ final class PictureEditPanel extends JPanel {
   private static final long serialVersionUID = 1L;
 
   public PictureEditPanel(final PicturePanels panels) {
-    super(new BorderLayout());
-    this.add(new PictureMetadataPanel(panels), BorderLayout.WEST);
+    super();
+    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+    this.add(new PictureMetadataPanel(panels));
 
     final JTextArea templateText = new AliasedTextArea(panels.getPicture().getTemplateText());
     templateText.getDocument().addDocumentListener(new DocumentListener() {
@@ -76,8 +75,7 @@ final class PictureEditPanel extends JPanel {
       }
     });
 
-    final JSplitPane templatesPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, new JScrollPane(templateText),
-        new JScrollPane(renderedTemplate));
-    this.add(templatesPanel, BorderLayout.CENTER);
+    this.add(new JScrollPane(templateText));
+    this.add(new JScrollPane(renderedTemplate));
   }
 }

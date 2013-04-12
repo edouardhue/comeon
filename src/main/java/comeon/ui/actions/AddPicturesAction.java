@@ -1,22 +1,20 @@
 package comeon.ui.actions;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import comeon.Core;
 import comeon.UserNotSetException;
 import comeon.model.Template;
-import comeon.model.TemplateKind;
 import comeon.ui.UI;
-import comeon.ui.preferences.PreferencesPanel;
+import comeon.ui.preferences.PreferencesDialog;
 
 public final class AddPicturesAction extends BaseAction {
 
@@ -32,41 +30,68 @@ public final class AddPicturesAction extends BaseAction {
     chooser.setFileFilter(new FileNameExtensionFilter("JPEG files", "jpg", "jpeg"));
   }
   
+  private TemplateWrapper[] getWrapperTemplates() {
+    final List<Template> templates = Core.getInstance().getTemplates().getTemplates();
+    final TemplateWrapper[] wrappers = new TemplateWrapper[templates.size()];
+    int i = 0;
+    for (final Template template : templates) {
+      wrappers[i] = new TemplateWrapper(template);
+      i++;
+    }
+    return wrappers;
+  }
+  
   @Override
   public void actionPerformed(final ActionEvent e) {
     final int returnVal = chooser.showOpenDialog(ui);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       final File[] files = chooser.getSelectedFiles();
       try {
-        // TODO use a real configured template
-        final String templateText = Files.toString(UI.TEMPLATE_FILE, Charsets.UTF_8);
-        final Template template = new Template("DEFAULT", "DEFAULT", UI.TEMPLATE_FILE, templateText, TemplateKind.VELOCITY);
-        Core.getInstance().addPictures(files, template);
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            ui.refreshPictures();
-          }
-        });
+        final TemplateWrapper[] templates = this.getWrapperTemplates();
+        if (templates.length == 0) {
+          final String messageKey = "error.notemplates.message";
+          final String titleKey = "error.notemplates.title";
+          warnAndShowPreferences(messageKey, titleKey);
+        } else {
+          final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template", JOptionPane.QUESTION_MESSAGE,
+              null, templates, templates.length > 0 ? templates[0] : null);
+          Core.getInstance().addPictures(files, wrapper.template);
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              ui.refreshPictures();
+            }
+          });
+        }
       } catch (final UserNotSetException ex) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            JOptionPane.showMessageDialog(ui, UI.BUNDLE.getString("error.usernotset.message"),
-                UI.BUNDLE.getString("error.usernotset.title"), JOptionPane.ERROR_MESSAGE);
-            new PreferencesPanel(JOptionPane.getRootFrame()).setVisible(true);
-          }
-        });
-      } catch (final IOException ex) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            JOptionPane.showMessageDialog(ui, UI.BUNDLE.getString("error.unreadabletemplate.message"),
-                UI.BUNDLE.getString("error.unreadabletemplate.title"), JOptionPane.ERROR_MESSAGE);
-          }
-        });
+        final String messageKey = "error.usernotset.message";
+        final String titleKey = "error.usernotset.title";
+        warnAndShowPreferences(messageKey, titleKey);
       }
     }
   }
 
+  private void warnAndShowPreferences(final String messageKey, final String titleKey) {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JOptionPane.showMessageDialog(ui, UI.BUNDLE.getString(messageKey),
+            UI.BUNDLE.getString(titleKey), JOptionPane.ERROR_MESSAGE);
+        new PreferencesDialog(JOptionPane.getRootFrame()).setVisible(true);
+      }
+    });
+  }
+
+  private static final class TemplateWrapper {
+    private final Template template;
+    
+    public TemplateWrapper(final Template template) {
+      this.template = template;
+    }
+    
+    @Override
+    public String toString() {
+      return template.getName();
+    }
+  }
 }

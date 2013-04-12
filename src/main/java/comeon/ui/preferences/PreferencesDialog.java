@@ -12,24 +12,32 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import comeon.Core;
 
-public final class PreferencesPanel extends JDialog {
+public final class PreferencesDialog extends JDialog {
 
   private static final long serialVersionUID = 1L;
   
   private final UserSettingsPanel userSettingsPanel;
+  
+  private final TemplatesPanel templatesPanel;
 
-  public PreferencesPanel(final Window parent) {
+  public PreferencesDialog(final Window parent) {
     // TODO i18n
     super(parent, "Preferences", ModalityType.APPLICATION_MODAL);
+    this.setLocationRelativeTo(parent);
     this.add(new Buttons(), BorderLayout.SOUTH);
-    userSettingsPanel = new UserSettingsPanel();
-    this.add(userSettingsPanel, BorderLayout.CENTER);
+    final JTabbedPane tabs = new JTabbedPane(JTabbedPane.LEFT);
+    this.userSettingsPanel = new UserSettingsPanel();
+    tabs.add("User", userSettingsPanel);
+    this.templatesPanel = new TemplatesPanel(Core.getInstance().getTemplates().getTemplates());
+    tabs.add("Templates", templatesPanel);
+    this.add(tabs, BorderLayout.CENTER);
     this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    this.setMinimumSize(new Dimension(300, 200));
+    this.setMinimumSize(new Dimension(480, 320));
   }
   
   private final class Buttons extends JPanel {
@@ -56,18 +64,20 @@ public final class PreferencesPanel extends JDialog {
         public void run() {
           try {
             Core.getInstance().getUsers().setUser(userSettingsPanel.getUser());
+            Core.getInstance().getTemplates().setTemplates(templatesPanel.getTemplates());
+            Core.getInstance().getTemplates().storePreferences();
           } catch (final BackingStoreException e) {
             SwingUtilities.invokeLater(new Runnable() {
               @Override
               public void run() {
                 // TODO i18n
-                JOptionPane.showMessageDialog(PreferencesPanel.this.getParent(), e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(PreferencesDialog.this.getParent(), e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
               }
             });
           }
         }
       });
-      PreferencesPanel.this.dispose();
+      PreferencesDialog.this.dispose();
     }
   }
   
@@ -80,7 +90,7 @@ public final class PreferencesPanel extends JDialog {
     
     @Override
     public void actionPerformed(final ActionEvent e) {
-      PreferencesPanel.this.dispose();
+      PreferencesDialog.this.dispose();
     }
   }
 }
