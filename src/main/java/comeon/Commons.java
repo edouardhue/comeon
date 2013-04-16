@@ -1,5 +1,7 @@
 package comeon;
 
+import in.yuvi.http.fluent.ProgressListener;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -40,17 +42,17 @@ final class Commons {
     }
   }
   
-  void upload(final Picture picture) throws NotLoggedInException, FailedLoginException, FailedUploadException, IOException {
+  void upload(final Picture picture, final ProgressListener listener) throws NotLoggedInException, FailedLoginException, FailedUploadException, IOException {
     if (this.api.isLoggedIn) {
       final InputStream stream = Files.newInputStreamSupplier(picture.getFile()).getInput();
       try {
-        this.api.upload(picture.getFile().getName(), stream, picture.getFile().length(), picture.getRenderedTemplate(), "Uploaded with ComeOn!");
+        this.api.upload(picture.getFile().getName(), stream, picture.getFile().length(), picture.getRenderedTemplate(), "Uploaded with ComeOn!", true, listener);
       } catch (final IOException e) {
         throw new FailedUploadException(e);
       }
     } else {
       this.login();
-      this.upload(picture);
+      this.upload(picture, listener);
     }
   }
   

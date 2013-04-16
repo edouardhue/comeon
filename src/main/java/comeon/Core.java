@@ -1,5 +1,7 @@
 package comeon;
 
+import in.yuvi.http.fluent.ProgressListener;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,19 +9,24 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import comeon.model.Picture;
 import comeon.model.Template;
 
 public final class Core {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Core.class);
+  
   private static final Core INSTANCE = new Core();
 
-  private List<Picture> pictures;
+  private final List<Picture> pictures;
 
-  private ExecutorService pool;
+  private final ExecutorService pool;
 
-  private Users users;
+  private final Users users;
 
-  private Templates templates;
+  private final Templates templates;
 
   private Core() {
     this.pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -38,13 +45,34 @@ public final class Core {
     return pictures;
   }
 
-  public void uploadPictures() throws UserNotSetException, NotLoggedInException, FailedLoginException,
-      FailedUploadException, IOException, FailedLogoutException {
-    final Commons commons = new Commons(users.getUser());
-    for (final Picture picture : this.pictures) {
-      commons.upload(picture);
-    }
-    commons.logout();
+  public void uploadPictures(final UploadMonitor monitor) {
+    final List<Picture> batch = new ArrayList<>(this.pictures);
+    monitor.setBatchSize(batch.size());
+    this.pool.submit(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          final Commons commons = new Commons(users.getUser());
+          monitor.uploadStarting();
+          int index = 0;
+          for (final Picture picture : batch) {
+            try {
+              final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length());
+              commons.upload(picture, listener);
+            } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
+              LOGGER.warn("Picture upload failed", e);
+            } finally {
+              monitor.itemDone(index);
+              index++;
+            }
+          }
+          commons.logout();
+          monitor.uploadDone();
+        } catch (final UserNotSetException | FailedLogoutException e) {
+          LOGGER.warn("Batch upload failed", e);
+        }
+      }
+    });
   }
 
   public Users getUsers() {
