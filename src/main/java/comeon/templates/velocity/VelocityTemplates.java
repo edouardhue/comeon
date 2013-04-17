@@ -5,7 +5,7 @@ import java.util.Properties;
 import org.apache.velocity.app.VelocityEngine;
 
 public final class VelocityTemplates {
-  private static final String VELOCITY_TEMPLATE_ROOT_KEY = "velocity.templateRoot";
+  private static final String VELOCITY_TEMPLATE_ROOT_KEY = VelocityTemplates.class.getName() + ".templateRoot";
 
   private static final VelocityTemplates INSTANCE = new VelocityTemplates();
 

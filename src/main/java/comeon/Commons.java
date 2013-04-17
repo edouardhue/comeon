@@ -16,7 +16,7 @@ import comeon.model.User;
 
 final class Commons {
   // TODO this URL should not be hard-coded
-  private static final String URL = "http://commons.wikimedia.org/w/api.php";
+  private static final String URL = System.getProperty(Commons.class.getName() + ".url", "http://commons.wikimedia.org/w/api.php");
   
   private final User user;
   
