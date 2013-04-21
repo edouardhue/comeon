@@ -2,6 +2,7 @@ package comeon.ui.actions;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import comeon.ui.UI;
@@ -21,7 +22,10 @@ public final class PreferencesAction extends BaseAction {
       @Override
       public void run() {
         final PreferencesDialog dialog = new PreferencesDialog(ui);
-        dialog.setVisible(true);
+        final int value = dialog.showDialog();
+        if (value == JOptionPane.OK_OPTION) {
+          dialog.save();
+        }
       }
     });
   }
