@@ -1,6 +1,7 @@
 package comeon.ui.preferences;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -21,6 +21,7 @@ import javax.swing.table.AbstractTableModel;
 import com.google.common.io.Files;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
+import comeon.ui.UI;
 
 public final class TemplatesPanel extends JPanel {
 
@@ -35,11 +36,11 @@ public final class TemplatesPanel extends JPanel {
     this.tableModel = new TableModel(templates);
     this.table = new JTable(tableModel);
     this.add(new JScrollPane(table), BorderLayout.CENTER);
-    final Box toolbar = Box.createVerticalBox();
+    final JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
     // TODO add icons
     toolbar.add(new JButton(new AddTemplateAction()));
     toolbar.add(new JButton(new RemoveTemplateAction()));
-    this.add(toolbar, BorderLayout.EAST);
+    this.add(toolbar, BorderLayout.SOUTH);
   }
   
   public List<Template> getTemplates() {
@@ -53,7 +54,7 @@ public final class TemplatesPanel extends JPanel {
     private final JFileChooser chooser;
 
     public AddTemplateAction() {
-      super("+");
+      super(UI.BUNDLE.getString("prefs.templates.add"));
       this.chooser = new JFileChooser();
     }
     
@@ -82,7 +83,7 @@ public final class TemplatesPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     public RemoveTemplateAction() {
-      super("-");
+      super(UI.BUNDLE.getString("prefs.templates.remove"));
     }
     
     @Override

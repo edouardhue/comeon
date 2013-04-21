@@ -48,12 +48,12 @@ public final class UI extends JFrame {
   
   public UI() {
     super("ComeOn!");
+    this.setIconImages(this.loadIcons());
     this.setJMenuBar(new MenuBar(this));
     this.setLayout(new BorderLayout());
     this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     this.setMinimumSize(new Dimension(800, 600));
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.setIconImages(this.loadIcons());
     
     this.previews = new Box(BoxLayout.X_AXIS);
     this.previews.setMinimumSize(new Dimension(0, PREVIEW_PANEL_HEIGHT));

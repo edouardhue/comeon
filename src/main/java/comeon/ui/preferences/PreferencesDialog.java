@@ -9,6 +9,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import comeon.Core;
+import comeon.ui.UI;
 
 public final class PreferencesDialog extends JOptionPane {
 
@@ -26,12 +27,11 @@ public final class PreferencesDialog extends JOptionPane {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
     this.tabs = new JTabbedPane(JTabbedPane.TOP);
     this.userSettingsPanel = new UserSettingsPanel();
-    tabs.add("User", userSettingsPanel);
+    tabs.add(UI.BUNDLE.getString("prefs.tab.user"), userSettingsPanel);
     this.templatesPanel = new TemplatesPanel(Core.getInstance().getTemplates().getTemplates());
-    tabs.add("Templates", templatesPanel);
+    tabs.add(UI.BUNDLE.getString("prefs.tab.templates"), templatesPanel);
     this.setMessage(this.tabs);
-    // TODO i18n
-    this.dialog = this.createDialog(parent, "Preferences");
+    this.dialog = this.createDialog(parent, UI.BUNDLE.getString("action.preferences.title"));
   }
 
   public int showDialog() {
