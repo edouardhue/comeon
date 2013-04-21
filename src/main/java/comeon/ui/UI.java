@@ -5,11 +5,16 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -18,14 +23,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import com.google.common.io.Resources;
 import comeon.Core;
 import comeon.model.Picture;
 import comeon.ui.pictures.PicturePanels;
 
 public final class UI extends JFrame {
-  @Deprecated
-  public static final File TEMPLATE_FILE = new File("/home/sbdd8031/Projets/comeon/workspace/comeon/veloTemplates/information.vm");
-
+  
   private static final long serialVersionUID = 1L;
 
   public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("comeon.ui.comeon");
@@ -49,6 +53,7 @@ public final class UI extends JFrame {
     this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     this.setMinimumSize(new Dimension(800, 600));
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setIconImages(this.loadIcons());
     
     this.previews = new Box(BoxLayout.X_AXIS);
     this.previews.setMinimumSize(new Dimension(0, PREVIEW_PANEL_HEIGHT));
@@ -63,6 +68,18 @@ public final class UI extends JFrame {
     this.add(editContainer, BorderLayout.CENTER);
     
     this.setVisible(true);
+  }
+
+  private List<? extends Image> loadIcons() {
+    try {
+      return Arrays.asList(
+          ImageIO.read(Resources.getResource("comeon_16_16.png")),
+          ImageIO.read(Resources.getResource("comeon_48_48.png")),
+          ImageIO.read(Resources.getResource("comeon_128_128.png"))
+      );
+    } catch (final IOException e) {
+      return Collections.emptyList();
+    }
   }
   
   public void refreshPictures() {
