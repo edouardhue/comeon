@@ -1,8 +1,10 @@
 package comeon.ui.pictures;
 
-import javax.swing.BoxLayout;
+import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -11,71 +13,94 @@ import javax.swing.text.BadLocationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import comeon.model.Picture;
+
 final class PictureEditPanel extends JPanel {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(PictureEditPanel.class);
 
   private static final long serialVersionUID = 1L;
 
   public PictureEditPanel(final PicturePanels panels) {
-    super();
-    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    this.add(new PictureMetadataPanel(panels));
+    super(new BorderLayout());
+    final PictureMetadataPanel metadataPanel = new PictureMetadataPanel(panels);
+    this.add(metadataPanel, BorderLayout.WEST);
 
     final JTextArea templateText = new AliasedTextArea(panels.getPicture().getTemplateText());
-    templateText.getDocument().addDocumentListener(new DocumentListener() {
-
-      @Override
-      public void removeUpdate(final DocumentEvent e) {
-        try {
-          panels.getPicture().setTemplateText(e.getDocument().getText(0, e.getDocument().getLength()));
-        } catch (final BadLocationException e1) {
-          LOGGER.warn("Can't update template text", e1);
-        }
-      }
-
-      @Override
-      public void insertUpdate(final DocumentEvent e) {
-        try {
-          panels.getPicture().setTemplateText(e.getDocument().getText(0, e.getDocument().getLength()));
-        } catch (final BadLocationException e1) {
-          LOGGER.warn("Can't update template text", e1);
-        }
-      }
-
-      @Override
-      public void changedUpdate(final DocumentEvent e) {
-
-      }
-    });
+    templateText.getDocument().addDocumentListener(new TemplateListener(panels.getPicture()));
+    final JScrollPane templatePanel = wrap(templateText);
 
     final JTextArea renderedTemplate = new AliasedTextArea(panels.getPicture().getRenderedTemplate());
-    renderedTemplate.getDocument().addDocumentListener(new DocumentListener() {
+    renderedTemplate.getDocument().addDocumentListener(new RenderedTemplateListener(panels.getPicture()));
+    final JScrollPane renderedTemplatePanel = wrap(renderedTemplate);
+    
+    final JTabbedPane templatesPanel = new JTabbedPane(JTabbedPane.TOP);
+    // TODO i18n
+    templatesPanel.add(templatePanel, "Template");
+    templatesPanel.add(renderedTemplatePanel, "Rendered template");
+    templatesPanel.setSelectedComponent(renderedTemplatePanel);
+    
+    this.add(templatesPanel, BorderLayout.CENTER);
+  }
 
-      @Override
-      public void removeUpdate(final DocumentEvent e) {
-        try {
-          panels.getPicture().setRenderedTemplate(e.getDocument().getText(0, e.getDocument().getLength()));
-        } catch (final BadLocationException e1) {
-          LOGGER.warn("Can't update rendered template", e1);
-        }
+  private JScrollPane wrap(final JTextArea area) {
+    return new JScrollPane(area);
+  }
+  
+  private abstract class AbstractTemplateListener implements DocumentListener {
+    private final Picture picture;
+    
+    protected AbstractTemplateListener(final Picture picture) {
+      this.picture = picture;
+    }
+    
+    @Override
+    public void removeUpdate(final DocumentEvent e) {
+      this.update(e);
+    }
+
+    @Override
+    public void insertUpdate(final DocumentEvent e) {
+      this.update(e);
+    }
+
+    @Override
+    public final void changedUpdate(final DocumentEvent e) {}
+    
+    private void update(final DocumentEvent e) {
+      try {
+        this.doUpdate(picture, getText(e));
+      } catch (final BadLocationException e1) {
+        LOGGER.warn("Can't update template text", e1);
       }
+    }
 
-      @Override
-      public void insertUpdate(final DocumentEvent e) {
-        try {
-          panels.getPicture().setRenderedTemplate(e.getDocument().getText(0, e.getDocument().getLength()));
-        } catch (final BadLocationException e1) {
-          LOGGER.warn("Can't update rendered template", e1);
-        }
-      }
+    private String getText(final DocumentEvent e) throws BadLocationException {
+      return e.getDocument().getText(0, e.getDocument().getLength());
+    }
+    
+    protected abstract void doUpdate(final Picture picture, final String text);
+  }
+  
+  private final class TemplateListener extends AbstractTemplateListener {
+    private TemplateListener(Picture picture) {
+      super(picture);
+    }
 
-      @Override
-      public void changedUpdate(final DocumentEvent e) {
+    @Override
+    protected void doUpdate(final Picture picture, final String text) {
+      picture.setTemplateText(text);
+    }
+  }
+  
+  private final class RenderedTemplateListener extends AbstractTemplateListener {
+    private RenderedTemplateListener(Picture picture) {
+      super(picture);
+    }
 
-      }
-    });
-
-    this.add(new JScrollPane(templateText));
-    this.add(new JScrollPane(renderedTemplate));
+    @Override
+    protected void doUpdate(final Picture picture, final String text) {
+      picture.setRenderedTemplate(text);
+    }
   }
 }
