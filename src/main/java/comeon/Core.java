@@ -57,7 +57,7 @@ public final class Core {
           int index = 0;
           for (final Picture picture : batch) {
             try {
-              final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length());
+              final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length(), picture.getFileName());
               commons.upload(picture, listener);
             } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
               LOGGER.warn("Picture upload failed", e);

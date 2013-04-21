@@ -36,12 +36,15 @@ public final class UploadPicturesAction extends BaseAction {
     private final JProgressBar pictureBar;
 
     public Monitor() {
-      super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
+      super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[0]);
       this.batchBar = new JProgressBar(JProgressBar.HORIZONTAL);
       this.pictureBar = new JProgressBar(JProgressBar.HORIZONTAL);
+      this.pictureBar.setStringPainted(true);
+      // TODO i18n
       this.dialog = new JDialog(UploadPicturesAction.this.ui, "Progress", true);
       this.dialog.getContentPane().setLayout(new BorderLayout());
       this.dialog.getContentPane().add(this, BorderLayout.CENTER);
+      this.dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
       this.dialog.pack();
       this.setMessage(new Object[] { batchBar, pictureBar });
     }
@@ -68,12 +71,15 @@ public final class UploadPicturesAction extends BaseAction {
     }
 
     @Override
-    public ProgressListener itemStarting(final int index, final long length) {
+    public ProgressListener itemStarting(final int index, final long length, final String name) {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
           Monitor.this.pictureBar.setMaximum((int) length);
           Monitor.this.pictureBar.setValue(0);
+          Monitor.this.batchBar.setString(name);
+          Monitor.this.batchBar.setStringPainted(true);
+          Monitor.this.dialog.pack();
         }
       });
       return new ProgressListener() {
