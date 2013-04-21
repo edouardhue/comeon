@@ -37,7 +37,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.0</version>
+        <version>3.1</version>
         <configuration>
           <source>7</source>
           <target>7</target>
@@ -57,6 +57,27 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>webstart-maven-plugin</artifactId>
+        <version>1.0-beta-3</version>
+        <executions>
+          <execution>
+            <id>jnlp</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jnlp-inline</goal>
+            </goals>
+            <inherited>false</inherited>
+            <configuration>
+              <jnlp>
+                <inputTemplate>src/main/jnlp/jnlp.vm</inputTemplate>
+                <mainClass>comeon.ComeOn</mainClass>
+              </jnlp>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   
@@ -69,7 +90,7 @@
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
-      <version>2.10.0</version>
+      <version>2.11.0</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
