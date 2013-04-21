@@ -14,8 +14,7 @@ public final class QuitAction extends BaseAction {
   
   @Override
   public void actionPerformed(final ActionEvent e) {
-    // TODO Auto-generated method stub
-
+    System.exit(0);
   }
 
 }
