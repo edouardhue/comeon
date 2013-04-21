@@ -2,7 +2,6 @@ package comeon.ui.actions;
 
 import in.yuvi.http.fluent.ProgressListener;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JDialog;
@@ -40,13 +39,9 @@ public final class UploadPicturesAction extends BaseAction {
       this.batchBar = new JProgressBar(JProgressBar.HORIZONTAL);
       this.pictureBar = new JProgressBar(JProgressBar.HORIZONTAL);
       this.pictureBar.setStringPainted(true);
-      // TODO i18n
-      this.dialog = new JDialog(UploadPicturesAction.this.ui, "Progress", true);
-      this.dialog.getContentPane().setLayout(new BorderLayout());
-      this.dialog.getContentPane().add(this, BorderLayout.CENTER);
-      this.dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-      this.dialog.pack();
       this.setMessage(new Object[] { batchBar, pictureBar });
+      // TODO i18n
+      this.dialog = this.createDialog(UploadPicturesAction.this.ui, "Progress");
     }
 
     @Override
