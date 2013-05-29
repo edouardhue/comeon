@@ -2,11 +2,15 @@ package comeon;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -20,11 +24,13 @@ import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.GeoLocation;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
+import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 import comeon.model.Picture;
 import comeon.model.Template;
@@ -107,8 +113,23 @@ final class Pictures {
           }
           metadata.put(directory.getName(), directoryMetadata);
           if (IptcDirectory.class.equals(directory.getClass())) {
-            final String[] keywords = ((IptcDirectory) directory).getStringArray(IptcDirectory.TAG_KEYWORDS);
+            final IptcDirectory iptcDirectory = (IptcDirectory) directory;
+            final String[] keywords = iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS);
             metadata.put("keywords", keywords);
+            final String iptcDate = iptcDirectory.getString(IptcDirectory.TAG_DIGITAL_DATE_CREATED);
+            final String iptcTime = iptcDirectory.getString(IptcDirectory.TAG_DIGITAL_TIME_CREATED);
+            final SimpleDateFormat inFormat = new SimpleDateFormat("HHmmss:yyyyMMdd", Locale.ENGLISH);
+            final SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+            try {
+              final Date pictureDate = inFormat.parse(iptcTime + ":" + iptcDate);
+              metadata.put("date", outFormat.format(pictureDate));
+            } catch (final ParseException e) {
+              LOGGER.warn("Can't handle date", e);
+            }
+          }
+          if (GpsDirectory.class.equals(directory.getClass())) {
+            final GeoLocation geolocation = ((GpsDirectory) directory).getGeoLocation();
+            metadata.put("geolocation", geolocation);
           }
         }
         final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
