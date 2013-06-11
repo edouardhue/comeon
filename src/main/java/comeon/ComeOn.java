@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 
 import comeon.core.CoreImpl;
 import comeon.ui.UI;
+import comeon.users.UserNotSetException;
 
 public final class ComeOn {
 

@@ -10,11 +10,11 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import comeon.UserNotSetException;
 import comeon.core.CoreImpl;
 import comeon.model.Template;
 import comeon.ui.UI;
 import comeon.ui.preferences.PreferencesDialog;
+import comeon.users.UserNotSetException;
 
 public final class AddPicturesAction extends BaseAction {
 

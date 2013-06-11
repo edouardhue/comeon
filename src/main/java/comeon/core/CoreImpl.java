@@ -13,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import comeon.UploadMonitor;
-import comeon.UserNotSetException;
-import comeon.Users;
 import comeon.commons.Commons;
 import comeon.commons.CommonsImpl;
 import comeon.commons.FailedLoginException;
@@ -27,6 +25,9 @@ import comeon.pictures.Pictures;
 import comeon.pictures.PicturesImpl;
 import comeon.templates.velocity.Templates;
 import comeon.templates.velocity.TemplatesImpl;
+import comeon.users.UserNotSetException;
+import comeon.users.Users;
+import comeon.users.UsersImpl;
 
 public final class CoreImpl implements Core {
   private static final Logger LOGGER = LoggerFactory.getLogger(CoreImpl.class);
@@ -44,7 +45,7 @@ public final class CoreImpl implements Core {
   private CoreImpl() {
     this.pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     this.pictures = new ArrayList<>();
-    this.users = new Users();
+    this.users = new UsersImpl();
     this.templates = new TemplatesImpl();
   }
 

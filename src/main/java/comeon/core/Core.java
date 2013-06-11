@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.List;
 
 import comeon.UploadMonitor;
-import comeon.UserNotSetException;
 import comeon.model.Picture;
 import comeon.model.Template;
+import comeon.users.UserNotSetException;
 
 public interface Core {
 

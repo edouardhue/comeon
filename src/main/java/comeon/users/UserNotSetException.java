@@ -1,4 +1,4 @@
-package comeon;
+package comeon.users;
 
 public final class UserNotSetException extends Exception {
 

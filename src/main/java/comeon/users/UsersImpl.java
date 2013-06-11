@@ -1,4 +1,4 @@
-package comeon;
+package comeon.users;
 
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -6,13 +6,14 @@ import java.util.prefs.Preferences;
 import comeon.core.CoreImpl;
 import comeon.model.User;
 
-public final class Users {
+public final class UsersImpl implements Users {
   
   private User user;
   
-  /**
-   * @throws UserNotSetException
+  /* (non-Javadoc)
+   * @see comeon.users.Users#getUser()
    */
+  @Override
   public User getUser() throws UserNotSetException {
     if (this.user == null) {
       this.user = loadUser();
@@ -20,6 +21,10 @@ public final class Users {
     return user;
   }
   
+  /* (non-Javadoc)
+   * @see comeon.users.Users#setUser(comeon.model.User)
+   */
+  @Override
   public void setUser(final User user) throws BackingStoreException {
     this.user = user;
     final Preferences userPrefs = getUserPreferences();

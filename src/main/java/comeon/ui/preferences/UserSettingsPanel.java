@@ -13,10 +13,10 @@ import javax.swing.text.Document;
 
 import layout.SpringUtilities;
 
-import comeon.UserNotSetException;
 import comeon.core.CoreImpl;
 import comeon.model.User;
 import comeon.ui.UI;
+import comeon.users.UserNotSetException;
 
 final class UserSettingsPanel extends JPanel {
 
