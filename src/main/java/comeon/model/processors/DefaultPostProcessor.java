@@ -5,7 +5,7 @@ import java.util.Map;
 import comeon.model.Picture;
 import comeon.model.User;
 
-final class DefaultProcessor implements Processor {
+final class DefaultPostProcessor implements PostProcessor {
   private  static final String PICTURE = "picture";
   
   private static final String USER = "user";

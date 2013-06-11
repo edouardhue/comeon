@@ -5,6 +5,6 @@ import java.util.Map;
 import comeon.model.Picture;
 import comeon.model.User;
 
-public interface Processor {
+public interface PostProcessor {
   void process(User user, Picture picture, Map<String, Object> context);
 }

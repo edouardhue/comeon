@@ -2,16 +2,13 @@ package comeon;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
@@ -24,17 +21,16 @@ import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.lang.GeoLocation;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
-import com.drew.metadata.exif.GpsDirectory;
-import com.drew.metadata.iptc.IptcDirectory;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.User;
+import comeon.model.processors.PreProcessor;
+import comeon.model.processors.Processors;
 
 final class Pictures {
   private static final Logger LOGGER = LoggerFactory.getLogger(Pictures.class);
@@ -76,6 +72,8 @@ final class Pictures {
   }
   
   final class PictureReader implements Runnable {
+    private static final String NON_WORD_CHARS = "[^\\w]";
+
     private final File file;
     
     private final User user;
@@ -99,38 +97,8 @@ final class Pictures {
         }
         final Map<String, Object> metadata = new HashMap<>(rawMetadata.getDirectoryCount());
         for (final Directory directory : rawMetadata.getDirectories()) {
-          final TagDescriptor<?> descriptor = MetadataHelper.getDescriptor(directory);
-          final List<DynaProperty> properties = new LinkedList<>();
-          for (final Tag tag : directory.getTags()) {
-            final DynaProperty property = new DynaProperty(tag.getTagName().replaceAll("[^\\w]", ""), String.class);
-            properties.add(property);
-          }
-          final LazyDynaClass directoryClass = new LazyDynaClass(directory.getName(), null, properties.toArray(new DynaProperty[properties.size()]));
-          directoryClass.setReturnNull(true);
-          final DynaBean directoryMetadata = new LazyDynaBean(directoryClass);
-          for (final Tag tag : directory.getTags()) {
-            directoryMetadata.set(tag.getTagName().replaceAll("[^\\w]", ""), descriptor.getDescription(tag.getTagType()));
-          }
-          metadata.put(directory.getName(), directoryMetadata);
-          if (IptcDirectory.class.equals(directory.getClass())) {
-            final IptcDirectory iptcDirectory = (IptcDirectory) directory;
-            final String[] keywords = iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS);
-            metadata.put("keywords", keywords);
-            final String iptcDate = iptcDirectory.getString(IptcDirectory.TAG_DIGITAL_DATE_CREATED);
-            final String iptcTime = iptcDirectory.getString(IptcDirectory.TAG_DIGITAL_TIME_CREATED);
-            final SimpleDateFormat inFormat = new SimpleDateFormat("HHmmss:yyyyMMdd", Locale.ENGLISH);
-            final SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-            try {
-              final Date pictureDate = inFormat.parse(iptcTime + ":" + iptcDate);
-              metadata.put("date", outFormat.format(pictureDate));
-            } catch (final ParseException e) {
-              LOGGER.warn("Can't handle date", e);
-            }
-          }
-          if (GpsDirectory.class.equals(directory.getClass())) {
-            final GeoLocation geolocation = ((GpsDirectory) directory).getGeoLocation();
-            metadata.put("geolocation", geolocation);
-          }
+          copy(metadata, directory);
+          preProcess(metadata, directory);
         }
         final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
         picture.renderTemplate(user);
@@ -141,6 +109,29 @@ final class Pictures {
         LOGGER.warn("Can't read file {}", fileName, e);
       }
       latch.countDown();
+    }
+
+    private void copy(final Map<String, Object> metadata, final Directory directory) {
+      final TagDescriptor<?> descriptor = MetadataHelper.getDescriptor(directory);
+      final List<DynaProperty> properties = new LinkedList<>();
+      for (final Tag tag : directory.getTags()) {
+        final DynaProperty property = new DynaProperty(tag.getTagName().replaceAll(NON_WORD_CHARS, ""), String.class);
+        properties.add(property);
+      }
+      final LazyDynaClass directoryClass = new LazyDynaClass(directory.getName(), null, properties.toArray(new DynaProperty[properties.size()]));
+      directoryClass.setReturnNull(true);
+      final DynaBean directoryMetadata = new LazyDynaBean(directoryClass);
+      for (final Tag tag : directory.getTags()) {
+        directoryMetadata.set(tag.getTagName().replaceAll(NON_WORD_CHARS, ""), descriptor.getDescription(tag.getTagType()));
+      }
+      metadata.put(directory.getName(), directoryMetadata);
+    }
+    
+    private void preProcess(final Map<String, Object> metadata, final Directory directory) {
+      final Set<PreProcessor> preProcessors = Processors.getInstance().getPreProcessors(directory.getClass());
+      for (final PreProcessor preProcessor : preProcessors) {
+        preProcessor.process(directory, metadata);
+      }
     }
   }
 }

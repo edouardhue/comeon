@@ -11,7 +11,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 
-import comeon.model.processors.Processor;
+import comeon.model.processors.PostProcessor;
 import comeon.model.processors.Processors;
 import comeon.templates.velocity.VelocityTemplates;
 
@@ -30,7 +30,7 @@ public enum TemplateKind {
   
   public final String render(final String templateText, final User user, final Picture picture) {
     final Map<String, Object> context = new HashMap<>();
-    for (final Processor processor : Processors.getInstance().getProcessors()) {
+    for (final PostProcessor processor : Processors.getInstance().getPostProcessors()) {
       processor.process(user, picture, context);
     }
     return this.doRender(templateText, context);
