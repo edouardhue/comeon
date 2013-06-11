@@ -1,4 +1,4 @@
-package comeon;
+package comeon.pictures;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +32,8 @@ import comeon.model.User;
 import comeon.model.processors.PreProcessor;
 import comeon.model.processors.Processors;
 
-public final class Pictures {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Pictures.class);
+public final class PicturesImpl implements Pictures {
+  private static final Logger LOGGER = LoggerFactory.getLogger(PicturesImpl.class);
   
   private final File[] files;
   
@@ -45,7 +45,7 @@ public final class Pictures {
   
   private final CountDownLatch latch;
   
-  public Pictures(final File[] files, final Template defautTemplate, final ExecutorService pool) {
+  public PicturesImpl(final File[] files, final Template defautTemplate, final ExecutorService pool) {
     this.files = files;
     this.defaultTemplate = defautTemplate;
     this.pool = pool;
@@ -53,6 +53,10 @@ public final class Pictures {
     this.latch = new CountDownLatch(files.length);
   }
   
+  /* (non-Javadoc)
+   * @see comeon.pictures.Pictures#readFiles(comeon.model.User)
+   */
+  @Override
   public Pictures readFiles(final User user) {
     for (final File file : files) {
       pool.execute(new PictureReader(file, user));
@@ -67,6 +71,10 @@ public final class Pictures {
     return this;
   }
   
+  /* (non-Javadoc)
+   * @see comeon.pictures.Pictures#getPictures()
+   */
+  @Override
   public List<Picture> getPictures() {
     return pictures;
   }

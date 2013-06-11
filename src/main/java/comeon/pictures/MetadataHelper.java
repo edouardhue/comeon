@@ -1,4 +1,4 @@
-package comeon;
+package comeon.pictures;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
-public final class MetadataHelper {
+final class MetadataHelper {
   private static final Logger LOGGER = LoggerFactory.getLogger(MetadataHelper.class);
   
   private MetadataHelper() {
@@ -16,7 +16,7 @@ public final class MetadataHelper {
   }
   
   @SuppressWarnings("unchecked")
-  public static <T extends Directory> TagDescriptor<T> getDescriptor(final T dir) {
+  static <T extends Directory> TagDescriptor<T> getDescriptor(final T dir) {
     final String dirClassName = dir.getClass().getName();
     final String descriptorClassName = dirClassName.replace("Directory", "Descriptor");
     try {

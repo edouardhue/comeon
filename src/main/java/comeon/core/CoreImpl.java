@@ -12,7 +12,6 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import comeon.Pictures;
 import comeon.UploadMonitor;
 import comeon.UserNotSetException;
 import comeon.Users;
@@ -24,6 +23,8 @@ import comeon.commons.FailedUploadException;
 import comeon.commons.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
+import comeon.pictures.Pictures;
+import comeon.pictures.PicturesImpl;
 import comeon.templates.velocity.Templates;
 import comeon.templates.velocity.TemplatesImpl;
 
@@ -52,7 +53,7 @@ public final class CoreImpl implements Core {
    */
   @Override
   public void addPictures(final File[] files, final Template defautTemplate) throws UserNotSetException {
-    final Pictures picturesReader = new Pictures(files, defautTemplate, pool);
+    final Pictures picturesReader = new PicturesImpl(files, defautTemplate, pool);
     final List<Picture> newPictures = picturesReader.readFiles(users.getUser()).getPictures();
     this.pictures.addAll(newPictures);
   }
