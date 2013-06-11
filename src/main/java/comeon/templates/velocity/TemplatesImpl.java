@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
+
+import comeon.ComeOn;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 
@@ -26,7 +28,7 @@ public final class TemplatesImpl implements Templates {
   
   public TemplatesImpl() {
     this.templates = new LinkedList<>();
-    this.prefs = Preferences.userNodeForPackage(TemplatesImpl.class).node("templates");
+    this.prefs = Preferences.userNodeForPackage(ComeOn.class).node("templates");
     this.loaded = false;
   }
   

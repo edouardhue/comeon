@@ -5,20 +5,23 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
+import comeon.core.Core;
+import comeon.templates.velocity.Templates;
 import comeon.ui.actions.AboutAction;
 import comeon.ui.actions.AddPicturesAction;
 import comeon.ui.actions.HelpManualAction;
 import comeon.ui.actions.PreferencesAction;
 import comeon.ui.actions.QuitAction;
 import comeon.ui.actions.UploadPicturesAction;
+import comeon.users.Users;
 
 final class MenuBar extends JMenuBar {
 
   private static final long serialVersionUID = 1L;
 
-  public MenuBar(final UI ui) {
-    this.add(new FileMenu(ui));
-    this.add(new EditMenu(ui));
+  public MenuBar(final UI ui, final Core core, final Users users, final Templates templates) {
+    this.add(new FileMenu(ui, core, users, templates));
+    this.add(new EditMenu(ui, users, templates));
     this.add(new HelpMenu(ui));
   }
 
@@ -37,10 +40,10 @@ final class MenuBar extends JMenuBar {
   private class FileMenu extends BaseMenu {
     private static final long serialVersionUID = 1L;
 
-    public FileMenu(final UI ui) {
+    public FileMenu(final UI ui, final Core core, final Users users, final Templates templates) {
       super("file", ui);
-      this.add(new JMenuItem(new AddPicturesAction(ui)));
-      this.add(new JMenuItem(new UploadPicturesAction(ui)));
+      this.add(new JMenuItem(new AddPicturesAction(ui, users, templates, core)));
+      this.add(new JMenuItem(new UploadPicturesAction(ui, core)));
       this.add(new JSeparator());
       this.add(new JMenuItem(new QuitAction(ui)));
     }
@@ -49,9 +52,9 @@ final class MenuBar extends JMenuBar {
   private class EditMenu extends BaseMenu {
     private static final long serialVersionUID = 1L;
 
-    public EditMenu(final UI ui) {
+    public EditMenu(final UI ui, final Users users, final Templates templates) {
       super("edit", ui);
-      this.add(new JMenuItem(new PreferencesAction(ui)));
+      this.add(new JMenuItem(new PreferencesAction(ui, users, templates)));
     }
   }
 

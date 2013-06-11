@@ -24,10 +24,11 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import com.google.common.io.Resources;
-
-import comeon.core.CoreImpl;
+import comeon.core.Core;
 import comeon.model.Picture;
+import comeon.templates.velocity.Templates;
 import comeon.ui.pictures.PicturePanels;
+import comeon.users.Users;
 
 public final class UI extends JFrame {
   
@@ -47,10 +48,15 @@ public final class UI extends JFrame {
   
   private final JPanel editContainer;
   
-  public UI() {
+  private final Core core;
+  
+  public UI(final Core core, final Users users, final Templates templates) {
     super("ComeOn!");
+    
+    this.core = core;
+    
     this.setIconImages(this.loadIcons());
-    this.setJMenuBar(new MenuBar(this));
+    this.setJMenuBar(new MenuBar(this, core, users, templates));
     this.setLayout(new BorderLayout());
     this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     this.setMinimumSize(new Dimension(800, 600));
@@ -89,7 +95,7 @@ public final class UI extends JFrame {
       public void run() {
         previews.removeAll();
         editContainer.removeAll();
-        for (final Picture picture : CoreImpl.getInstance().getPictures()) {
+        for (final Picture picture : core.getPictures()) {
           add(picture);
         }
       }

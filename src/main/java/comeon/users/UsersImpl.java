@@ -3,7 +3,8 @@ package comeon.users;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import comeon.core.CoreImpl;
+import comeon.ComeOn;
+import comeon.core.Core;
 import comeon.model.User;
 
 public final class UsersImpl implements Users {
@@ -52,7 +53,7 @@ public final class UsersImpl implements Users {
   }
 
   private Preferences getUserPreferences() {
-    return Preferences.userNodeForPackage(CoreImpl.class).node("user");
+    return Preferences.userNodeForPackage(ComeOn.class).node("user");
   }
   
   private enum PreferencesKeys {

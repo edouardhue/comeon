@@ -7,13 +7,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import comeon.commons.Commons;
-import comeon.commons.CommonsImpl;
 import comeon.commons.FailedLoginException;
 import comeon.commons.FailedLogoutException;
 import comeon.commons.FailedUploadException;
@@ -22,30 +21,26 @@ import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.pictures.Pictures;
 import comeon.pictures.PicturesImpl;
-import comeon.templates.velocity.Templates;
-import comeon.templates.velocity.TemplatesImpl;
 import comeon.users.UserNotSetException;
 import comeon.users.Users;
-import comeon.users.UsersImpl;
 
 public final class CoreImpl implements Core {
   private static final Logger LOGGER = LoggerFactory.getLogger(CoreImpl.class);
   
-  private static final CoreImpl INSTANCE = new CoreImpl();
-
   private final List<Picture> pictures;
 
   private final ExecutorService pool;
 
   private final Users users;
 
-  private final Templates templates;
-
-  private CoreImpl() {
-    this.pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+  private final Commons commons;
+  
+  @Inject
+  private CoreImpl(final Users users, final Commons commons, final ExecutorService pool) {
     this.pictures = new ArrayList<>();
-    this.users = new UsersImpl();
-    this.templates = new TemplatesImpl();
+    this.users = users;
+    this.pool = pool;
+    this.commons = commons;
   }
 
   /* (non-Javadoc)
@@ -77,7 +72,6 @@ public final class CoreImpl implements Core {
       @Override
       public void run() {
         try {
-          final Commons commons = new CommonsImpl(users.getUser());
           monitor.uploadStarting();
           int index = 0;
           for (final Picture picture : batch) {
@@ -93,26 +87,11 @@ public final class CoreImpl implements Core {
           }
           commons.logout();
           monitor.uploadDone();
-        } catch (final UserNotSetException | FailedLogoutException e) {
-          LOGGER.warn("Batch upload failed", e);
+        } catch (final FailedLogoutException e) {
+          // TODO i18n
+          LOGGER.warn("Couldn't close Commons session properly", e);
         }
       }
     });
-  }
-
-  public Users getUsers() {
-    return users;
-  }
-
-  public Templates getTemplates() {
-    return templates;
-  }
-
-  public static CoreImpl getInstance() {
-    return INSTANCE;
-  }
-
-  public ExecutorService getPool() {
-    return pool;
   }
 }

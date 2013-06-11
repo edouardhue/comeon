@@ -10,20 +10,31 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import comeon.core.CoreImpl;
+import comeon.core.Core;
 import comeon.model.Template;
+import comeon.templates.velocity.Templates;
 import comeon.ui.UI;
 import comeon.ui.preferences.PreferencesDialog;
 import comeon.users.UserNotSetException;
+import comeon.users.Users;
 
 public final class AddPicturesAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
   
   private final JFileChooser chooser;
+  
+  private final Users users;
+  
+  private final Templates templates;
+  
+  private final Core core;
 
-  public AddPicturesAction(final UI ui) {
+  public AddPicturesAction(final UI ui, final Users users, final Templates templates, final Core core) {
     super("addpictures", ui);
+    this.users = users;
+    this.templates = templates;
+    this.core = core;
     this.chooser = new JFileChooser();
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     chooser.setMultiSelectionEnabled(true);
@@ -31,7 +42,7 @@ public final class AddPicturesAction extends BaseAction {
   }
   
   private TemplateWrapper[] getWrapperTemplates() {
-    final List<Template> templates = CoreImpl.getInstance().getTemplates().getTemplates();
+    final List<Template> templates = this.templates.getTemplates();
     final TemplateWrapper[] wrappers = new TemplateWrapper[templates.size()];
     int i = 0;
     for (final Template template : templates) {
@@ -55,7 +66,7 @@ public final class AddPicturesAction extends BaseAction {
         } else {
           final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template", JOptionPane.QUESTION_MESSAGE,
               null, templates, templates.length > 0 ? templates[0] : null);
-          CoreImpl.getInstance().addPictures(files, wrapper.template);
+          core.addPictures(files, wrapper.template);
           SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -77,7 +88,7 @@ public final class AddPicturesAction extends BaseAction {
       public void run() {
         JOptionPane.showMessageDialog(ui, UI.BUNDLE.getString(messageKey),
             UI.BUNDLE.getString(titleKey), JOptionPane.ERROR_MESSAGE);
-        new PreferencesDialog(JOptionPane.getRootFrame()).setVisible(true);
+        new PreferencesDialog(users, templates).setVisible(true);
       }
     });
   }

@@ -11,6 +11,7 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.mediawiki.api.MWApi;
 
 import com.google.common.io.Files;
+import com.google.inject.Inject;
 
 import comeon.model.Picture;
 import comeon.model.User;
@@ -23,7 +24,8 @@ public final class CommonsImpl implements Commons {
   
   private final MWApi api;
   
-  public CommonsImpl(final User user) {
+  @Inject
+  private CommonsImpl(final User user) {
     this.user = user;
     final DefaultHttpClient client = new DefaultHttpClient();
     // TODO Filter version from POM

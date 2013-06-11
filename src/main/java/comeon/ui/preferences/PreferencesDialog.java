@@ -1,6 +1,5 @@
 package comeon.ui.preferences;
 
-import java.awt.Frame;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.JDialog;
@@ -8,8 +7,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
-import comeon.core.CoreImpl;
+import comeon.templates.velocity.Templates;
 import comeon.ui.UI;
+import comeon.users.Users;
 
 public final class PreferencesDialog extends JOptionPane {
 
@@ -23,41 +23,42 @@ public final class PreferencesDialog extends JOptionPane {
 
   private final TemplatesPanel templatesPanel;
 
-  public PreferencesDialog(final Frame parent) {
+  private final Users users;
+
+  private final Templates templates;
+
+  public PreferencesDialog(final Users users, final Templates templates) {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+    this.users = users;
+    this.templates = templates;
     this.tabs = new JTabbedPane(JTabbedPane.TOP);
-    this.userSettingsPanel = new UserSettingsPanel();
+    this.userSettingsPanel = new UserSettingsPanel(users);
     tabs.add(UI.BUNDLE.getString("prefs.tab.user"), userSettingsPanel);
-    this.templatesPanel = new TemplatesPanel(CoreImpl.getInstance().getTemplates().getTemplates());
+    this.templatesPanel = new TemplatesPanel(templates.getTemplates());
     tabs.add(UI.BUNDLE.getString("prefs.tab.templates"), templatesPanel);
     this.setMessage(this.tabs);
-    this.dialog = this.createDialog(parent, UI.BUNDLE.getString("action.preferences.title"));
+    this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("action.preferences.title"));
   }
 
   public int showDialog() {
     this.dialog.setVisible(true);
     return ((Integer) this.getValue()).intValue();
   }
-  
+
   public void save() {
-    CoreImpl.getInstance().getPool().submit(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          CoreImpl.getInstance().getUsers().setUser(userSettingsPanel.getUser());
-          CoreImpl.getInstance().getTemplates().setTemplates(templatesPanel.getTemplates());
-          CoreImpl.getInstance().getTemplates().storePreferences();
-        } catch (final BackingStoreException e) {
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              // TODO i18n
-              JOptionPane.showMessageDialog(PreferencesDialog.this.getParent(), e.getLocalizedMessage(), "Error",
-                  JOptionPane.ERROR_MESSAGE);
-            }
-          });
+    try {
+      users.setUser(userSettingsPanel.getUser());
+      templates.setTemplates(templatesPanel.getTemplates());
+      templates.storePreferences();
+    } catch (final BackingStoreException e) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          // TODO i18n
+          JOptionPane.showMessageDialog(PreferencesDialog.this.getParent(), e.getLocalizedMessage(), "Error",
+              JOptionPane.ERROR_MESSAGE);
         }
-      }
-    });
+      });
+    }
   }
 }
