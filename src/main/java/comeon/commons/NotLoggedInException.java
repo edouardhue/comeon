@@ -1,4 +1,4 @@
-package comeon;
+package comeon.commons;
 
 public final class NotLoggedInException extends CommonsException {
 

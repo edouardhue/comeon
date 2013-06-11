@@ -12,10 +12,6 @@ import org.mediawiki.api.MWApi;
 
 import com.google.common.io.Files;
 
-import comeon.FailedLoginException;
-import comeon.FailedLogoutException;
-import comeon.FailedUploadException;
-import comeon.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.User;
 

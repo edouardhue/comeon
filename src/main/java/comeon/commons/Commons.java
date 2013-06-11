@@ -4,10 +4,6 @@ import in.yuvi.http.fluent.ProgressListener;
 
 import java.io.IOException;
 
-import comeon.FailedLoginException;
-import comeon.FailedLogoutException;
-import comeon.FailedUploadException;
-import comeon.NotLoggedInException;
 import comeon.model.Picture;
 
 public interface Commons {

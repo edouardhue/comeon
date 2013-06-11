@@ -1,4 +1,4 @@
-package comeon;
+package comeon.commons;
 
 import java.io.IOException;
 

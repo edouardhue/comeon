@@ -12,10 +12,6 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import comeon.FailedLoginException;
-import comeon.FailedLogoutException;
-import comeon.FailedUploadException;
-import comeon.NotLoggedInException;
 import comeon.Pictures;
 import comeon.Templates;
 import comeon.UploadMonitor;
@@ -23,6 +19,10 @@ import comeon.UserNotSetException;
 import comeon.Users;
 import comeon.commons.Commons;
 import comeon.commons.CommonsImpl;
+import comeon.commons.FailedLoginException;
+import comeon.commons.FailedLogoutException;
+import comeon.commons.FailedUploadException;
+import comeon.commons.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
 
