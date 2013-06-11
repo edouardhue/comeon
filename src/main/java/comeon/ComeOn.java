@@ -10,7 +10,6 @@ import javax.swing.SwingUtilities;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
 import comeon.commons.Commons;
 import comeon.commons.CommonsImpl;
 import comeon.core.Core;
@@ -19,6 +18,7 @@ import comeon.templates.velocity.Templates;
 import comeon.ui.UI;
 import comeon.users.UserNotSetException;
 import comeon.users.Users;
+import comeon.users.UsersImpl;
 
 public final class ComeOn extends AbstractModule {
 
@@ -38,6 +38,7 @@ public final class ComeOn extends AbstractModule {
   protected void configure() {
     bind(Commons.class).to(CommonsImpl.class);
     bind(Core.class).to(CoreImpl.class);
+    bind(Users.class).to(UsersImpl.class);
     bind(ExecutorService.class).toInstance(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
   }
 

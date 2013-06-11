@@ -1,11 +1,10 @@
 package comeon.commons;
 
-import java.io.IOException;
 
 public final class FailedLoginException extends CommonsException {
   private static final long serialVersionUID = 1L;
 
-  public FailedLoginException(final IOException cause) {
+  public FailedLoginException(final Exception cause) {
     super(cause);
   }
 }

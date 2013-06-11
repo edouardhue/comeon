@@ -15,18 +15,20 @@ import com.google.inject.Inject;
 
 import comeon.model.Picture;
 import comeon.model.User;
+import comeon.users.UserNotSetException;
+import comeon.users.Users;
 
 public final class CommonsImpl implements Commons {
   // TODO this URL should not be hard-coded
   private static final String URL = System.getProperty(CommonsImpl.class.getName() + ".url", "http://commons.wikimedia.org/w/api.php");
   
-  private final User user;
-  
   private final MWApi api;
   
+  private final Users users;
+  
   @Inject
-  private CommonsImpl(final User user) {
-    this.user = user;
+  private CommonsImpl(final Users users) {
+    this.users = users;
     final DefaultHttpClient client = new DefaultHttpClient();
     // TODO Filter version from POM
     client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "ComeOn!/1.0-SNAPSHOT (http://github.com/edouardhue/comeon; EdouardHue) using org.mediawiki:api:1.3");
@@ -40,11 +42,12 @@ public final class CommonsImpl implements Commons {
   @Override
   public void login() throws NotLoggedInException, FailedLoginException {
     try {
+      final User user = users.getUser();
       final String result = this.api.login(user.getLogin(), user.getPassword());
       if (!this.api.isLoggedIn) {
         throw new NotLoggedInException(result);
       }
-    } catch (final IOException e) {
+    } catch (final IOException | UserNotSetException e) {
       throw new FailedLoginException(e);
     }
   }

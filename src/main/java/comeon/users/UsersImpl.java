@@ -3,6 +3,8 @@ package comeon.users;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import com.google.inject.Inject;
+
 import comeon.ComeOn;
 import comeon.core.Core;
 import comeon.model.User;
@@ -11,9 +13,10 @@ public final class UsersImpl implements Users {
   
   private User user;
   
-  /* (non-Javadoc)
-   * @see comeon.users.Users#getUser()
-   */
+  @Inject
+  private UsersImpl() {
+  }
+  
   @Override
   public User getUser() throws UserNotSetException {
     if (this.user == null) {
@@ -22,9 +25,6 @@ public final class UsersImpl implements Users {
     return user;
   }
   
-  /* (non-Javadoc)
-   * @see comeon.users.Users#setUser(comeon.model.User)
-   */
   @Override
   public void setUser(final User user) throws BackingStoreException {
     this.user = user;
