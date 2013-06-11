@@ -5,7 +5,6 @@ import java.util.prefs.BackingStoreException;
 
 import javax.swing.SwingUtilities;
 
-import comeon.model.Picture;
 import comeon.ui.UI;
 
 public final class ComeOn {
@@ -16,10 +15,7 @@ public final class ComeOn {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        final UI ui = new UI();
-        for (final Picture picture : core.getPictures()) {
-          ui.add(picture);
-        }
+        new UI();
       }
     });
   }
