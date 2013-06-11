@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import comeon.commons.Commons;
+import comeon.commons.CommonsImpl;
 import comeon.model.Picture;
 import comeon.model.Template;
 
@@ -52,7 +54,7 @@ public final class Core {
       @Override
       public void run() {
         try {
-          final Commons commons = new Commons(users.getUser());
+          final Commons commons = new CommonsImpl(users.getUser());
           monitor.uploadStarting();
           int index = 0;
           for (final Picture picture : batch) {

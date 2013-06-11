@@ -1,4 +1,4 @@
-package comeon;
+package comeon.commons;
 
 import in.yuvi.http.fluent.ProgressListener;
 
@@ -11,18 +11,23 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.mediawiki.api.MWApi;
 
 import com.google.common.io.Files;
+
+import comeon.FailedLoginException;
+import comeon.FailedLogoutException;
+import comeon.FailedUploadException;
+import comeon.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.User;
 
-final class Commons {
+public final class CommonsImpl implements Commons {
   // TODO this URL should not be hard-coded
-  private static final String URL = System.getProperty(Commons.class.getName() + ".url", "http://commons.wikimedia.org/w/api.php");
+  private static final String URL = System.getProperty(CommonsImpl.class.getName() + ".url", "http://commons.wikimedia.org/w/api.php");
   
   private final User user;
   
   private final MWApi api;
   
-  Commons(final User user) {
+  public CommonsImpl(final User user) {
     this.user = user;
     final DefaultHttpClient client = new DefaultHttpClient();
     // TODO Filter version from POM
@@ -31,7 +36,11 @@ final class Commons {
     this.api = new MWApi(URL, (AbstractHttpClient) client);
   }
   
-  void login() throws NotLoggedInException, FailedLoginException {
+  /* (non-Javadoc)
+   * @see comeon.commons.Commons#login()
+   */
+  @Override
+  public void login() throws NotLoggedInException, FailedLoginException {
     try {
       final String result = this.api.login(user.getLogin(), user.getPassword());
       if (!this.api.isLoggedIn) {
@@ -42,7 +51,11 @@ final class Commons {
     }
   }
   
-  void upload(final Picture picture, final ProgressListener listener) throws NotLoggedInException, FailedLoginException, FailedUploadException, IOException {
+  /* (non-Javadoc)
+   * @see comeon.commons.Commons#upload(comeon.model.Picture, in.yuvi.http.fluent.ProgressListener)
+   */
+  @Override
+  public void upload(final Picture picture, final ProgressListener listener) throws NotLoggedInException, FailedLoginException, FailedUploadException, IOException {
     if (this.api.isLoggedIn) {
       final InputStream stream = Files.newInputStreamSupplier(picture.getFile()).getInput();
       try {
@@ -56,7 +69,11 @@ final class Commons {
     }
   }
   
-  void logout() throws FailedLogoutException {
+  /* (non-Javadoc)
+   * @see comeon.commons.Commons#logout()
+   */
+  @Override
+  public void logout() throws FailedLogoutException {
     if (this.api.isLoggedIn) {
       try {
         this.api.logout();
