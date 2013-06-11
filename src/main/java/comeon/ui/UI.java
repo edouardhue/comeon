@@ -26,7 +26,7 @@ import javax.swing.SwingUtilities;
 import com.google.common.io.Resources;
 import comeon.core.Core;
 import comeon.model.Picture;
-import comeon.templates.velocity.Templates;
+import comeon.templates.Templates;
 import comeon.ui.pictures.PicturePanels;
 import comeon.users.Users;
 

@@ -6,7 +6,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
 import comeon.core.Core;
-import comeon.templates.velocity.Templates;
+import comeon.templates.Templates;
 import comeon.ui.actions.AboutAction;
 import comeon.ui.actions.AddPicturesAction;
 import comeon.ui.actions.HelpManualAction;

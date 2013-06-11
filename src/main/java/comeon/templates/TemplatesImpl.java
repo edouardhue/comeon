@@ -1,4 +1,4 @@
-package comeon.templates.velocity;
+package comeon.templates;
 
 import java.io.File;
 import java.io.IOException;

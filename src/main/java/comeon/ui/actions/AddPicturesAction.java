@@ -12,7 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import comeon.core.Core;
 import comeon.model.Template;
-import comeon.templates.velocity.Templates;
+import comeon.templates.Templates;
 import comeon.ui.UI;
 import comeon.ui.preferences.PreferencesDialog;
 import comeon.users.UserNotSetException;

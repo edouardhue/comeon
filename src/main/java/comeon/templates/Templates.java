@@ -1,4 +1,4 @@
-package comeon.templates.velocity;
+package comeon.templates;
 
 import java.util.List;
 import java.util.prefs.BackingStoreException;

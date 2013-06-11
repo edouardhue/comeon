@@ -14,7 +14,7 @@ import comeon.commons.Commons;
 import comeon.commons.CommonsImpl;
 import comeon.core.Core;
 import comeon.core.CoreImpl;
-import comeon.templates.velocity.Templates;
+import comeon.templates.Templates;
 import comeon.ui.UI;
 import comeon.users.UserNotSetException;
 import comeon.users.Users;

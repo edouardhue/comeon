@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import comeon.templates.velocity.Templates;
+import comeon.templates.Templates;
 import comeon.ui.UI;
 import comeon.ui.preferences.PreferencesDialog;
 import comeon.users.Users;
