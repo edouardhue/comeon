@@ -4,9 +4,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import com.google.inject.Inject;
-
 import comeon.ComeOn;
-import comeon.core.Core;
 import comeon.model.User;
 
 public final class UsersImpl implements Users {
