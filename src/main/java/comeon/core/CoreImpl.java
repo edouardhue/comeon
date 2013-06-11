@@ -12,7 +12,6 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import comeon.UploadMonitor;
 import comeon.commons.Commons;
 import comeon.commons.CommonsImpl;
 import comeon.commons.FailedLoginException;

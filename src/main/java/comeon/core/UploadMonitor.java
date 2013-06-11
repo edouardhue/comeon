@@ -1,4 +1,4 @@
-package comeon;
+package comeon.core;
 
 import in.yuvi.http.fluent.ProgressListener;
 
