@@ -15,6 +15,7 @@ import comeon.commons.CommonsImpl;
 import comeon.core.Core;
 import comeon.core.CoreImpl;
 import comeon.templates.Templates;
+import comeon.templates.TemplatesImpl;
 import comeon.ui.UI;
 import comeon.users.UserNotSetException;
 import comeon.users.Users;
@@ -39,6 +40,7 @@ public final class ComeOn extends AbstractModule {
     bind(Commons.class).to(CommonsImpl.class);
     bind(Core.class).to(CoreImpl.class);
     bind(Users.class).to(UsersImpl.class);
+    bind(Templates.class).to(TemplatesImpl.class);
     bind(ExecutorService.class).toInstance(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
   }
 

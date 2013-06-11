@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
+import com.google.inject.Inject;
 
 import comeon.ComeOn;
 import comeon.model.Template;
@@ -26,7 +27,8 @@ public final class TemplatesImpl implements Templates {
   
   private boolean loaded;
   
-  public TemplatesImpl() {
+  @Inject
+  private TemplatesImpl() {
     this.templates = new LinkedList<>();
     this.prefs = Preferences.userNodeForPackage(ComeOn.class).node("templates");
     this.loaded = false;
