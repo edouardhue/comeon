@@ -1,4 +1,4 @@
-package comeon.pictures;
+package comeon.core;
 
 import java.lang.reflect.InvocationTargetException;
 

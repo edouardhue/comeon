@@ -1,4 +1,4 @@
-package comeon.pictures;
+package comeon.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +32,8 @@ import comeon.model.User;
 import comeon.model.processors.PreProcessor;
 import comeon.model.processors.Processors;
 
-public final class PicturesImpl implements Pictures {
-  private static final Logger LOGGER = LoggerFactory.getLogger(PicturesImpl.class);
+final class Pictures {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Pictures.class);
   
   private final File[] files;
   
@@ -45,7 +45,7 @@ public final class PicturesImpl implements Pictures {
   
   private final CountDownLatch latch;
   
-  public PicturesImpl(final File[] files, final Template defautTemplate, final ExecutorService pool) {
+  Pictures(final File[] files, final Template defautTemplate, final ExecutorService pool) {
     this.files = files;
     this.defaultTemplate = defautTemplate;
     this.pool = pool;
@@ -53,10 +53,6 @@ public final class PicturesImpl implements Pictures {
     this.latch = new CountDownLatch(files.length);
   }
   
-  /* (non-Javadoc)
-   * @see comeon.pictures.Pictures#readFiles(comeon.model.User)
-   */
-  @Override
   public Pictures readFiles(final User user) {
     for (final File file : files) {
       pool.execute(new PictureReader(file, user));
@@ -71,22 +67,18 @@ public final class PicturesImpl implements Pictures {
     return this;
   }
   
-  /* (non-Javadoc)
-   * @see comeon.pictures.Pictures#getPictures()
-   */
-  @Override
   public List<Picture> getPictures() {
     return pictures;
   }
   
-  final class PictureReader implements Runnable {
+  private final class PictureReader implements Runnable {
     private static final String NON_WORD_CHARS = "[^\\w]";
 
     private final File file;
     
     private final User user;
     
-    public PictureReader(final File file, final User user) {
+    private PictureReader(final File file, final User user) {
       this.file = file;
       this.user = user;
     }
