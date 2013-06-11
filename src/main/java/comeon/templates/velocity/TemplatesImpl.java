@@ -1,4 +1,4 @@
-package comeon;
+package comeon.templates.velocity;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +15,8 @@ import com.google.common.io.Files;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 
-public final class Templates {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Templates.class);
+public final class TemplatesImpl implements Templates {
+  private static final Logger LOGGER = LoggerFactory.getLogger(TemplatesImpl.class);
   
   private final List<Template> templates;
   
@@ -24,12 +24,16 @@ public final class Templates {
   
   private boolean loaded;
   
-  public Templates() {
+  public TemplatesImpl() {
     this.templates = new LinkedList<>();
-    this.prefs = Preferences.userNodeForPackage(Templates.class).node("templates");
+    this.prefs = Preferences.userNodeForPackage(TemplatesImpl.class).node("templates");
     this.loaded = false;
   }
   
+  /* (non-Javadoc)
+   * @see comeon.templates.velocity.Templates#readPreferences()
+   */
+  @Override
   public void readPreferences() throws BackingStoreException {
     final String[] templateNames = prefs.childrenNames();
     for (final String templateName : templateNames) {
@@ -38,6 +42,10 @@ public final class Templates {
     loaded = true;
   }
   
+  /* (non-Javadoc)
+   * @see comeon.templates.velocity.Templates#getTemplates()
+   */
+  @Override
   public List<Template> getTemplates() {
     if (loaded) {
       return templates;
@@ -47,6 +55,10 @@ public final class Templates {
     }
   }
   
+  /* (non-Javadoc)
+   * @see comeon.templates.velocity.Templates#setTemplates(java.util.List)
+   */
+  @Override
   public void setTemplates(final List<Template> templates) {
     this.templates.clear();
     this.templates.addAll(templates);
@@ -68,6 +80,10 @@ public final class Templates {
     }
   }
   
+  /* (non-Javadoc)
+   * @see comeon.templates.velocity.Templates#storePreferences()
+   */
+  @Override
   public void storePreferences() throws BackingStoreException {
     for (final String name : prefs.childrenNames()) {
       prefs.node(name).removeNode();
