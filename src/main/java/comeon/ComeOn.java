@@ -5,12 +5,13 @@ import java.util.prefs.BackingStoreException;
 
 import javax.swing.SwingUtilities;
 
+import comeon.core.CoreImpl;
 import comeon.ui.UI;
 
 public final class ComeOn {
 
   public static void main(final String[] args) throws IOException, UserNotSetException, BackingStoreException {
-    final Core core = Core.getInstance();
+    final CoreImpl core = CoreImpl.getInstance();
     core.getTemplates().readPreferences();
     SwingUtilities.invokeLater(new Runnable() {
       @Override

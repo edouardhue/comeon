@@ -13,8 +13,8 @@ import javax.swing.text.Document;
 
 import layout.SpringUtilities;
 
-import comeon.Core;
 import comeon.UserNotSetException;
+import comeon.core.CoreImpl;
 import comeon.model.User;
 import comeon.ui.UI;
 
@@ -35,7 +35,7 @@ final class UserSettingsPanel extends JPanel {
 
     User candidateUser;
     try {
-      candidateUser = new User(Core.getInstance().getUsers().getUser());
+      candidateUser = new User(CoreImpl.getInstance().getUsers().getUser());
     } catch (final UserNotSetException e) {
       candidateUser = new User("", "", "");
     }

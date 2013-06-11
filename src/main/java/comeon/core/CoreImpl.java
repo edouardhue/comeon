@@ -1,4 +1,4 @@
-package comeon;
+package comeon.core;
 
 import in.yuvi.http.fluent.ProgressListener;
 
@@ -12,15 +12,24 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import comeon.FailedLoginException;
+import comeon.FailedLogoutException;
+import comeon.FailedUploadException;
+import comeon.NotLoggedInException;
+import comeon.Pictures;
+import comeon.Templates;
+import comeon.UploadMonitor;
+import comeon.UserNotSetException;
+import comeon.Users;
 import comeon.commons.Commons;
 import comeon.commons.CommonsImpl;
 import comeon.model.Picture;
 import comeon.model.Template;
 
-public final class Core {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Core.class);
+public final class CoreImpl implements Core {
+  private static final Logger LOGGER = LoggerFactory.getLogger(CoreImpl.class);
   
-  private static final Core INSTANCE = new Core();
+  private static final CoreImpl INSTANCE = new CoreImpl();
 
   private final List<Picture> pictures;
 
@@ -30,23 +39,35 @@ public final class Core {
 
   private final Templates templates;
 
-  private Core() {
+  private CoreImpl() {
     this.pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     this.pictures = new ArrayList<>();
     this.users = new Users();
     this.templates = new Templates();
   }
 
+  /* (non-Javadoc)
+   * @see comeon.Core#addPictures(java.io.File[], comeon.model.Template)
+   */
+  @Override
   public void addPictures(final File[] files, final Template defautTemplate) throws UserNotSetException {
     final Pictures picturesReader = new Pictures(files, defautTemplate, pool);
     final List<Picture> newPictures = picturesReader.readFiles(users.getUser()).getPictures();
     this.pictures.addAll(newPictures);
   }
 
+  /* (non-Javadoc)
+   * @see comeon.Core#getPictures()
+   */
+  @Override
   public List<Picture> getPictures() {
     return pictures;
   }
 
+  /* (non-Javadoc)
+   * @see comeon.Core#uploadPictures(comeon.UploadMonitor)
+   */
+  @Override
   public void uploadPictures(final UploadMonitor monitor) {
     final List<Picture> batch = new ArrayList<>(this.pictures);
     monitor.setBatchSize(batch.size());
@@ -85,7 +106,7 @@ public final class Core {
     return templates;
   }
 
-  public static Core getInstance() {
+  public static CoreImpl getInstance() {
     return INSTANCE;
   }
 

@@ -32,7 +32,7 @@ import comeon.model.User;
 import comeon.model.processors.PreProcessor;
 import comeon.model.processors.Processors;
 
-final class Pictures {
+public final class Pictures {
   private static final Logger LOGGER = LoggerFactory.getLogger(Pictures.class);
   
   private final File[] files;
@@ -45,7 +45,7 @@ final class Pictures {
   
   private final CountDownLatch latch;
   
-  Pictures(final File[] files, final Template defautTemplate, final ExecutorService pool) {
+  public Pictures(final File[] files, final Template defautTemplate, final ExecutorService pool) {
     this.files = files;
     this.defaultTemplate = defautTemplate;
     this.pool = pool;
@@ -53,7 +53,7 @@ final class Pictures {
     this.latch = new CountDownLatch(files.length);
   }
   
-  Pictures readFiles(final User user) {
+  public Pictures readFiles(final User user) {
     for (final File file : files) {
       pool.execute(new PictureReader(file, user));
     }
@@ -67,7 +67,7 @@ final class Pictures {
     return this;
   }
   
-  List<Picture> getPictures() {
+  public List<Picture> getPictures() {
     return pictures;
   }
   

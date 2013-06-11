@@ -24,7 +24,7 @@ public final class Templates {
   
   private boolean loaded;
   
-  Templates() {
+  public Templates() {
     this.templates = new LinkedList<>();
     this.prefs = Preferences.userNodeForPackage(Templates.class).node("templates");
     this.loaded = false;

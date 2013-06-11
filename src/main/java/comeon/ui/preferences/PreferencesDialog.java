@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
-import comeon.Core;
+import comeon.core.CoreImpl;
 import comeon.ui.UI;
 
 public final class PreferencesDialog extends JOptionPane {
@@ -28,7 +28,7 @@ public final class PreferencesDialog extends JOptionPane {
     this.tabs = new JTabbedPane(JTabbedPane.TOP);
     this.userSettingsPanel = new UserSettingsPanel();
     tabs.add(UI.BUNDLE.getString("prefs.tab.user"), userSettingsPanel);
-    this.templatesPanel = new TemplatesPanel(Core.getInstance().getTemplates().getTemplates());
+    this.templatesPanel = new TemplatesPanel(CoreImpl.getInstance().getTemplates().getTemplates());
     tabs.add(UI.BUNDLE.getString("prefs.tab.templates"), templatesPanel);
     this.setMessage(this.tabs);
     this.dialog = this.createDialog(parent, UI.BUNDLE.getString("action.preferences.title"));
@@ -40,13 +40,13 @@ public final class PreferencesDialog extends JOptionPane {
   }
   
   public void save() {
-    Core.getInstance().getPool().submit(new Runnable() {
+    CoreImpl.getInstance().getPool().submit(new Runnable() {
       @Override
       public void run() {
         try {
-          Core.getInstance().getUsers().setUser(userSettingsPanel.getUser());
-          Core.getInstance().getTemplates().setTemplates(templatesPanel.getTemplates());
-          Core.getInstance().getTemplates().storePreferences();
+          CoreImpl.getInstance().getUsers().setUser(userSettingsPanel.getUser());
+          CoreImpl.getInstance().getTemplates().setTemplates(templatesPanel.getTemplates());
+          CoreImpl.getInstance().getTemplates().storePreferences();
         } catch (final BackingStoreException e) {
           SwingUtilities.invokeLater(new Runnable() {
             @Override

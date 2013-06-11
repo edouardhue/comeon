@@ -9,8 +9,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
-import comeon.Core;
 import comeon.UploadMonitor;
+import comeon.core.CoreImpl;
 import comeon.ui.UI;
 
 public final class UploadPicturesAction extends BaseAction {
@@ -22,7 +22,7 @@ public final class UploadPicturesAction extends BaseAction {
 
   @Override
   public void actionPerformed(final ActionEvent e) {
-    Core.getInstance().uploadPictures(new Monitor());
+    CoreImpl.getInstance().uploadPictures(new Monitor());
   }
 
   private final class Monitor extends JOptionPane implements UploadMonitor {

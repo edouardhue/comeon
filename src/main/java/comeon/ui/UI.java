@@ -24,7 +24,8 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import com.google.common.io.Resources;
-import comeon.Core;
+
+import comeon.core.CoreImpl;
 import comeon.model.Picture;
 import comeon.ui.pictures.PicturePanels;
 
@@ -88,7 +89,7 @@ public final class UI extends JFrame {
       public void run() {
         previews.removeAll();
         editContainer.removeAll();
-        for (final Picture picture : Core.getInstance().getPictures()) {
+        for (final Picture picture : CoreImpl.getInstance().getPictures()) {
           add(picture);
         }
       }

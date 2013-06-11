@@ -10,8 +10,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import comeon.Core;
 import comeon.UserNotSetException;
+import comeon.core.CoreImpl;
 import comeon.model.Template;
 import comeon.ui.UI;
 import comeon.ui.preferences.PreferencesDialog;
@@ -31,7 +31,7 @@ public final class AddPicturesAction extends BaseAction {
   }
   
   private TemplateWrapper[] getWrapperTemplates() {
-    final List<Template> templates = Core.getInstance().getTemplates().getTemplates();
+    final List<Template> templates = CoreImpl.getInstance().getTemplates().getTemplates();
     final TemplateWrapper[] wrappers = new TemplateWrapper[templates.size()];
     int i = 0;
     for (final Template template : templates) {
@@ -55,7 +55,7 @@ public final class AddPicturesAction extends BaseAction {
         } else {
           final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template", JOptionPane.QUESTION_MESSAGE,
               null, templates, templates.length > 0 ? templates[0] : null);
-          Core.getInstance().addPictures(files, wrapper.template);
+          CoreImpl.getInstance().addPictures(files, wrapper.template);
           SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
