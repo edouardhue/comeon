@@ -11,8 +11,8 @@ public final class HelpManualAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
   
-  public HelpManualAction(final UI ui) {
-    super("manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), ui);
+  public HelpManualAction() {
+    super("manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
   }
 
   @Override

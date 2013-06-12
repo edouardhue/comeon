@@ -29,9 +29,9 @@ public final class AddPicturesAction extends BaseAction {
   private final Templates templates;
   
   private final Core core;
-
-  public AddPicturesAction(final UI ui, final Users users, final Templates templates, final Core core) {
-    super("addpictures", ui);
+  
+  public AddPicturesAction(final Users users, final Templates templates, final Core core) {
+    super("addpictures");
     this.users = users;
     this.templates = templates;
     this.core = core;
@@ -54,7 +54,7 @@ public final class AddPicturesAction extends BaseAction {
   
   @Override
   public void actionPerformed(final ActionEvent e) {
-    final int returnVal = chooser.showOpenDialog(ui);
+    final int returnVal = chooser.showOpenDialog(JOptionPane.getRootFrame());
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       final File[] files = chooser.getSelectedFiles();
       try {
@@ -67,12 +67,6 @@ public final class AddPicturesAction extends BaseAction {
           final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template", JOptionPane.QUESTION_MESSAGE,
               null, templates, templates.length > 0 ? templates[0] : null);
           core.addPictures(files, wrapper.template);
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              ui.refreshPictures();
-            }
-          });
         }
       } catch (final UserNotSetException ex) {
         final String messageKey = "error.usernotset.message";
@@ -86,7 +80,7 @@ public final class AddPicturesAction extends BaseAction {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        JOptionPane.showMessageDialog(ui, UI.BUNDLE.getString(messageKey),
+        JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString(messageKey),
             UI.BUNDLE.getString(titleKey), JOptionPane.ERROR_MESSAGE);
         new PreferencesDialog(users, templates).setVisible(true);
       }

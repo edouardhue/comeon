@@ -12,12 +12,14 @@ import org.mediawiki.api.MWApi;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import comeon.model.Picture;
 import comeon.model.User;
 import comeon.users.UserNotSetException;
 import comeon.users.Users;
 
+@Singleton
 public final class CommonsImpl implements Commons {
   // TODO this URL should not be hard-coded
   private static final String URL = System.getProperty(CommonsImpl.class.getName() + ".url", "http://commons.wikimedia.org/w/api.php");

@@ -4,9 +4,12 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import comeon.ComeOn;
 import comeon.model.User;
 
+@Singleton
 public final class UsersImpl implements Users {
   
   private User user;

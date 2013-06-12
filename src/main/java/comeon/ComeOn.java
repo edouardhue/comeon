@@ -7,6 +7,7 @@ import java.util.prefs.BackingStoreException;
 
 import javax.swing.SwingUtilities;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -17,24 +18,22 @@ import comeon.core.CoreImpl;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesImpl;
 import comeon.ui.UI;
+import comeon.ui.menu.EditMenu;
+import comeon.ui.menu.FileMenu;
+import comeon.ui.menu.HelpMenu;
+import comeon.ui.menu.MenuBar;
 import comeon.users.UserNotSetException;
 import comeon.users.Users;
 import comeon.users.UsersImpl;
 
 public final class ComeOn extends AbstractModule {
-
-  public static void main(final String[] args) throws IOException, UserNotSetException, BackingStoreException {
-    final Injector injector = Guice.createInjector(new ComeOn());
-    final Templates templates = injector.getInstance(Templates.class);
-    templates.readPreferences();
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        new UI(injector.getInstance(Core.class), injector.getInstance(Users.class), templates);
-      }
-    });
+  
+  private final EventBus bus;
+  
+  public ComeOn() {
+    this.bus = new EventBus();
   }
-
+  
   @Override
   protected void configure() {
     bind(Commons.class).to(CommonsImpl.class);
@@ -42,6 +41,27 @@ public final class ComeOn extends AbstractModule {
     bind(Users.class).to(UsersImpl.class);
     bind(Templates.class).to(TemplatesImpl.class);
     bind(ExecutorService.class).toInstance(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+    bind(UI.class);
+    bind(MenuBar.class);
+    bind(FileMenu.class);
+    bind(EditMenu.class);
+    bind(HelpMenu.class);
+    bind(EventBus.class).toInstance(bus);
+  }
+
+  public static void main(final String[] args) throws IOException, UserNotSetException, BackingStoreException {
+    final ComeOn comeOn = new ComeOn();
+    final Injector injector = Guice.createInjector(comeOn);
+    final Templates templates = injector.getInstance(Templates.class);
+    templates.readPreferences();
+    final UI ui = injector.getInstance(UI.class);
+    comeOn.bus.register(ui);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        ui.setVisible(true);
+      }
+    });
   }
 
 }

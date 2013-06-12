@@ -11,7 +11,10 @@ import java.util.concurrent.ExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import comeon.commons.Commons;
 import comeon.commons.FailedLoginException;
 import comeon.commons.FailedLogoutException;
@@ -19,9 +22,11 @@ import comeon.commons.FailedUploadException;
 import comeon.commons.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
+import comeon.ui.actions.PicturesAddedEvent;
 import comeon.users.UserNotSetException;
 import comeon.users.Users;
 
+@Singleton
 public final class CoreImpl implements Core {
   private static final Logger LOGGER = LoggerFactory.getLogger(CoreImpl.class);
   
@@ -33,35 +38,30 @@ public final class CoreImpl implements Core {
 
   private final Commons commons;
   
+  private final EventBus bus;
+  
   @Inject
-  private CoreImpl(final Users users, final Commons commons, final ExecutorService pool) {
+  private CoreImpl(final Users users, final Commons commons, final ExecutorService pool, final EventBus bus) {
     this.pictures = new ArrayList<>();
     this.users = users;
     this.pool = pool;
     this.commons = commons;
+    this.bus = bus;
   }
 
-  /* (non-Javadoc)
-   * @see comeon.Core#addPictures(java.io.File[], comeon.model.Template)
-   */
   @Override
   public void addPictures(final File[] files, final Template defautTemplate) throws UserNotSetException {
     final Pictures picturesReader = new Pictures(files, defautTemplate, pool);
     final List<Picture> newPictures = picturesReader.readFiles(users.getUser()).getPictures();
     this.pictures.addAll(newPictures);
+    bus.post(new PicturesAddedEvent());
   }
 
-  /* (non-Javadoc)
-   * @see comeon.Core#getPictures()
-   */
   @Override
   public List<Picture> getPictures() {
     return pictures;
   }
 
-  /* (non-Javadoc)
-   * @see comeon.Core#uploadPictures(comeon.UploadMonitor)
-   */
   @Override
   public void uploadPictures(final UploadMonitor monitor) {
     final List<Picture> batch = new ArrayList<>(this.pictures);

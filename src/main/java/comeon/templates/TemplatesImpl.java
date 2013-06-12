@@ -13,11 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import comeon.ComeOn;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 
+@Singleton
 public final class TemplatesImpl implements Templates {
   private static final Logger LOGGER = LoggerFactory.getLogger(TemplatesImpl.class);
   
@@ -34,9 +36,6 @@ public final class TemplatesImpl implements Templates {
     this.loaded = false;
   }
   
-  /* (non-Javadoc)
-   * @see comeon.templates.velocity.Templates#readPreferences()
-   */
   @Override
   public void readPreferences() throws BackingStoreException {
     final String[] templateNames = prefs.childrenNames();
@@ -46,9 +45,6 @@ public final class TemplatesImpl implements Templates {
     loaded = true;
   }
   
-  /* (non-Javadoc)
-   * @see comeon.templates.velocity.Templates#getTemplates()
-   */
   @Override
   public List<Template> getTemplates() {
     if (loaded) {
@@ -59,9 +55,6 @@ public final class TemplatesImpl implements Templates {
     }
   }
   
-  /* (non-Javadoc)
-   * @see comeon.templates.velocity.Templates#setTemplates(java.util.List)
-   */
   @Override
   public void setTemplates(final List<Template> templates) {
     this.templates.clear();
@@ -84,9 +77,6 @@ public final class TemplatesImpl implements Templates {
     }
   }
   
-  /* (non-Javadoc)
-   * @see comeon.templates.velocity.Templates#storePreferences()
-   */
   @Override
   public void storePreferences() throws BackingStoreException {
     for (final String name : prefs.childrenNames()) {

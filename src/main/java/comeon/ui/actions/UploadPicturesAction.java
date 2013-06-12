@@ -11,15 +11,14 @@ import javax.swing.SwingUtilities;
 
 import comeon.core.Core;
 import comeon.core.UploadMonitor;
-import comeon.ui.UI;
 
 public final class UploadPicturesAction extends BaseAction {
   private static final long serialVersionUID = 1L;
 
   private final Core core;
   
-  public UploadPicturesAction(final UI ui, final Core core) {
-    super("upload", ui);
+  public UploadPicturesAction(final Core core) {
+    super("upload");
     this.core = core;
   }
 
@@ -44,7 +43,7 @@ public final class UploadPicturesAction extends BaseAction {
       this.pictureBar.setStringPainted(true);
       this.setMessage(new Object[] { batchBar, pictureBar });
       // TODO i18n
-      this.dialog = this.createDialog(UploadPicturesAction.this.ui, "Progress");
+      this.dialog = this.createDialog(JOptionPane.getRootFrame(), "Progress");
     }
 
     @Override

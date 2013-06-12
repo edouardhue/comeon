@@ -6,7 +6,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import comeon.templates.Templates;
-import comeon.ui.UI;
 import comeon.ui.preferences.PreferencesDialog;
 import comeon.users.Users;
 
@@ -18,8 +17,8 @@ public final class PreferencesAction extends BaseAction {
   
   private final Templates templates;
   
-  public PreferencesAction(final UI ui, final Users users, final Templates templates) {
-    super("preferences", ui);
+  public PreferencesAction(final Users users, final Templates templates) {
+    super("preferences");
     this.users = users;
     this.templates = templates;
   }

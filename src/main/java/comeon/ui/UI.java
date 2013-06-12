@@ -9,7 +9,6 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -23,13 +22,21 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.Subscribe;
 import com.google.common.io.Resources;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import comeon.core.Core;
 import comeon.model.Picture;
 import comeon.templates.Templates;
+import comeon.ui.actions.PicturesAddedEvent;
+import comeon.ui.menu.MenuBar;
 import comeon.ui.pictures.PicturePanels;
 import comeon.users.Users;
 
+@Singleton
 public final class UI extends JFrame {
   
   private static final long serialVersionUID = 1L;
@@ -42,6 +49,8 @@ public final class UI extends JFrame {
 
   public static final int METADATA_PANEL_WIDTH = 280;
 
+  public static final List<? extends Image> ICON_IMAGES = loadIcons();
+  
   private final Box previews;
   
   private final Component previewsGlue;
@@ -50,13 +59,14 @@ public final class UI extends JFrame {
   
   private final Core core;
   
-  public UI(final Core core, final Users users, final Templates templates) {
+  @Inject
+  public UI(final Core core, final Users users, final Templates templates, final MenuBar menuBar) {
     super("ComeOn!");
     
     this.core = core;
     
-    this.setIconImages(this.loadIcons());
-    this.setJMenuBar(new MenuBar(this, core, users, templates));
+    this.setIconImages(ICON_IMAGES);
+    this.setJMenuBar(menuBar);
     this.setLayout(new BorderLayout());
     this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     this.setMinimumSize(new Dimension(800, 600));
@@ -73,13 +83,11 @@ public final class UI extends JFrame {
     
     this.editContainer = new JPanel(new CardLayout());
     this.add(editContainer, BorderLayout.CENTER);
-    
-    this.setVisible(true);
   }
 
-  private List<? extends Image> loadIcons() {
+  private static List<? extends Image> loadIcons() {
     try {
-      return Arrays.asList(
+      return ImmutableList.of(
           ImageIO.read(Resources.getResource("comeon_16_16.png")),
           ImageIO.read(Resources.getResource("comeon_48_48.png")),
           ImageIO.read(Resources.getResource("comeon_128_128.png"))
@@ -89,7 +97,12 @@ public final class UI extends JFrame {
     }
   }
   
-  public void refreshPictures() {
+  @Subscribe
+  public void handlePicturesAddedEvent(final PicturesAddedEvent event) {
+    this.refreshPictures();
+  }
+  
+  private void refreshPictures() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
