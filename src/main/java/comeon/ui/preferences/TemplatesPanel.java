@@ -26,11 +26,11 @@ import comeon.ui.UI;
 public final class TemplatesPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final TableModel tableModel;
-  
+
   private final JTable table;
-  
+
   public TemplatesPanel(final List<Template> templates) {
     super(new BorderLayout());
     this.tableModel = new TableModel(templates);
@@ -42,22 +42,22 @@ public final class TemplatesPanel extends JPanel {
     toolbar.add(new JButton(new RemoveTemplateAction()));
     this.add(toolbar, BorderLayout.SOUTH);
   }
-  
+
   public List<Template> getTemplates() {
     return tableModel.getTemplates();
   }
-  
+
   // TODO i18n
   private final class AddTemplateAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
-    
+
     private final JFileChooser chooser;
 
     public AddTemplateAction() {
       super(UI.BUNDLE.getString("prefs.templates.add"));
       this.chooser = new JFileChooser();
     }
-    
+
     @Override
     public void actionPerformed(final ActionEvent e) {
       final int chooserReturnVal = chooser.showOpenDialog(TemplatesPanel.this);
@@ -68,24 +68,25 @@ public final class TemplatesPanel extends JPanel {
           final String templateText = Files.toString(file, charset);
           final String name = JOptionPane.showInputDialog(TemplatesPanel.this, "Name ?");
           final String description = JOptionPane.showInputDialog(TemplatesPanel.this, "Description ?");
-          final TemplateKind kind = (TemplateKind) JOptionPane.showInputDialog(TemplatesPanel.this, "Kind ?", "Kind", JOptionPane.QUESTION_MESSAGE, null,
-              TemplateKind.values(), TemplateKind.values()[0]);
+          final TemplateKind kind = (TemplateKind) JOptionPane.showInputDialog(TemplatesPanel.this, "Kind ?", "Kind",
+              JOptionPane.QUESTION_MESSAGE, null, TemplateKind.values(), TemplateKind.values()[0]);
           final Template template = new Template(name, description, file, charset, templateText, kind);
           tableModel.addTemplate(template);
         } catch (final IOException ex) {
-          JOptionPane.showMessageDialog(TemplatesPanel.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(TemplatesPanel.this, ex.getLocalizedMessage(), "Error",
+              JOptionPane.ERROR_MESSAGE);
         }
       }
     }
   }
-  
+
   private final class RemoveTemplateAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
     public RemoveTemplateAction() {
       super(UI.BUNDLE.getString("prefs.templates.remove"));
     }
-    
+
     @Override
     public void actionPerformed(final ActionEvent e) {
       final int selectedRow = table.getSelectedRow();
@@ -94,12 +95,12 @@ public final class TemplatesPanel extends JPanel {
       }
     }
   }
-  
+
   private static final class TableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     private final List<Template> templates;
-    
+
     public TableModel(final List<Template> templates) {
       this.templates = new ArrayList<>(templates);
     }
@@ -115,7 +116,7 @@ public final class TemplatesPanel extends JPanel {
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
+    public Object getValueAt(final int rowIndex, final int columnIndex) {
       final Template template = templates.get(rowIndex);
       final String value;
       switch (columnIndex) {
@@ -136,20 +137,20 @@ public final class TemplatesPanel extends JPanel {
       }
       return value;
     }
-    
+
     private List<Template> getTemplates() {
       return new ArrayList<>(templates);
     }
-    
+
     private void addTemplate(final Template template) {
       templates.add(template);
       final int lastRow = templates.size() - 1;
       this.fireTableRowsInserted(lastRow, lastRow);
     }
-    
+
     private void removeRow(final int row) {
-        templates.remove(row);
-        this.fireTableRowsDeleted(row, row);
+      templates.remove(row);
+      this.fireTableRowsDeleted(row, row);
     }
   }
 

@@ -27,7 +27,7 @@ public enum TemplateKind {
       return outWriter.toString();
     }
   };
-  
+
   public final String render(final String templateText, final User user, final Picture picture) {
     final Map<String, Object> context = new HashMap<>();
     for (final PostProcessor processor : Processors.getInstance().getPostProcessors()) {
@@ -35,6 +35,6 @@ public enum TemplateKind {
     }
     return this.doRender(templateText, context);
   }
-  
+
   protected abstract String doRender(final String templateText, final Map<String, Object> context);
 }

@@ -11,17 +11,17 @@ import comeon.ui.UI;
 abstract class BaseAction extends AbstractAction {
 
   private static final long serialVersionUID = 1L;
-  
+
   protected BaseAction(final String bundleKey) {
     super(UI.BUNDLE.getString("action." + bundleKey + ".title"));
     this.setKeys(bundleKey, null);
   }
-  
+
   protected BaseAction(final String bundleKey, final KeyStroke accelerator) {
     super(UI.BUNDLE.getString("action." + bundleKey + ".title"));
     this.setKeys(bundleKey, accelerator);
   }
-  
+
   private void setKeys(final String bundleKey, final KeyStroke accelerator) {
     setMnemoKey(bundleKey);
     setAccelerator(bundleKey, accelerator);
@@ -43,14 +43,14 @@ abstract class BaseAction extends AbstractAction {
   }
 
   private void setMnemoKey(final String bundleKey) {
-      final String mnemoKey = "action." + bundleKey + ".mnemo";
-      if (UI.BUNDLE.containsKey(mnemoKey)) {
-        final String bundleMnemo = UI.BUNDLE.getString(mnemoKey);
-        if (!bundleMnemo.isEmpty()) {
-          final char mnemo = bundleMnemo.charAt(0);
-          final int mnemoKeyEvent = KeyEvent.getExtendedKeyCodeForChar(mnemo);
-          this.putValue(MNEMONIC_KEY, mnemoKeyEvent);
-        }
+    final String mnemoKey = "action." + bundleKey + ".mnemo";
+    if (UI.BUNDLE.containsKey(mnemoKey)) {
+      final String bundleMnemo = UI.BUNDLE.getString(mnemoKey);
+      if (!bundleMnemo.isEmpty()) {
+        final char mnemo = bundleMnemo.charAt(0);
+        final int mnemoKeyEvent = KeyEvent.getExtendedKeyCodeForChar(mnemo);
+        this.putValue(MNEMONIC_KEY, mnemoKeyEvent);
       }
+    }
   }
 }

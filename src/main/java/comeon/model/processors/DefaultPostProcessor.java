@@ -6,10 +6,10 @@ import comeon.model.Picture;
 import comeon.model.User;
 
 final class DefaultPostProcessor implements PostProcessor {
-  private  static final String PICTURE = "picture";
-  
+  private static final String PICTURE = "picture";
+
   private static final String USER = "user";
-  
+
   @Override
   public void process(final User user, final Picture picture, final Map<String, Object> context) {
     context.put(PICTURE, picture);

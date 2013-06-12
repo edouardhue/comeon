@@ -10,7 +10,7 @@ public final class VelocityTemplates {
   private static final VelocityTemplates INSTANCE = new VelocityTemplates();
 
   private final VelocityEngine engine;
-  
+
   private VelocityTemplates() {
     engine = new VelocityEngine();
     if (System.getProperties().containsKey(VELOCITY_TEMPLATE_ROOT_KEY)) {
@@ -23,11 +23,11 @@ public final class VelocityTemplates {
       engine.init();
     }
   }
-  
+
   public static VelocityTemplates getInstance() {
     return INSTANCE;
   }
-  
+
   public VelocityEngine getEngine() {
     return engine;
   }

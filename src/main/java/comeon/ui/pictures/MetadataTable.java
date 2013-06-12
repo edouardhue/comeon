@@ -14,7 +14,7 @@ import org.apache.commons.beanutils.DynaProperty;
 
 final class MetadataTable extends JPanel {
   private static final long serialVersionUID = 1L;
-  
+
   public MetadataTable(final String directoryName, final DynaBean directoryContent) {
     super(new BorderLayout());
     final JLabel title = new JLabel(directoryName);
@@ -31,21 +31,21 @@ final class MetadataTable extends JPanel {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-        int row, int column) {
+    public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
+        final boolean hasFocus, final int row, final int column) {
       final JLabel comp = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       comp.setToolTipText(String.valueOf(value));
       return comp;
     }
   }
-  
+
   private static final class TableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     private final DynaProperty[] properties;
-    
+
     private final DynaBean content;
-    
+
     private TableModel(final DynaBean directoryContent) {
       this.properties = directoryContent.getDynaClass().getDynaProperties();
       this.content = directoryContent;
@@ -73,10 +73,10 @@ final class MetadataTable extends JPanel {
         value = content.get(property.getName());
         break;
       default:
-         throw new IndexOutOfBoundsException("No such column: " + columnIndex); 
+        throw new IndexOutOfBoundsException("No such column: " + columnIndex);
       }
       return value;
     }
-    
+
   }
 }

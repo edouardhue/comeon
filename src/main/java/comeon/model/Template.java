@@ -7,16 +7,17 @@ public final class Template {
   private final String name;
 
   private final String description;
-  
+
   private final File file;
-  
+
   private final Charset charset;
-  
+
   private final String templateText;
-  
+
   private final TemplateKind kind;
 
-  public Template(final String name, final String description, final File file, final Charset charset, final String templateText, final TemplateKind kind) {
+  public Template(final String name, final String description, final File file, final Charset charset,
+      final String templateText, final TemplateKind kind) {
     super();
     this.name = name;
     this.description = description;
@@ -37,7 +38,7 @@ public final class Template {
   public File getFile() {
     return file;
   }
-  
+
   public Charset getCharset() {
     return charset;
   }

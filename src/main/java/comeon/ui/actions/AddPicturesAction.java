@@ -21,15 +21,15 @@ import comeon.users.Users;
 public final class AddPicturesAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final JFileChooser chooser;
-  
+
   private final Users users;
-  
+
   private final Templates templates;
-  
+
   private final Core core;
-  
+
   public AddPicturesAction(final Users users, final Templates templates, final Core core) {
     super("addpictures");
     this.users = users;
@@ -40,7 +40,7 @@ public final class AddPicturesAction extends BaseAction {
     chooser.setMultiSelectionEnabled(true);
     chooser.setFileFilter(new FileNameExtensionFilter("JPEG files", "jpg", "jpeg"));
   }
-  
+
   private TemplateWrapper[] getWrapperTemplates() {
     final List<Template> templates = this.templates.getTemplates();
     final TemplateWrapper[] wrappers = new TemplateWrapper[templates.size()];
@@ -51,7 +51,7 @@ public final class AddPicturesAction extends BaseAction {
     }
     return wrappers;
   }
-  
+
   @Override
   public void actionPerformed(final ActionEvent e) {
     final int returnVal = chooser.showOpenDialog(JOptionPane.getRootFrame());
@@ -64,8 +64,9 @@ public final class AddPicturesAction extends BaseAction {
           final String titleKey = "error.notemplates.title";
           warnAndShowPreferences(messageKey, titleKey);
         } else {
-          final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template", JOptionPane.QUESTION_MESSAGE,
-              null, templates, templates.length > 0 ? templates[0] : null);
+          final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(
+              SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template",
+              JOptionPane.QUESTION_MESSAGE, null, templates, templates.length > 0 ? templates[0] : null);
           core.addPictures(files, wrapper.template);
         }
       } catch (final UserNotSetException ex) {
@@ -89,11 +90,11 @@ public final class AddPicturesAction extends BaseAction {
 
   private static final class TemplateWrapper {
     private final Template template;
-    
+
     public TemplateWrapper(final Template template) {
       this.template = template;
     }
-    
+
     @Override
     public String toString() {
       return template.getName();

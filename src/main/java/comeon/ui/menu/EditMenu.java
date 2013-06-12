@@ -4,7 +4,6 @@ import javax.swing.JMenuItem;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.templates.Templates;
 import comeon.ui.actions.PreferencesAction;
 import comeon.users.Users;

@@ -16,18 +16,18 @@ import comeon.ui.UI;
 public final class AboutAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final Image icon;
 
   public AboutAction() {
     super("about");
     icon = UI.ICON_IMAGES.get(UI.ICON_IMAGES.size() - 1);
   }
-  
+
   @Override
   public void actionPerformed(final ActionEvent e) {
     SwingUtilities.invokeLater(new Runnable() {
-      
+
       @Override
       public void run() {
         // TODO i18n
@@ -36,11 +36,9 @@ public final class AboutAction extends BaseAction {
         messageArea.setWrapStyleWord(true);
         final JScrollPane messageScrollArea = new JScrollPane(messageArea);
         messageScrollArea.setPreferredSize(new Dimension(380, 240));
-        JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), new Object[] {
-            new JLabel("ComeOn!"),
-            messageScrollArea
-          },
-          UI.BUNDLE.getString("action.about.title"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(icon));
+        JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), new Object[] { new JLabel("ComeOn!"),
+            messageScrollArea }, UI.BUNDLE.getString("action.about.title"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(
+            icon));
       }
     });
   }

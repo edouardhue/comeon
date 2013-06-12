@@ -9,7 +9,7 @@ public final class Picture {
   private final String fileName;
 
   private final Template template;
-  
+
   private String templateText;
 
   private String renderedTemplate;
@@ -18,7 +18,8 @@ public final class Picture {
 
   private final byte[] thumbnail;
 
-  public Picture(final File file, final String fileName, final Template template, final Map<String, Object> metadata, final byte[] thumbnail) {
+  public Picture(final File file, final String fileName, final Template template, final Map<String, Object> metadata,
+      final byte[] thumbnail) {
     super();
     this.file = file;
     this.fileName = fileName;
@@ -27,7 +28,7 @@ public final class Picture {
     this.metadata = metadata;
     this.thumbnail = thumbnail;
   }
-  
+
   public void renderTemplate(final User user) {
     this.renderedTemplate = template.getKind().render(templateText, user, this);
   }
@@ -39,11 +40,11 @@ public final class Picture {
   public Template getTemplate() {
     return template;
   }
-  
+
   public String getTemplateText() {
     return templateText;
   }
-  
+
   public void setTemplateText(final String templateText) {
     this.templateText = templateText;
   }
@@ -51,16 +52,16 @@ public final class Picture {
   public String getRenderedTemplate() {
     return renderedTemplate;
   }
-  
+
   public void setRenderedTemplate(final String renderedTemplate) {
     this.renderedTemplate = renderedTemplate;
   }
-  
+
   public Map<String, Object> getMetadata() {
     return metadata;
   }
 
-  public  byte[] getThumbnail() {
+  public byte[] getThumbnail() {
     return thumbnail;
   }
 

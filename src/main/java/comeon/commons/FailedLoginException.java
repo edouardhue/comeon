@@ -1,6 +1,5 @@
 package comeon.commons;
 
-
 public final class FailedLoginException extends CommonsException {
   private static final long serialVersionUID = 1L;
 

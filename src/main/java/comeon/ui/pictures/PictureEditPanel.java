@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -33,27 +34,27 @@ final class PictureEditPanel extends JPanel {
     final JTextArea renderedTemplate = new AliasedTextArea(panels.getPicture().getRenderedTemplate());
     renderedTemplate.getDocument().addDocumentListener(new RenderedTemplateListener(panels.getPicture()));
     final JScrollPane renderedTemplatePanel = wrap(renderedTemplate);
-    
-    final JTabbedPane templatesPanel = new JTabbedPane(JTabbedPane.TOP);
+
+    final JTabbedPane templatesPanel = new JTabbedPane(SwingConstants.TOP);
     // TODO i18n
     templatesPanel.add(templatePanel, "Template");
     templatesPanel.add(renderedTemplatePanel, "Rendered template");
     templatesPanel.setSelectedComponent(renderedTemplatePanel);
-    
+
     this.add(templatesPanel, BorderLayout.CENTER);
   }
 
   private JScrollPane wrap(final JTextArea area) {
     return new JScrollPane(area);
   }
-  
+
   private abstract class AbstractTemplateListener implements DocumentListener {
     private final Picture picture;
-    
+
     protected AbstractTemplateListener(final Picture picture) {
       this.picture = picture;
     }
-    
+
     @Override
     public void removeUpdate(final DocumentEvent e) {
       this.update(e);
@@ -65,8 +66,9 @@ final class PictureEditPanel extends JPanel {
     }
 
     @Override
-    public final void changedUpdate(final DocumentEvent e) {}
-    
+    public final void changedUpdate(final DocumentEvent e) {
+    }
+
     private void update(final DocumentEvent e) {
       try {
         this.doUpdate(picture, getText(e));
@@ -78,12 +80,12 @@ final class PictureEditPanel extends JPanel {
     private String getText(final DocumentEvent e) throws BadLocationException {
       return e.getDocument().getText(0, e.getDocument().getLength());
     }
-    
+
     protected abstract void doUpdate(final Picture picture, final String text);
   }
-  
+
   private final class TemplateListener extends AbstractTemplateListener {
-    private TemplateListener(Picture picture) {
+    private TemplateListener(final Picture picture) {
       super(picture);
     }
 
@@ -92,9 +94,9 @@ final class PictureEditPanel extends JPanel {
       picture.setTemplateText(text);
     }
   }
-  
+
   private final class RenderedTemplateListener extends AbstractTemplateListener {
-    private RenderedTemplateListener(Picture picture) {
+    private RenderedTemplateListener(final Picture picture) {
       super(picture);
     }
 

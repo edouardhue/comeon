@@ -5,7 +5,6 @@ import javax.swing.JSeparator;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.core.Core;
 import comeon.templates.Templates;
 import comeon.ui.actions.AddPicturesAction;

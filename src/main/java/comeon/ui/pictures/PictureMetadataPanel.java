@@ -8,6 +8,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 import org.apache.commons.beanutils.DynaBean;
 
@@ -16,7 +17,7 @@ import comeon.ui.UI;
 final class PictureMetadataPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  
+
   public static final int PREVIEW_WIDTH = (int) (UI.METADATA_PANEL_WIDTH * 0.9);
 
   public PictureMetadataPanel(final PicturePanels panels) {
@@ -43,7 +44,8 @@ final class PictureMetadataPanel extends JPanel {
         metadataBox.add(table);
       }
     }
-    final JScrollPane metadataScrollPane = new JScrollPane(metadataBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    final JScrollPane metadataScrollPane = new JScrollPane(metadataBox,
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     this.add(metadataScrollPane, BorderLayout.CENTER);
   }
 }

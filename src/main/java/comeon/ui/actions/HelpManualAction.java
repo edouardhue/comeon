@@ -5,12 +5,10 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import comeon.ui.UI;
-
 public final class HelpManualAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
-  
+
   public HelpManualAction() {
     super("manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
   }

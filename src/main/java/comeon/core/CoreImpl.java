@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.commons.Commons;
 import comeon.commons.FailedLoginException;
 import comeon.commons.FailedLogoutException;
@@ -29,7 +28,7 @@ import comeon.users.Users;
 @Singleton
 public final class CoreImpl implements Core {
   private static final Logger LOGGER = LoggerFactory.getLogger(CoreImpl.class);
-  
+
   private final List<Picture> pictures;
 
   private final ExecutorService pool;
@@ -37,9 +36,9 @@ public final class CoreImpl implements Core {
   private final Users users;
 
   private final Commons commons;
-  
+
   private final EventBus bus;
-  
+
   @Inject
   private CoreImpl(final Users users, final Commons commons, final ExecutorService pool, final EventBus bus) {
     this.pictures = new ArrayList<>();
@@ -74,7 +73,8 @@ public final class CoreImpl implements Core {
           int index = 0;
           for (final Picture picture : batch) {
             try {
-              final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length(), picture.getFileName());
+              final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length(),
+                  picture.getFileName());
               commons.upload(picture, listener);
             } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
               LOGGER.warn("Picture upload failed", e);

@@ -35,7 +35,7 @@ public final class IptcPreProcessor implements PreProcessor {
       LOGGER.warn("Can't handle date", e);
     }
   }
-  
+
   @Override
   public Class<IptcDirectory> getSupportedClass() {
     return IptcDirectory.class;

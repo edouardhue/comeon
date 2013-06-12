@@ -5,7 +5,6 @@ import javax.swing.JSeparator;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.ui.actions.AboutAction;
 import comeon.ui.actions.HelpManualAction;
 

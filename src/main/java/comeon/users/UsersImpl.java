@@ -5,19 +5,18 @@ import java.util.prefs.Preferences;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.ComeOn;
 import comeon.model.User;
 
 @Singleton
 public final class UsersImpl implements Users {
-  
+
   private User user;
-  
+
   @Inject
   private UsersImpl() {
   }
-  
+
   @Override
   public User getUser() throws UserNotSetException {
     if (this.user == null) {
@@ -25,7 +24,7 @@ public final class UsersImpl implements Users {
     }
     return user;
   }
-  
+
   @Override
   public void setUser(final User user) throws BackingStoreException {
     this.user = user;
@@ -56,10 +55,8 @@ public final class UsersImpl implements Users {
   private Preferences getUserPreferences() {
     return Preferences.userNodeForPackage(ComeOn.class).node("user");
   }
-  
+
   private enum PreferencesKeys {
-    LOGIN,
-    PASSWORD,
-    DISPLAY_NAME
+    LOGIN, PASSWORD, DISPLAY_NAME
   }
 }

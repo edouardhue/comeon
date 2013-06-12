@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.ComeOn;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
@@ -22,20 +21,20 @@ import comeon.model.TemplateKind;
 @Singleton
 public final class TemplatesImpl implements Templates {
   private static final Logger LOGGER = LoggerFactory.getLogger(TemplatesImpl.class);
-  
+
   private final List<Template> templates;
-  
+
   private final Preferences prefs;
-  
+
   private boolean loaded;
-  
+
   @Inject
   private TemplatesImpl() {
     this.templates = new LinkedList<>();
     this.prefs = Preferences.userNodeForPackage(ComeOn.class).node("templates");
     this.loaded = false;
   }
-  
+
   @Override
   public void readPreferences() throws BackingStoreException {
     final String[] templateNames = prefs.childrenNames();
@@ -44,7 +43,7 @@ public final class TemplatesImpl implements Templates {
     }
     loaded = true;
   }
-  
+
   @Override
   public List<Template> getTemplates() {
     if (loaded) {
@@ -54,7 +53,7 @@ public final class TemplatesImpl implements Templates {
       throw new IllegalStateException("Template preferences not loaded");
     }
   }
-  
+
   @Override
   public void setTemplates(final List<Template> templates) {
     this.templates.clear();
@@ -76,7 +75,7 @@ public final class TemplatesImpl implements Templates {
       child.removeNode();
     }
   }
-  
+
   @Override
   public void storePreferences() throws BackingStoreException {
     for (final String name : prefs.childrenNames()) {
@@ -90,11 +89,8 @@ public final class TemplatesImpl implements Templates {
       node.put(PreferencesKeys.KIND.name(), template.getKind().name());
     }
   }
-  
+
   private enum PreferencesKeys {
-    DESCRIPTION,
-    FILE,
-    KIND,
-    CHARSET
+    DESCRIPTION, FILE, KIND, CHARSET
   }
 }

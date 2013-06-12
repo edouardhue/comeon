@@ -16,16 +16,17 @@ import com.google.common.collect.Sets;
 
 public final class Processors {
   private static final Logger LOGGER = LoggerFactory.getLogger(Processors.class);
-  
+
   private static final Processors INSTANCE = new Processors();
-  
+
   private final Set<PreProcessor> preProcessors;
 
   private final Set<PostProcessor> postProcessors;
-  
+
   private Processors() {
-    final Reflections reflections = new Reflections(ClasspathHelper.forPackage("comeon.model.processors"), new SubTypesScanner());
-    
+    final Reflections reflections = new Reflections(ClasspathHelper.forPackage("comeon.model.processors"),
+        new SubTypesScanner());
+
     final Set<Class<? extends PostProcessor>> postProcessorClasses = reflections.getSubTypesOf(PostProcessor.class);
     this.postProcessors = new HashSet<>(postProcessorClasses.size());
     for (final Class<? extends PostProcessor> clazz : postProcessorClasses) {
@@ -46,20 +47,21 @@ public final class Processors {
       }
     }
   }
-  
+
   public static Processors getInstance() {
     return INSTANCE;
   }
-  
+
   public Set<PreProcessor> getPreProcessors(final Class<? extends Directory> clazz) {
     final Predicate<PreProcessor> predicate = new Predicate<PreProcessor>() {
+      @Override
       public boolean apply(final PreProcessor processor) {
         return clazz.isAssignableFrom(processor.getSupportedClass());
       }
     };
     return Sets.filter(this.preProcessors, predicate);
   }
-  
+
   public Set<PostProcessor> getPostProcessors() {
     return Collections.unmodifiableSet(postProcessors);
   }

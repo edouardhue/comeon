@@ -9,7 +9,7 @@ public final class QuitAction extends BaseAction {
   public QuitAction() {
     super("quit");
   }
-  
+
   @Override
   public void actionPerformed(final ActionEvent e) {
     System.exit(0);

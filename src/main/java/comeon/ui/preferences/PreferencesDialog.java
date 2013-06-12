@@ -5,6 +5,7 @@ import java.util.prefs.BackingStoreException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import comeon.templates.Templates;
@@ -31,7 +32,7 @@ public final class PreferencesDialog extends JOptionPane {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
     this.users = users;
     this.templates = templates;
-    this.tabs = new JTabbedPane(JTabbedPane.TOP);
+    this.tabs = new JTabbedPane(SwingConstants.TOP);
     this.userSettingsPanel = new UserSettingsPanel(users);
     tabs.add(UI.BUNDLE.getString("prefs.tab.user"), userSettingsPanel);
     this.templatesPanel = new TemplatesPanel(templates.getTemplates());

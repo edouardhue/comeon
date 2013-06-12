@@ -14,15 +14,15 @@ public final class PreferencesAction extends BaseAction {
   private static final long serialVersionUID = 1L;
 
   private final Users users;
-  
+
   private final Templates templates;
-  
+
   public PreferencesAction(final Users users, final Templates templates) {
     super("preferences");
     this.users = users;
     this.templates = templates;
   }
-  
+
   @Override
   public void actionPerformed(final ActionEvent e) {
     SwingUtilities.invokeLater(new Runnable() {

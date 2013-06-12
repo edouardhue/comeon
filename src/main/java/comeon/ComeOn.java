@@ -27,13 +27,13 @@ import comeon.users.Users;
 import comeon.users.UsersImpl;
 
 public final class ComeOn extends AbstractModule {
-  
+
   private final EventBus bus;
-  
+
   public ComeOn() {
     this.bus = new EventBus();
   }
-  
+
   @Override
   protected void configure() {
     bind(Commons.class).to(CommonsImpl.class);

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import comeon.core.Core;
@@ -16,7 +17,7 @@ public final class UploadPicturesAction extends BaseAction {
   private static final long serialVersionUID = 1L;
 
   private final Core core;
-  
+
   public UploadPicturesAction(final Core core) {
     super("upload");
     this.core = core;
@@ -38,8 +39,8 @@ public final class UploadPicturesAction extends BaseAction {
 
     public Monitor() {
       super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[0]);
-      this.batchBar = new JProgressBar(JProgressBar.HORIZONTAL);
-      this.pictureBar = new JProgressBar(JProgressBar.HORIZONTAL);
+      this.batchBar = new JProgressBar(SwingConstants.HORIZONTAL);
+      this.pictureBar = new JProgressBar(SwingConstants.HORIZONTAL);
       this.pictureBar.setStringPainted(true);
       this.setMessage(new Object[] { batchBar, pictureBar });
       // TODO i18n

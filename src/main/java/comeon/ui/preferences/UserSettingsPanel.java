@@ -106,7 +106,7 @@ final class UserSettingsPanel extends JPanel {
 
   private final class LoginDocumentListener extends UserDocumentListener {
     @Override
-    protected void doUpdate(String newValue) {
+    protected void doUpdate(final String newValue) {
       UserSettingsPanel.this.user.setLogin(newValue);
     }
   }
