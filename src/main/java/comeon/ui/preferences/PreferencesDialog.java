@@ -50,7 +50,7 @@ public final class PreferencesDialog extends JOptionPane {
     try {
       users.setUser(userSettingsPanel.getUser());
       templates.setTemplates(templatesPanel.getTemplates());
-      templates.storePreferences();
+      templates.save();
     } catch (final BackingStoreException e) {
       SwingUtilities.invokeLater(new Runnable() {
         @Override

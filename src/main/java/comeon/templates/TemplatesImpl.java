@@ -3,7 +3,7 @@ package comeon.templates;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -15,69 +15,47 @@ import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.ComeOn;
+import comeon.core.WithPreferences;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 
 @Singleton
-public final class TemplatesImpl implements Templates {
+public final class TemplatesImpl implements Templates, WithPreferences<BackingStoreException> {
   private static final Logger LOGGER = LoggerFactory.getLogger(TemplatesImpl.class);
 
-  private final List<Template> templates;
+  private final ArrayList<Template> templates;
 
   private final Preferences prefs;
 
-  private boolean loaded;
-
   @Inject
   private TemplatesImpl() {
-    this.templates = new LinkedList<>();
+    this.templates = new ArrayList<>(0);
     this.prefs = Preferences.userNodeForPackage(ComeOn.class).node("templates");
-    this.loaded = false;
   }
 
   @Override
-  public void readPreferences() throws BackingStoreException {
+  public void loadPreferences() throws BackingStoreException {
     final String[] templateNames = prefs.childrenNames();
+    this.templates.ensureCapacity(templateNames.length);
     for (final String templateName : templateNames) {
-      readPref(templateName);
+      readNode(templateName);
     }
-    loaded = true;
   }
 
   @Override
   public List<Template> getTemplates() {
-    if (loaded) {
-      return templates;
-    } else {
-      // TODO i18n
-      throw new IllegalStateException("Template preferences not loaded");
-    }
+    return new ArrayList<>(templates);
   }
 
   @Override
   public void setTemplates(final List<Template> templates) {
     this.templates.clear();
+    this.templates.ensureCapacity(templates.size());
     this.templates.addAll(templates);
   }
 
-  private void readPref(final String templateName) throws BackingStoreException {
-    final Preferences child = prefs.node(templateName);
-    final String description = child.get(PreferencesKeys.DESCRIPTION.name(), "");
-    try {
-      final Charset charset = Charset.forName(child.get(PreferencesKeys.CHARSET.name(), null));
-      final File file = new File(child.get(PreferencesKeys.FILE.name(), null));
-      final String templateText = Files.toString(file, charset);
-      final TemplateKind kind = TemplateKind.valueOf(child.get(PreferencesKeys.KIND.name(), ""));
-      final Template template = new Template(templateName, description, file, charset, templateText, kind);
-      templates.add(template);
-    } catch (final IllegalArgumentException | NullPointerException | IOException e) {
-      LOGGER.warn("Got exception, removing template {}", templateName, e);
-      child.removeNode();
-    }
-  }
-
   @Override
-  public void storePreferences() throws BackingStoreException {
+  public void save() throws BackingStoreException {
     for (final String name : prefs.childrenNames()) {
       prefs.node(name).removeNode();
     }
@@ -87,6 +65,22 @@ public final class TemplatesImpl implements Templates {
       node.put(PreferencesKeys.FILE.name(), template.getFile().getAbsolutePath());
       node.put(PreferencesKeys.CHARSET.name(), template.getCharset().name());
       node.put(PreferencesKeys.KIND.name(), template.getKind().name());
+    }
+  }
+
+  private void readNode(final String templateName) throws BackingStoreException {
+    final Preferences node = prefs.node(templateName);
+    final String description = node.get(PreferencesKeys.DESCRIPTION.name(), "");
+    try {
+      final Charset charset = Charset.forName(node.get(PreferencesKeys.CHARSET.name(), null));
+      final File file = new File(node.get(PreferencesKeys.FILE.name(), null));
+      final String templateText = Files.toString(file, charset);
+      final TemplateKind kind = TemplateKind.valueOf(node.get(PreferencesKeys.KIND.name(), ""));
+      final Template template = new Template(templateName, description, file, charset, templateText, kind);
+      templates.add(template);
+    } catch (final IllegalArgumentException | NullPointerException | IOException e) {
+      LOGGER.warn("Got exception, removing template {}", templateName, e);
+      node.removeNode();
     }
   }
 

@@ -53,7 +53,7 @@ public final class ComeOn extends AbstractModule {
     final ComeOn comeOn = new ComeOn();
     final Injector injector = Guice.createInjector(comeOn);
     final Templates templates = injector.getInstance(Templates.class);
-    templates.readPreferences();
+//    templates.loadPreferences();
     final UI ui = injector.getInstance(UI.class);
     comeOn.bus.register(ui);
     SwingUtilities.invokeLater(new Runnable() {

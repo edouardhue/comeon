@@ -27,13 +27,13 @@ public final class TemplatesPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private final TableModel tableModel;
+  private final TemplatesTableModel tableModel;
 
   private final JTable table;
 
   public TemplatesPanel(final List<Template> templates) {
     super(new BorderLayout());
-    this.tableModel = new TableModel(templates);
+    this.tableModel = new TemplatesTableModel(templates);
     this.table = new JTable(tableModel);
     this.add(new JScrollPane(table), BorderLayout.CENTER);
     final JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -96,12 +96,12 @@ public final class TemplatesPanel extends JPanel {
     }
   }
 
-  private static final class TableModel extends AbstractTableModel {
+  private static final class TemplatesTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     private final List<Template> templates;
 
-    public TableModel(final List<Template> templates) {
+    public TemplatesTableModel(final List<Template> templates) {
       this.templates = new ArrayList<>(templates);
     }
 

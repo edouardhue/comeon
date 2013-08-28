@@ -7,12 +7,10 @@ import comeon.model.Template;
 
 public interface Templates {
 
-  public abstract void readPreferences() throws BackingStoreException;
+  List<Template> getTemplates();
 
-  public abstract List<Template> getTemplates();
+  void setTemplates(List<Template> templates);
 
-  public abstract void setTemplates(List<Template> templates);
-
-  public abstract void storePreferences() throws BackingStoreException;
+  void save() throws BackingStoreException;
 
 }
