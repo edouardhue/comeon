@@ -6,11 +6,10 @@ import java.util.prefs.Preferences;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.ComeOn;
-import comeon.core.WithPreferences;
 import comeon.model.User;
 
 @Singleton
-public final class UsersImpl implements Users, WithPreferences<UserNotSetException> {
+public final class UsersImpl implements Users {
 
   private User user;
 

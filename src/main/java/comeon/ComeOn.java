@@ -1,9 +1,9 @@
 package comeon;
 
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.prefs.BackingStoreException;
 
 import javax.swing.SwingUtilities;
 
@@ -13,6 +13,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import comeon.core.Core;
 import comeon.core.CoreImpl;
+import comeon.core.WithPreferences;
 import comeon.mediawiki.MediaWiki;
 import comeon.mediawiki.MediaWikiImpl;
 import comeon.templates.Templates;
@@ -22,7 +23,6 @@ import comeon.ui.menu.EditMenu;
 import comeon.ui.menu.FileMenu;
 import comeon.ui.menu.HelpMenu;
 import comeon.ui.menu.MenuBar;
-import comeon.users.UserNotSetException;
 import comeon.users.Users;
 import comeon.users.UsersImpl;
 
@@ -49,11 +49,16 @@ public final class ComeOn extends AbstractModule {
     bind(EventBus.class).toInstance(bus);
   }
 
-  public static void main(final String[] args) throws IOException, UserNotSetException, BackingStoreException {
+  public static void main(final String[] args) throws Exception {
     final ComeOn comeOn = new ComeOn();
     final Injector injector = Guice.createInjector(comeOn);
-    final Templates templates = injector.getInstance(Templates.class);
-//    templates.loadPreferences();
+    final List<WithPreferences<? extends Exception>> withPrefs = Arrays.asList(
+        injector.getInstance(Templates.class),
+        injector.getInstance(Users.class)
+    );
+    for (final WithPreferences<? extends Exception> withPref : withPrefs) {
+      withPref.loadPreferences();
+    }
     final UI ui = injector.getInstance(UI.class);
     comeOn.bus.register(ui);
     SwingUtilities.invokeLater(new Runnable() {

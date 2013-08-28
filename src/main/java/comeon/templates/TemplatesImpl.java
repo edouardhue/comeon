@@ -15,12 +15,11 @@ import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.ComeOn;
-import comeon.core.WithPreferences;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 
 @Singleton
-public final class TemplatesImpl implements Templates, WithPreferences<BackingStoreException> {
+public final class TemplatesImpl implements Templates {
   private static final Logger LOGGER = LoggerFactory.getLogger(TemplatesImpl.class);
 
   private final ArrayList<Template> templates;
