@@ -14,11 +14,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import comeon.commons.Commons;
-import comeon.commons.FailedLoginException;
-import comeon.commons.FailedLogoutException;
-import comeon.commons.FailedUploadException;
-import comeon.commons.NotLoggedInException;
+
+import comeon.mediawiki.FailedLoginException;
+import comeon.mediawiki.FailedLogoutException;
+import comeon.mediawiki.FailedUploadException;
+import comeon.mediawiki.MediaWiki;
+import comeon.mediawiki.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.ui.actions.PicturesAddedEvent;
@@ -35,12 +36,12 @@ public final class CoreImpl implements Core {
 
   private final Users users;
 
-  private final Commons commons;
+  private final MediaWiki commons;
 
   private final EventBus bus;
 
   @Inject
-  private CoreImpl(final Users users, final Commons commons, final ExecutorService pool, final EventBus bus) {
+  private CoreImpl(final Users users, final MediaWiki commons, final ExecutorService pool, final EventBus bus) {
     this.pictures = new ArrayList<>();
     this.users = users;
     this.pool = pool;

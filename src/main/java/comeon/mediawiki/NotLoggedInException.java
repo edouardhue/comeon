@@ -1,6 +1,6 @@
-package comeon.commons;
+package comeon.mediawiki;
 
-public final class NotLoggedInException extends CommonsException {
+public final class NotLoggedInException extends MediaWikiException {
 
   private static final long serialVersionUID = 1L;
 

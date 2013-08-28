@@ -1,4 +1,4 @@
-package comeon.commons;
+package comeon.mediawiki;
 
 import in.yuvi.http.fluent.ProgressListener;
 
@@ -18,9 +18,9 @@ import comeon.users.UserNotSetException;
 import comeon.users.Users;
 
 @Singleton
-public final class CommonsImpl implements Commons {
+public final class MediaWikiImpl implements MediaWiki {
   // TODO this URL should not be hard-coded
-  private static final String URL = System.getProperty(CommonsImpl.class.getName() + ".url",
+  private static final String URL = System.getProperty(MediaWikiImpl.class.getName() + ".url",
       "http://commons.wikimedia.org/w/api.php");
 
   private final MWApi api;
@@ -28,7 +28,7 @@ public final class CommonsImpl implements Commons {
   private final Users users;
 
   @Inject
-  private CommonsImpl(final Users users) {
+  private MediaWikiImpl(final Users users) {
     this.users = users;
     final DefaultHttpClient client = new DefaultHttpClient();
     // TODO Filter version from POM

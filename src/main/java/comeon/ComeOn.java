@@ -11,10 +11,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import comeon.commons.Commons;
-import comeon.commons.CommonsImpl;
 import comeon.core.Core;
 import comeon.core.CoreImpl;
+import comeon.mediawiki.MediaWiki;
+import comeon.mediawiki.MediaWikiImpl;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesImpl;
 import comeon.ui.UI;
@@ -36,7 +36,7 @@ public final class ComeOn extends AbstractModule {
 
   @Override
   protected void configure() {
-    bind(Commons.class).to(CommonsImpl.class);
+    bind(MediaWiki.class).to(MediaWikiImpl.class);
     bind(Core.class).to(CoreImpl.class);
     bind(Users.class).to(UsersImpl.class);
     bind(Templates.class).to(TemplatesImpl.class);

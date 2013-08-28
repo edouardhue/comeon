@@ -1,4 +1,4 @@
-package comeon.commons;
+package comeon.mediawiki;
 
 import in.yuvi.http.fluent.ProgressListener;
 
@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import comeon.model.Picture;
 
-public interface Commons {
+public interface MediaWiki {
 
   public abstract void login() throws NotLoggedInException, FailedLoginException;
 
