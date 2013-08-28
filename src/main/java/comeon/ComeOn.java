@@ -1,5 +1,6 @@
 package comeon;
 
+import java.awt.SplashScreen;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -64,6 +65,10 @@ public final class ComeOn extends AbstractModule {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
+        final SplashScreen splash = SplashScreen.getSplashScreen();
+        if (splash != null) {
+          splash.close();
+        }
         ui.setVisible(true);
       }
     });
