@@ -6,10 +6,11 @@ import java.util.prefs.Preferences;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.ComeOn;
+import comeon.core.WithPreferences;
 import comeon.model.User;
 
 @Singleton
-public final class UsersImpl implements Users {
+public final class UsersImpl implements Users, WithPreferences<UserNotSetException> {
 
   private User user;
 
@@ -18,10 +19,7 @@ public final class UsersImpl implements Users {
   }
 
   @Override
-  public User getUser() throws UserNotSetException {
-    if (this.user == null) {
-      this.user = loadUser();
-    }
+  public User getUser() {
     return user;
   }
 
@@ -35,21 +33,18 @@ public final class UsersImpl implements Users {
     userPrefs.flush();
   }
 
-  /**
-   * @throws UserNotSetException
-   */
-  private User loadUser() throws UserNotSetException {
+  
+  @Override
+  public void loadPreferences() throws BackingStoreException, UserNotSetException {
     final Preferences userPrefs = getUserPreferences();
     final String login = userPrefs.get(PreferencesKeys.LOGIN.name(), null);
     final String password = userPrefs.get(PreferencesKeys.PASSWORD.name(), null);
     final String displayName = userPrefs.get(PreferencesKeys.DISPLAY_NAME.name(), null);
-    final User user;
     if (login == null || password == null || displayName == null) {
       throw new UserNotSetException();
     } else {
       user = new User(login, password, displayName);
     }
-    return user;
   }
 
   private Preferences getUserPreferences() {

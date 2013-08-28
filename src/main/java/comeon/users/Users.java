@@ -6,10 +6,7 @@ import comeon.model.User;
 
 public interface Users {
 
-  /**
-   * @throws UserNotSetException
-   */
-  public abstract User getUser() throws UserNotSetException;
+  public abstract User getUser();
 
   public abstract void setUser(User user) throws BackingStoreException;
 

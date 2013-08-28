@@ -15,7 +15,6 @@ import layout.SpringUtilities;
 
 import comeon.model.User;
 import comeon.ui.UI;
-import comeon.users.UserNotSetException;
 import comeon.users.Users;
 
 final class UserSettingsPanel extends JPanel {
@@ -33,13 +32,7 @@ final class UserSettingsPanel extends JPanel {
   public UserSettingsPanel(final Users users) {
     super(new SpringLayout());
 
-    User candidateUser;
-    try {
-      candidateUser = new User(users.getUser());
-    } catch (final UserNotSetException e) {
-      candidateUser = new User("", "", "");
-    }
-    this.user = candidateUser;
+    this.user = new User(users.getUser());
 
     final JLabel displayNameLabel = new JLabel(UI.BUNDLE.getString("prefs.user.displayName"), SwingConstants.TRAILING);
     this.add(displayNameLabel);

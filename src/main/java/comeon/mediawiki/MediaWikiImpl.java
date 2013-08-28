@@ -14,7 +14,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.model.Picture;
 import comeon.model.User;
-import comeon.users.UserNotSetException;
 import comeon.users.Users;
 
 @Singleton
@@ -51,7 +50,7 @@ public final class MediaWikiImpl implements MediaWiki {
       if (!this.api.isLoggedIn) {
         throw new NotLoggedInException(result);
       }
-    } catch (final IOException | UserNotSetException e) {
+    } catch (final IOException e) {
       throw new FailedLoginException(e);
     }
   }
