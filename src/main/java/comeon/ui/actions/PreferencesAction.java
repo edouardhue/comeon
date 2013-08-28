@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 import comeon.templates.Templates;
 import comeon.ui.preferences.PreferencesDialog;
 import comeon.users.Users;
+import comeon.wikis.Wikis;
 
 public final class PreferencesAction extends BaseAction {
 
@@ -16,11 +17,14 @@ public final class PreferencesAction extends BaseAction {
   private final Users users;
 
   private final Templates templates;
+  
+  private final Wikis wikis;
 
-  public PreferencesAction(final Users users, final Templates templates) {
+  public PreferencesAction(final Users users, final Templates templates, final Wikis wikis) {
     super("preferences");
     this.users = users;
     this.templates = templates;
+    this.wikis = wikis;
   }
 
   @Override
@@ -28,7 +32,7 @@ public final class PreferencesAction extends BaseAction {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        final PreferencesDialog dialog = new PreferencesDialog(users, templates);
+        final PreferencesDialog dialog = new PreferencesDialog(users, templates, wikis);
         final int value = dialog.showDialog();
         if (value == JOptionPane.OK_OPTION) {
           dialog.save();

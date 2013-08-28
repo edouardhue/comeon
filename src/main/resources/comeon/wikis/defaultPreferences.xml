@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE preferences SYSTEM "http://java.sun.com/dtd/preferences.dtd">
+<preferences>
+  <root type="user">
+    <map/>
+    <node name="comeon">
+      <map/>
+      <node name="wikis">
+        <map/>
+        <node name="Commons">
+          <map>
+            <entry key="URL" value="http://commons.wikimedia.org/w/api.php"/>
+          </map>
+        </node>
+      </node>
+    </node>
+  </root>
+</preferences>

@@ -26,6 +26,8 @@ import comeon.ui.menu.HelpMenu;
 import comeon.ui.menu.MenuBar;
 import comeon.users.Users;
 import comeon.users.UsersImpl;
+import comeon.wikis.Wikis;
+import comeon.wikis.WikisImpl;
 
 public final class ComeOn extends AbstractModule {
 
@@ -41,6 +43,7 @@ public final class ComeOn extends AbstractModule {
     bind(Core.class).to(CoreImpl.class);
     bind(Users.class).to(UsersImpl.class);
     bind(Templates.class).to(TemplatesImpl.class);
+    bind(Wikis.class).to(WikisImpl.class);
     bind(ExecutorService.class).toInstance(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
     bind(UI.class);
     bind(MenuBar.class);
@@ -55,7 +58,8 @@ public final class ComeOn extends AbstractModule {
     final Injector injector = Guice.createInjector(comeOn);
     final List<WithPreferences<? extends Exception>> withPrefs = Arrays.asList(
         injector.getInstance(Templates.class),
-        injector.getInstance(Users.class)
+        injector.getInstance(Users.class),
+        injector.getInstance(Wikis.class)
     );
     for (final WithPreferences<? extends Exception> withPref : withPrefs) {
       withPref.loadPreferences();

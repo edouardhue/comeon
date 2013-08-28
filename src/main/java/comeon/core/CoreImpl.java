@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.mediawiki.FailedLoginException;
 import comeon.mediawiki.FailedLogoutException;
 import comeon.mediawiki.FailedUploadException;
@@ -23,7 +22,6 @@ import comeon.mediawiki.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.ui.actions.PicturesAddedEvent;
-import comeon.users.UserNotSetException;
 import comeon.users.Users;
 
 @Singleton
@@ -50,7 +48,7 @@ public final class CoreImpl implements Core {
   }
 
   @Override
-  public void addPictures(final File[] files, final Template defautTemplate) throws UserNotSetException {
+  public void addPictures(final File[] files, final Template defautTemplate) {
     final Pictures picturesReader = new Pictures(files, defautTemplate, pool);
     final List<Picture> newPictures = picturesReader.readFiles(users.getUser()).getPictures();
     this.pictures.addAll(newPictures);

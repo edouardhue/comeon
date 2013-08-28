@@ -5,11 +5,10 @@ import java.util.List;
 
 import comeon.model.Picture;
 import comeon.model.Template;
-import comeon.users.UserNotSetException;
 
 public interface Core {
 
-  public abstract void addPictures(File[] files, Template defautTemplate) throws UserNotSetException;
+  public abstract void addPictures(File[] files, Template defautTemplate);
 
   public abstract List<Picture> getPictures();
 
