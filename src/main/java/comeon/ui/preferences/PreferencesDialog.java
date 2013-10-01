@@ -62,7 +62,10 @@ public final class PreferencesDialog extends JOptionPane {
         @Override
         public void run() {
           // TODO i18n
-          JOptionPane.showMessageDialog(PreferencesDialog.this.getParent(), e.getLocalizedMessage(), "Error",
+          JOptionPane.showMessageDialog(
+              PreferencesDialog.this.getParent(),
+              new StringBuffer(UI.BUNDLE.getString("prefs.error.save")).append('\n').append(e.getLocalizedMessage()),
+              UI.BUNDLE.getString("error.generic.title"),
               JOptionPane.ERROR_MESSAGE);
         }
       });

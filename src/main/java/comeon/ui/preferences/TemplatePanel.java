@@ -131,8 +131,17 @@ final class TemplatePanel extends JOptionPane {
             }
           });
         } catch (final IOException ex) {
-          JOptionPane.showMessageDialog(TemplatePanel.this, ex.getLocalizedMessage(), "Error",
-              JOptionPane.ERROR_MESSAGE);
+          SwingUtilities.invokeLater(new Runnable() {
+            
+            @Override
+            public void run() {
+              JOptionPane.showMessageDialog(
+                  TemplatePanel.this,
+                  new StringBuffer(UI.BUNDLE.getString("prefs.templates.error.read")).append('\n').append(ex.getLocalizedMessage()),
+                  UI.BUNDLE.getString("error.generic.title"),
+                  JOptionPane.ERROR_MESSAGE);
+            }
+          });
         }
       }
     }
