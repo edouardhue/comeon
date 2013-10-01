@@ -10,31 +10,24 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.mediawiki.api.MWApi;
 
 import com.google.common.io.Files;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import comeon.model.Picture;
 import comeon.model.User;
-import comeon.users.Users;
+import comeon.model.Wiki;
 
-@Singleton
 public final class MediaWikiImpl implements MediaWiki {
-  // TODO this URL should not be hard-coded
-  private static final String URL = System.getProperty(MediaWikiImpl.class.getName() + ".url",
-      "http://commons.wikimedia.org/w/api.php");
 
   private final MWApi api;
 
-  private final Users users;
-
-  @Inject
-  private MediaWikiImpl(final Users users) {
-    this.users = users;
+  private final Wiki wiki;
+  
+  public MediaWikiImpl(final Wiki wiki) {
+    this.wiki = wiki;
     final DefaultHttpClient client = new DefaultHttpClient();
     // TODO Filter version from POM
     client.getParams().setParameter(CoreProtocolPNames.USER_AGENT,
         "ComeOn!/1.0-SNAPSHOT (http://github.com/edouardhue/comeon; EdouardHue) using org.mediawiki:api:1.3");
     // XXX MWApi requires AbstractHttpClient instead of HttpClient
-    this.api = new MWApi(URL, client);
+    this.api = new MWApi(wiki.getUrl(), client);
   }
 
   /*
@@ -45,7 +38,7 @@ public final class MediaWikiImpl implements MediaWiki {
   @Override
   public void login() throws NotLoggedInException, FailedLoginException {
     try {
-      final User user = users.getUser();
+      final User user = wiki.getUser();
       final String result = this.api.login(user.getLogin(), user.getPassword());
       if (!this.api.isLoggedIn) {
         throw new NotLoggedInException(result);
@@ -55,6 +48,11 @@ public final class MediaWikiImpl implements MediaWiki {
     }
   }
 
+  @Override
+  public boolean isLoggedIn() {
+    return api.isLoggedIn;
+  }
+  
   /*
    * (non-Javadoc)
    * 

@@ -1,44 +1,48 @@
 package comeon.wikis;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.ComeOn;
 import comeon.core.WithPreferences;
+import comeon.model.User;
 import comeon.model.Wiki;
 
 @Singleton
-public final class WikisImpl implements Wikis, WithPreferences<BackingStoreException> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(WikisImpl.class);
+public final class WikisImpl implements Wikis, WithPreferences {
+
+  private static final String DEFAULT_ACTIVE_WIKI_NAME = "Commons";
 
   private final ArrayList<Wiki> wikis;
 
   private final Preferences preferences;
   
+  private final EventBus bus;
+  
+  private Wiki activeWiki;
+  
   @Inject
-  public WikisImpl() {
+  public WikisImpl(final EventBus bus) {
+    this.bus = bus;
     this.wikis = new ArrayList<>(0);
     preferences = Preferences.userNodeForPackage(ComeOn.class).node("wikis");
   }
   
   @Override
   public void loadPreferences() throws BackingStoreException {
-    if (preferences.childrenNames().length == 0) {
-      this.loadDefaults();
-    }
+    final String activeWikiName = preferences.get(WikiPreferencesKeys.ACTIVE.name(), DEFAULT_ACTIVE_WIKI_NAME);
     final String[] wikiNames = preferences.childrenNames();
     this.wikis.ensureCapacity(wikiNames.length);
     for (final String name : wikiNames) {
-      this.readNode(name);
+      final Wiki wiki = this.readWiki(name);
+      if (activeWikiName.equals(name)) {
+        activeWiki = wiki;
+      }
     }
   }
   
@@ -61,27 +65,44 @@ public final class WikisImpl implements Wikis, WithPreferences<BackingStoreExcep
     }
     for (final Wiki wiki : wikis) {
       final Preferences node = preferences.node(wiki.getName());
-      node.put(PreferencesKeys.URL.name(), wiki.getUrl());
+      node.put(WikiPreferencesKeys.URL.name(), wiki.getUrl());
     }
   }
+
+  @Override
+  public Wiki getActiveWiki() {
+    return activeWiki;
+  }
   
-  private void readNode(final String name) throws BackingStoreException {
+  @Override
+  public void setActiveWiki(final Wiki wiki) {
+    final ActiveWikiChangeEvent event = new ActiveWikiChangeEvent(this.activeWiki, wiki);
+    this.activeWiki = wiki;
+    preferences.put(WikiPreferencesKeys.ACTIVE.name(), wiki.getName());
+    bus.post(event);
+  }
+  
+  private Wiki readWiki(final String name) throws BackingStoreException {
     final Preferences node = preferences.node(name);
-    final String url = node.get(PreferencesKeys.URL.name(), null);
-    final Wiki wiki = new Wiki(name, url);
+    final String url = node.get(WikiPreferencesKeys.URL.name(), null);
+    final Wiki wiki = new Wiki(name, url, this.readUser(node));
     wikis.add(wiki);
+    return wiki;
   }
   
-  private void loadDefaults() {
-    try {
-      Preferences.importPreferences(WikisImpl.class.getResourceAsStream("defaultPreferences.xml"));
-    } catch (final InvalidPreferencesFormatException | IOException e) {
-      // TODO i18n
-      LOGGER.warn("Can't load default preferences", e);
-    }
+  private User readUser(final Preferences wikiNode) throws BackingStoreException {
+    final Preferences userNode = wikiNode.node("user");
+    final String login = userNode.get(UserPreferencesKeys.LOGIN.name(), null);
+    final String password = userNode.get(UserPreferencesKeys.PASSWORD.name(), null);
+    final String displayName = userNode.get(UserPreferencesKeys.DISPLAY_NAME.name(), null);
+    return new User(login, password, displayName);
   }
   
-  private enum PreferencesKeys {
-    URL
+  private enum WikiPreferencesKeys {
+    URL, ACTIVE
+  }
+
+  private enum UserPreferencesKeys {
+    LOGIN, PASSWORD, DISPLAY_NAME
   }
 }

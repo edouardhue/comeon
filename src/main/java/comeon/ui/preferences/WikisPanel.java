@@ -25,23 +25,28 @@ public final class WikisPanel extends JPanel {
 
   private final JTable table;
 
-  public WikisPanel(final List<Wiki> wikis) {
+  public WikisPanel(final List<Wiki> wikis, final int defaultWikiIndex) {
     super(new BorderLayout());
-    this.tableModel = new WikisTableModel(wikis);
+    this.tableModel = new WikisTableModel(wikis, defaultWikiIndex);
     this.table = new JTable(tableModel);
     this.add(new JScrollPane(table), BorderLayout.CENTER);
     final JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
     // TODO add icons
     toolbar.add(new JButton(new AddWikiAction()));
+    toolbar.add(new JButton(new EditWikiAction()));
     toolbar.add(new JButton(new RemoveWikiAction()));
+    toolbar.add(new JButton(new MakeDefaultAction()));
     this.add(toolbar, BorderLayout.SOUTH);
   }
 
   public List<Wiki> getWikis() {
     return tableModel.getWikis();
   }
+  
+  public Wiki getActiveWiki() {
+    return tableModel.getWikis().get(tableModel.defaultWikiIndex);
+  }
 
-  // TODO i18n
   private final class AddWikiAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
@@ -51,10 +56,34 @@ public final class WikisPanel extends JPanel {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-      final String name = JOptionPane.showInputDialog(WikisPanel.this, "Name ?");
-      final String url = JOptionPane.showInputDialog(WikisPanel.this, "URL ?");
-      final Wiki wiki = new Wiki(name, url);
-      tableModel.addWiki(wiki);
+      final WikiPanel panel = new WikiPanel(null);
+      final int value = panel.showDialog();
+      if (value == JOptionPane.OK_OPTION) {
+        final Wiki wiki = panel.getWiki();
+        tableModel.addWiki(wiki);
+      }
+    }
+  }
+  
+  private final class EditWikiAction extends AbstractAction {
+    private static final long serialVersionUID = 1L;
+    
+    public EditWikiAction() {
+      super(UI.BUNDLE.getString("prefs.wikis.edit"));
+    }
+    
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+      final int selectedRow = table.getSelectedRow();
+      if (selectedRow != -1) {
+        final Wiki selectedWiki = tableModel.getWikis().get(selectedRow);
+        final WikiPanel panel = new WikiPanel(selectedWiki);
+        final int value = panel.showDialog();
+        if (value == JOptionPane.OK_OPTION) {
+          final Wiki editedWiki = panel.getWiki();
+          tableModel.replaceWiki(selectedRow, editedWiki);
+        }
+      }
     }
   }
 
@@ -73,14 +102,31 @@ public final class WikisPanel extends JPanel {
       }
     }
   }
+  
+  private final class MakeDefaultAction extends AbstractAction {
+    private static final long serialVersionUID = 1L;
+  
+    public MakeDefaultAction() {
+      super(UI.BUNDLE.getString("prefs.wikis.makeDefault"));
+    }
+    
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+      tableModel.setDefault(table.getSelectedRow());
+      
+    }
+  }
 
   private static final class WikisTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     private final List<Wiki> wikis;
 
-    public WikisTableModel(final List<Wiki> wikis) {
+    private int defaultWikiIndex;
+    
+    public WikisTableModel(final List<Wiki> wikis, final int defaultWikiIndex) {
       this.wikis = new ArrayList<>(wikis);
+      this.defaultWikiIndex = defaultWikiIndex;
     }
 
     @Override
@@ -90,13 +136,13 @@ public final class WikisPanel extends JPanel {
 
     @Override
     public int getColumnCount() {
-      return 2;
+      return 5;
     }
 
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex) {
       final Wiki wiki = wikis.get(rowIndex);
-      final String value;
+      final Object value;
       switch (columnIndex) {
       case 0:
         value = wiki.getName();
@@ -104,6 +150,15 @@ public final class WikisPanel extends JPanel {
       case 1:
         value = wiki.getUrl();
         break;
+      case 2:
+        value = wiki.getUser().getDisplayName();
+        break;
+      case 3:
+        value = wiki.getUser().getLogin();
+        break;
+      case 4:
+          value = defaultWikiIndex == rowIndex;
+          break;
       default:
         throw new IllegalArgumentException();
       }
@@ -123,6 +178,18 @@ public final class WikisPanel extends JPanel {
     private void removeRow(final int row) {
       wikis.remove(row);
       this.fireTableRowsDeleted(row, row);
+    }
+    
+    private void replaceWiki(final int row, final Wiki wiki) {
+      wikis.set(row, wiki);
+      this.fireTableRowsUpdated(row, row);
+    }
+    
+    private void setDefault(final int index) {
+      final int previousIndex = this.defaultWikiIndex;
+      this.defaultWikiIndex = index;
+      this.fireTableRowsUpdated(previousIndex, previousIndex);
+      this.fireTableRowsUpdated(index, index);
     }
   }
 }

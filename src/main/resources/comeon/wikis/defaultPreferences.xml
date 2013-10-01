@@ -6,7 +6,9 @@
     <node name="comeon">
       <map/>
       <node name="wikis">
-        <map/>
+        <map>
+          <entry key="ACTIVE" value="Commons"/>
+        </map>
         <node name="Commons">
           <map>
             <entry key="URL" value="http://commons.wikimedia.org/w/api.php"/>

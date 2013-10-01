@@ -18,11 +18,13 @@ import comeon.mediawiki.FailedLoginException;
 import comeon.mediawiki.FailedLogoutException;
 import comeon.mediawiki.FailedUploadException;
 import comeon.mediawiki.MediaWiki;
+import comeon.mediawiki.MediaWikiImpl;
 import comeon.mediawiki.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.ui.actions.PicturesAddedEvent;
-import comeon.users.Users;
+import comeon.wikis.ActiveWikiChangeEvent;
+import comeon.wikis.Wikis;
 
 @Singleton
 public final class CoreImpl implements Core {
@@ -31,26 +33,26 @@ public final class CoreImpl implements Core {
   private final List<Picture> pictures;
 
   private final ExecutorService pool;
-
-  private final Users users;
-
-  private final MediaWiki commons;
+  
+  private final Wikis wikis;
 
   private final EventBus bus;
+  
+  private MediaWiki activeMediaWiki;
 
   @Inject
-  private CoreImpl(final Users users, final MediaWiki commons, final ExecutorService pool, final EventBus bus) {
+  private CoreImpl(final Wikis wikis, final ExecutorService pool, final EventBus bus) {
     this.pictures = new ArrayList<>();
-    this.users = users;
     this.pool = pool;
-    this.commons = commons;
     this.bus = bus;
+    this.wikis = wikis;
+    this.activeMediaWiki = new MediaWikiImpl(wikis.getActiveWiki());
   }
 
   @Override
   public void addPictures(final File[] files, final Template defautTemplate) {
     final Pictures picturesReader = new Pictures(files, defautTemplate, pool);
-    final List<Picture> newPictures = picturesReader.readFiles(users.getUser()).getPictures();
+    final List<Picture> newPictures = picturesReader.readFiles(wikis.getActiveWiki().getUser()).getPictures();
     this.pictures.addAll(newPictures);
     bus.post(new PicturesAddedEvent());
   }
@@ -74,7 +76,7 @@ public final class CoreImpl implements Core {
             try {
               final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length(),
                   picture.getFileName());
-              commons.upload(picture, listener);
+              activeMediaWiki.upload(picture, listener);
             } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
               LOGGER.warn("Picture upload failed", e);
             } finally {
@@ -82,7 +84,7 @@ public final class CoreImpl implements Core {
               index++;
             }
           }
-          commons.logout();
+          activeMediaWiki.logout();
           monitor.uploadDone();
         } catch (final FailedLogoutException e) {
           // TODO i18n
@@ -90,5 +92,15 @@ public final class CoreImpl implements Core {
         }
       }
     });
+  }
+  
+  public void handleActiveWikiChangeEvent(final ActiveWikiChangeEvent event) {
+    if (this.activeMediaWiki.isLoggedIn()) {
+      try {
+        this.activeMediaWiki.logout();
+      } catch (final FailedLogoutException e) {
+        LOGGER.warn("Failed implicit logout", e);
+      }
+    }
   }
 }

@@ -35,7 +35,6 @@ import comeon.templates.Templates;
 import comeon.ui.actions.PicturesAddedEvent;
 import comeon.ui.menu.MenuBar;
 import comeon.ui.pictures.PicturePanels;
-import comeon.users.Users;
 
 @Singleton
 public final class UI extends JFrame {
@@ -61,7 +60,7 @@ public final class UI extends JFrame {
   private final Core core;
 
   @Inject
-  public UI(final Core core, final Users users, final Templates templates, final MenuBar menuBar) {
+  public UI(final Core core, final Templates templates, final MenuBar menuBar) {
     super("ComeOn!");
 
     this.core = core;
