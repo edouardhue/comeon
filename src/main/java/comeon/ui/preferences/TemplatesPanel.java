@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -17,10 +18,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableColumnModel;
 
 import com.google.common.io.Files;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
+import comeon.ui.ComeOnTableColumn;
 import comeon.ui.UI;
 
 public final class TemplatesPanel extends JPanel {
@@ -34,7 +37,7 @@ public final class TemplatesPanel extends JPanel {
   public TemplatesPanel(final List<Template> templates) {
     super(new BorderLayout());
     this.tableModel = new TemplatesTableModel(templates);
-    this.table = new JTable(tableModel);
+    this.table = new JTable(tableModel, new TemplatesColumnModel());
     this.add(new JScrollPane(table), BorderLayout.CENTER);
     final JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
     // TODO add icons
@@ -47,7 +50,6 @@ public final class TemplatesPanel extends JPanel {
     return tableModel.getTemplates();
   }
 
-  // TODO i18n
   private final class AddTemplateAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
@@ -93,6 +95,20 @@ public final class TemplatesPanel extends JPanel {
       if (selectedRow != -1) {
         tableModel.removeRow(selectedRow);
       }
+    }
+  }
+  
+  private static final class TemplatesColumnModel extends DefaultTableColumnModel {
+
+    private static final long serialVersionUID = 1L;
+
+    public TemplatesColumnModel() {
+      super.tableColumns.addAll(Arrays.asList(
+          new ComeOnTableColumn(0, UI.BUNDLE.getString("prefs.templates.name")),
+          new ComeOnTableColumn(1, UI.BUNDLE.getString("prefs.templates.description")),
+          new ComeOnTableColumn(2, UI.BUNDLE.getString("prefs.templates.kind")),
+          new ComeOnTableColumn(4, UI.BUNDLE.getString("prefs.templates.charset"))
+      ));
     }
   }
 

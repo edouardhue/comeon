@@ -124,7 +124,6 @@ public final class WikisPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     
     public WikisColumnModel() {
-      super();
       super.tableColumns.addAll(Arrays.asList(
           new ComeOnTableColumn(0, UI.BUNDLE.getString("prefs.wikis.name")),
           new ComeOnTableColumn(1, UI.BUNDLE.getString("prefs.wikis.url")),
