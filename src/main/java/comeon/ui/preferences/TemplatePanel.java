@@ -23,6 +23,9 @@ import javax.swing.SwingUtilities;
 
 import layout.SpringUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import comeon.model.Template;
@@ -32,6 +35,8 @@ import comeon.ui.UI;
 final class TemplatePanel extends JOptionPane {
 
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(TemplatePanel.class);
 
   private final JDialog dialog;
   
@@ -131,8 +136,8 @@ final class TemplatePanel extends JOptionPane {
             }
           });
         } catch (final IOException ex) {
+          LOGGER.error(UI.BUNDLE.getString("prefs.error.save"), ex);
           SwingUtilities.invokeLater(new Runnable() {
-            
             @Override
             public void run() {
               JOptionPane.showMessageDialog(

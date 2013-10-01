@@ -9,6 +9,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import comeon.model.Wiki;
 import comeon.templates.Templates;
 import comeon.ui.UI;
@@ -17,6 +20,8 @@ import comeon.wikis.Wikis;
 public final class PreferencesDialog extends JOptionPane {
 
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(PreferencesDialog.class);
 
   private final JDialog dialog;
 
@@ -58,6 +63,7 @@ public final class PreferencesDialog extends JOptionPane {
       wikis.setActiveWiki(wikisPanel.getActiveWiki());
       wikis.save();
     } catch (final BackingStoreException e) {
+      LOGGER.error(UI.BUNDLE.getString("prefs.error.save"), e);
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
