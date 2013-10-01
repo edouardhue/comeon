@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -13,8 +14,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableColumnModel;
 
 import comeon.model.Wiki;
+import comeon.ui.ComeOnTableColumn;
 import comeon.ui.UI;
 
 public final class WikisPanel extends JPanel {
@@ -28,7 +31,7 @@ public final class WikisPanel extends JPanel {
   public WikisPanel(final List<Wiki> wikis, final int defaultWikiIndex) {
     super(new BorderLayout());
     this.tableModel = new WikisTableModel(wikis, defaultWikiIndex);
-    this.table = new JTable(tableModel);
+    this.table = new JTable(tableModel, new WikisColumnModel());
     this.add(new JScrollPane(table), BorderLayout.CENTER);
     final JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
     // TODO add icons
@@ -117,6 +120,21 @@ public final class WikisPanel extends JPanel {
     }
   }
 
+  private static final class WikisColumnModel extends DefaultTableColumnModel {
+    private static final long serialVersionUID = 1L;
+    
+    public WikisColumnModel() {
+      super();
+      super.tableColumns.addAll(Arrays.asList(
+          new ComeOnTableColumn(0, UI.BUNDLE.getString("prefs.wikis.name")),
+          new ComeOnTableColumn(1, UI.BUNDLE.getString("prefs.wikis.url")),
+          new ComeOnTableColumn(2, UI.BUNDLE.getString("prefs.wikis.displayName")),
+          new ComeOnTableColumn(3, UI.BUNDLE.getString("prefs.wikis.login")),
+          new ComeOnTableColumn(4, UI.BUNDLE.getString("prefs.wikis.password"))
+      ));
+    }
+  }
+  
   private static final class WikisTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 

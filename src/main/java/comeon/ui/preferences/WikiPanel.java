@@ -47,23 +47,23 @@ final class WikiPanel extends JOptionPane {
   }
   
   private void build() {
-    final JLabel nameLabel = new JLabel("Name", SwingConstants.TRAILING);
+    final JLabel nameLabel = new JLabel(UI.BUNDLE.getString("prefs.wikis.name"), SwingConstants.TRAILING);
     nameLabel.setLabelFor(nameField);
     fieldsPanel.add(nameLabel);
     fieldsPanel.add(this.nameField);
-    final JLabel urlLabel = new JLabel("API URL", SwingConstants.TRAILING);
+    final JLabel urlLabel = new JLabel(UI.BUNDLE.getString("prefs.wikis.url"), SwingConstants.TRAILING);
     urlLabel.setLabelFor(urlField);
     fieldsPanel.add(urlLabel);
     fieldsPanel.add(this.urlField);
-    final JLabel displayNameLabel = new JLabel(UI.BUNDLE.getString("prefs.user.displayName"), SwingConstants.TRAILING);
+    final JLabel displayNameLabel = new JLabel(UI.BUNDLE.getString("prefs.wikis.displayName"), SwingConstants.TRAILING);
     displayNameLabel.setLabelFor(displayNameField);
     fieldsPanel.add(displayNameLabel);
     fieldsPanel.add(this.displayNameField);
-    final JLabel loginLabel = new JLabel(UI.BUNDLE.getString("prefs.user.login"), SwingConstants.TRAILING);
+    final JLabel loginLabel = new JLabel(UI.BUNDLE.getString("prefs.wikis.login"), SwingConstants.TRAILING);
     loginLabel.setLabelFor(loginField);
     fieldsPanel.add(loginLabel);
     fieldsPanel.add(this.loginField);
-    final JLabel passwordLabel = new JLabel(UI.BUNDLE.getString("prefs.user.password"), SwingConstants.TRAILING);
+    final JLabel passwordLabel = new JLabel(UI.BUNDLE.getString("prefs.wikis.password"), SwingConstants.TRAILING);
     passwordLabel.setLabelFor(passwordField);
     fieldsPanel.add(passwordLabel);
     fieldsPanel.add(this.passwordField);
