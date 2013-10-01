@@ -77,6 +77,15 @@ final class WikiPanel extends JOptionPane {
   }
   
   Wiki getWiki() {
-    return new Wiki(this.nameField.getText(), this.urlField.getText(), new User(this.loginField.getText(), new String(this.passwordField.getPassword()), this.displayNameField.getText()));
+    final User user = new User(
+        this.loginField.getText(),
+        new String(this.passwordField.getPassword()),
+        this.displayNameField.getText()
+    );
+    return new Wiki(
+        this.nameField.getText(),
+        this.urlField.getText(),
+        user
+    );
   }
 }

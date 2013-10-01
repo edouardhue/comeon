@@ -3,16 +3,12 @@ package comeon.ui.preferences;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,9 +16,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
 
-import com.google.common.io.Files;
 import comeon.model.Template;
-import comeon.model.TemplateKind;
 import comeon.ui.ComeOnTableColumn;
 import comeon.ui.UI;
 
@@ -42,6 +36,7 @@ public final class TemplatesPanel extends JPanel {
     final JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
     // TODO add icons
     toolbar.add(new JButton(new AddTemplateAction()));
+    toolbar.add(new JButton(new EditTemplateAction()));
     toolbar.add(new JButton(new RemoveTemplateAction()));
     this.add(toolbar, BorderLayout.SOUTH);
   }
@@ -53,35 +48,43 @@ public final class TemplatesPanel extends JPanel {
   private final class AddTemplateAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
-    private final JFileChooser chooser;
-
     public AddTemplateAction() {
       super(UI.BUNDLE.getString("prefs.templates.add"));
-      this.chooser = new JFileChooser();
     }
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-      final int chooserReturnVal = chooser.showOpenDialog(TemplatesPanel.this);
-      if (JFileChooser.APPROVE_OPTION == chooserReturnVal) {
-        final File file = chooser.getSelectedFile();
-        try {
-          final Charset charset = Charset.forName(JOptionPane.showInputDialog(TemplatesPanel.this, "Charset ?"));
-          final String templateText = Files.toString(file, charset);
-          final String name = JOptionPane.showInputDialog(TemplatesPanel.this, "Name ?");
-          final String description = JOptionPane.showInputDialog(TemplatesPanel.this, "Description ?");
-          final TemplateKind kind = (TemplateKind) JOptionPane.showInputDialog(TemplatesPanel.this, "Kind ?", "Kind",
-              JOptionPane.QUESTION_MESSAGE, null, TemplateKind.values(), TemplateKind.values()[0]);
-          final Template template = new Template(name, description, file, charset, templateText, kind);
-          tableModel.addTemplate(template);
-        } catch (final IOException ex) {
-          JOptionPane.showMessageDialog(TemplatesPanel.this, ex.getLocalizedMessage(), "Error",
-              JOptionPane.ERROR_MESSAGE);
-        }
+      final TemplatePanel panel = new TemplatePanel(null);
+      final int value = panel.showDialog();
+      if (value == JOptionPane.OK_OPTION) {
+        final Template template = panel.getTemplate();
+        tableModel.addTemplate(template);
       }
     }
   }
 
+  private final class EditTemplateAction extends AbstractAction {
+    private static final long serialVersionUID = 1L;
+    
+    public EditTemplateAction() {
+      super(UI.BUNDLE.getString("prefs.templates.edit"));
+    }
+    
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+      final int selectedRow = table.getSelectedRow();
+      if (selectedRow != -1) {
+        final Template selectedTemplate = tableModel.getTemplates().get(selectedRow);
+        final TemplatePanel panel = new TemplatePanel(selectedTemplate);
+        final int value = panel.showDialog();
+        if (value == JOptionPane.OK_OPTION) {
+          final Template editedTemplate = panel.getTemplate();
+          tableModel.replaceTemplate(selectedRow, editedTemplate);
+        }
+      }
+    }
+  }
+  
   private final class RemoveTemplateAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
@@ -107,7 +110,7 @@ public final class TemplatesPanel extends JPanel {
           new ComeOnTableColumn(0, UI.BUNDLE.getString("prefs.templates.name")),
           new ComeOnTableColumn(1, UI.BUNDLE.getString("prefs.templates.description")),
           new ComeOnTableColumn(2, UI.BUNDLE.getString("prefs.templates.kind")),
-          new ComeOnTableColumn(4, UI.BUNDLE.getString("prefs.templates.charset"))
+          new ComeOnTableColumn(3, UI.BUNDLE.getString("prefs.templates.charset"))
       ));
     }
   }
@@ -143,10 +146,10 @@ public final class TemplatesPanel extends JPanel {
         value = template.getDescription();
         break;
       case 2:
-        value = template.getFile().getAbsolutePath();
+        value = template.getKind().name();
         break;
       case 3:
-        value = template.getKind().name();
+        value = template.getCharset().displayName();
         break;
       default:
         throw new IllegalArgumentException();
@@ -162,6 +165,11 @@ public final class TemplatesPanel extends JPanel {
       templates.add(template);
       final int lastRow = templates.size() - 1;
       this.fireTableRowsInserted(lastRow, lastRow);
+    }
+    
+    private void replaceTemplate(final int row, final Template template) {
+      templates.set(row, template);
+      this.fireTableRowsUpdated(row, row);
     }
 
     private void removeRow(final int row) {
