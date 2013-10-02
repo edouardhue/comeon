@@ -2,6 +2,7 @@ package comeon;
 
 import java.awt.SplashScreen;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -12,6 +13,8 @@ import java.util.prefs.Preferences;
 
 import javax.swing.SwingUtilities;
 
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,34 +83,50 @@ public final class ComeOn extends AbstractModule {
   }
   
   public static void main(final String[] args) throws Exception {
-    final ComeOn comeOn = new ComeOn();
-    // TODO Improve parameters handling
-    if (args.length == 1 && "--rescue".equals(args[0])) {
-      comeOn.resetPreferences();
-    } else {
-      comeOn.checkPreferences();
+    final Arguments arguments = new Arguments();
+    final CmdLineParser parser = new CmdLineParser(arguments);
+    try {
+      parser.parseArgument(args);
+      final ComeOn comeOn = new ComeOn();
+      if (arguments.getRescue()) {
+        comeOn.resetPreferences();
+      } else {
+        comeOn.checkPreferences();
+      }
+      final UI ui = assemble(comeOn);
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          final SplashScreen splash = SplashScreen.getSplashScreen();
+          if (splash != null) {
+            splash.close();
+          }
+          ui.setVisible(true);
+        }
+      });
+    } catch (final CmdLineException e) {
+      final StringWriter usage = new StringWriter();
+      usage.append(UI.BUNDLE.getString("args.usage"));
+      usage.append('\n');
+      parser.printUsage(usage, UI.BUNDLE);
+      System.err.println(usage.toString());
+      usage.close();
     }
+  }
+
+  private static UI assemble(final ComeOn comeOn) throws BackingStoreException {
     final Injector injector = Guice.createInjector(comeOn);
     final List<WithPreferences> withPrefs = Arrays.asList(
         injector.getInstance(Templates.class),
         injector.getInstance(Wikis.class)
-    );
+        );
     for (final WithPreferences withPref : withPrefs) {
       withPref.loadPreferences();
     }
     final UI ui = injector.getInstance(UI.class);
     comeOn.bus.register(ui);
     comeOn.bus.register(injector.getInstance(Core.class));
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        final SplashScreen splash = SplashScreen.getSplashScreen();
-        if (splash != null) {
-          splash.close();
-        }
-        ui.setVisible(true);
-      }
-    });
+    return ui;
   }
 
 }
