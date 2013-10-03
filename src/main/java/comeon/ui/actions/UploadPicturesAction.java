@@ -15,6 +15,7 @@ import com.google.inject.Singleton;
 
 import comeon.core.Core;
 import comeon.core.UploadMonitor;
+import comeon.ui.UI;
 
 @Singleton
 public final class UploadPicturesAction extends BaseAction {
@@ -49,7 +50,7 @@ public final class UploadPicturesAction extends BaseAction {
       this.pictureBar.setStringPainted(true);
       this.setMessage(new Object[] { batchBar, pictureBar });
       // TODO i18n
-      this.dialog = this.createDialog(JOptionPane.getRootFrame(), "Progress");
+      this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("upload.title"));
     }
 
     @Override

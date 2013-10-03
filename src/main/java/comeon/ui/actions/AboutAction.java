@@ -30,13 +30,12 @@ public final class AboutAction extends BaseAction {
 
       @Override
       public void run() {
-        // TODO i18n
         final JTextArea messageArea = new JTextArea(UI.BUNDLE.getString("about.message"));
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
         final JScrollPane messageScrollArea = new JScrollPane(messageArea);
         messageScrollArea.setPreferredSize(new Dimension(380, 240));
-        JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), new Object[] { new JLabel("ComeOn!"),
+        JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), new Object[] { new JLabel(UI.BUNDLE.getString("comeon")),
             messageScrollArea }, UI.BUNDLE.getString("action.about.title"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(
             icon));
       }

@@ -83,8 +83,7 @@ public final class ComeOn extends AbstractModule {
     try {
       Preferences.importPreferences(WikisImpl.class.getResourceAsStream("defaultPreferences.xml"));
     } catch (final InvalidPreferencesFormatException | IOException e) {
-      // TODO i18n
-      LOGGER.warn("Can't load default preferences", e);
+      LOGGER.warn(UI.BUNDLE.getString("error.preferences.cantloaddefault.message"), e);
     }
   }
   
@@ -111,12 +110,14 @@ public final class ComeOn extends AbstractModule {
         }
       });
     } catch (final CmdLineException e) {
-      final StringWriter usage = new StringWriter();
-      usage.append(UI.BUNDLE.getString("args.usage"));
-      usage.append('\n');
-      parser.printUsage(usage, UI.BUNDLE);
-      System.err.println(usage.toString());
-      usage.close();
+      final StringWriter usageBuffer = new StringWriter();
+      usageBuffer.append(UI.BUNDLE.getString("comeon"));
+      usageBuffer.append(" – ");
+      usageBuffer.append(UI.BUNDLE.getString("args.usage"));
+      usageBuffer.append('\n');
+      parser.printUsage(usageBuffer, UI.BUNDLE);
+      System.err.println(usageBuffer.toString());
+      usageBuffer.close();
     }
   }
 

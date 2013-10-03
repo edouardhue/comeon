@@ -17,6 +17,7 @@ import comeon.core.Core;
 import comeon.model.Template;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesChangedEvent;
+import comeon.ui.UI;
 
 @Singleton
 public final class AddPicturesAction extends BaseAction {
@@ -37,8 +38,7 @@ public final class AddPicturesAction extends BaseAction {
     this.chooser = new JFileChooser();
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     chooser.setMultiSelectionEnabled(true);
-    // TODO i18n
-    chooser.setFileFilter(new FileNameExtensionFilter("JPEG files", "jpg", "jpeg"));
+    chooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("action.addpictures.filter"), "jpg", "jpeg"));
     if (templates.getTemplates().isEmpty()) {
       this.setEnabled(false);
     }
@@ -63,8 +63,12 @@ public final class AddPicturesAction extends BaseAction {
       if (files.length > 0) {
         final TemplateWrapper[] templates = this.getWrapperTemplates();
         final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(
-            SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template",
-            JOptionPane.QUESTION_MESSAGE, null, templates, templates.length > 0 ? templates[0] : null);
+            SwingUtilities.getWindowAncestor((Component) e.getSource()),
+            UI.BUNDLE.getString("action.addpictures.choosetemplate.message"),
+            UI.BUNDLE.getString("action.addpictures.choosetemplate.title"),
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            templates, templates.length > 0 ? templates[0] : null);
         core.addPictures(files, wrapper.template);
       }
     }

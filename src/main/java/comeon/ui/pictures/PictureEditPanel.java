@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import comeon.model.Picture;
+import comeon.ui.UI;
 
 final class PictureEditPanel extends JPanel {
 
@@ -36,9 +37,8 @@ final class PictureEditPanel extends JPanel {
     final JScrollPane renderedTemplatePanel = wrap(renderedTemplate);
 
     final JTabbedPane templatesPanel = new JTabbedPane(SwingConstants.TOP);
-    // TODO i18n
-    templatesPanel.add(templatePanel, "Template");
-    templatesPanel.add(renderedTemplatePanel, "Rendered template");
+    templatesPanel.add(templatePanel, UI.BUNDLE.getString("picture.tab.template"));
+    templatesPanel.add(renderedTemplatePanel, UI.BUNDLE.getString("picture.tab.page"));
     templatesPanel.setSelectedComponent(renderedTemplatePanel);
 
     this.add(templatesPanel, BorderLayout.CENTER);
@@ -73,6 +73,7 @@ final class PictureEditPanel extends JPanel {
       try {
         this.doUpdate(picture, getText(e));
       } catch (final BadLocationException e1) {
+        // TODO i18n
         LOGGER.warn("Can't update template text", e1);
       }
     }

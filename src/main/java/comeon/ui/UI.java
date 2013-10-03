@@ -61,7 +61,7 @@ public final class UI extends JFrame {
 
   @Inject
   public UI(final Core core, final Templates templates, final MenuBar menuBar) {
-    super("ComeOn!");
+    super(BUNDLE.getString("comeon"));
 
     this.core = core;
 

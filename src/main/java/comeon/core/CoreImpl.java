@@ -80,6 +80,7 @@ public final class CoreImpl implements Core {
                   picture.getFileName());
               activeMediaWiki.upload(picture, listener);
             } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
+              // TODO i18n
               LOGGER.warn("Picture upload failed", e);
             } finally {
               monitor.itemDone(index);
@@ -102,6 +103,7 @@ public final class CoreImpl implements Core {
       try {
         this.activeMediaWiki.logout();
       } catch (final FailedLogoutException e) {
+        // TODO i18n
         LOGGER.warn("Failed implicit logout", e);
       }
     }

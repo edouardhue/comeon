@@ -67,7 +67,6 @@ public final class PreferencesDialog extends JOptionPane {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          // TODO i18n
           JOptionPane.showMessageDialog(
               PreferencesDialog.this.getParent(),
               new StringBuffer(UI.BUNDLE.getString("prefs.error.save")).append('\n').append(e.getLocalizedMessage()),
