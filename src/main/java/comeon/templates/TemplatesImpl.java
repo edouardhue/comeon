@@ -11,6 +11,7 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -26,10 +27,13 @@ public final class TemplatesImpl implements Templates {
 
   private final Preferences prefs;
 
+  private final EventBus bus;
+  
   @Inject
-  private TemplatesImpl() {
+  private TemplatesImpl(final EventBus bus) {
     this.templates = new ArrayList<>(0);
     this.prefs = Preferences.userNodeForPackage(ComeOn.class).node("templates");
+    this.bus = bus;
   }
 
   @Override
@@ -51,6 +55,7 @@ public final class TemplatesImpl implements Templates {
     this.templates.clear();
     this.templates.ensureCapacity(templates.size());
     this.templates.addAll(templates);
+    this.bus.post(new TemplatesChangedEvent(this.getTemplates()));
   }
 
   @Override

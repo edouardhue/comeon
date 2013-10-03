@@ -10,10 +10,15 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import comeon.core.Core;
 import comeon.model.Template;
 import comeon.templates.Templates;
+import comeon.templates.TemplatesChangedEvent;
 
+@Singleton
 public final class AddPicturesAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
@@ -24,6 +29,7 @@ public final class AddPicturesAction extends BaseAction {
 
   private final Core core;
 
+  @Inject
   public AddPicturesAction(final Templates templates, final Core core) {
     super("addpictures");
     this.templates = templates;
@@ -32,7 +38,6 @@ public final class AddPicturesAction extends BaseAction {
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     chooser.setMultiSelectionEnabled(true);
     chooser.setFileFilter(new FileNameExtensionFilter("JPEG files", "jpg", "jpeg"));
-    // TODO watch templates update to enable
     if (templates.getTemplates().isEmpty()) {
       this.setEnabled(false);
     }
@@ -54,11 +59,22 @@ public final class AddPicturesAction extends BaseAction {
     final int returnVal = chooser.showOpenDialog(JOptionPane.getRootFrame());
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       final File[] files = chooser.getSelectedFiles();
-      final TemplateWrapper[] templates = this.getWrapperTemplates();
-      final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(
-          SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template",
-          JOptionPane.QUESTION_MESSAGE, null, templates, templates.length > 0 ? templates[0] : null);
-      core.addPictures(files, wrapper.template);
+      if (files.length > 0) {
+        final TemplateWrapper[] templates = this.getWrapperTemplates();
+        final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(
+            SwingUtilities.getWindowAncestor((Component) e.getSource()), "Choose a template", "Template",
+            JOptionPane.QUESTION_MESSAGE, null, templates, templates.length > 0 ? templates[0] : null);
+        core.addPictures(files, wrapper.template);
+      }
+    }
+  }
+  
+  @Subscribe
+  public void handleTemplatesChanged(final TemplatesChangedEvent event) {
+    if (event.getTemplates().isEmpty()) {
+      this.setEnabled(false);
+    } else {
+      this.setEnabled(true);
     }
   }
 

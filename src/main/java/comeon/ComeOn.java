@@ -28,6 +28,9 @@ import comeon.core.WithPreferences;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesImpl;
 import comeon.ui.UI;
+import comeon.ui.actions.AddPicturesAction;
+import comeon.ui.actions.QuitAction;
+import comeon.ui.actions.UploadPicturesAction;
 import comeon.ui.menu.EditMenu;
 import comeon.ui.menu.FileMenu;
 import comeon.ui.menu.HelpMenu;
@@ -59,6 +62,9 @@ public final class ComeOn extends AbstractModule {
     bind(FileMenu.class);
     bind(EditMenu.class);
     bind(HelpMenu.class);
+    bind(AddPicturesAction.class);
+    bind(UploadPicturesAction.class);
+    bind(QuitAction.class);
     bind(EventBus.class).toInstance(bus);
   }
   
@@ -126,6 +132,7 @@ public final class ComeOn extends AbstractModule {
     final UI ui = injector.getInstance(UI.class);
     comeOn.bus.register(ui);
     comeOn.bus.register(injector.getInstance(Core.class));
+    comeOn.bus.register(injector.getInstance(AddPicturesAction.class));
     return ui;
   }
 

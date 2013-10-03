@@ -5,8 +5,6 @@ import javax.swing.JSeparator;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import comeon.core.Core;
-import comeon.templates.Templates;
 import comeon.ui.actions.AddPicturesAction;
 import comeon.ui.actions.QuitAction;
 import comeon.ui.actions.UploadPicturesAction;
@@ -16,11 +14,12 @@ public final class FileMenu extends BaseMenu {
   private static final long serialVersionUID = 1L;
 
   @Inject
-  public FileMenu(final Core core, final Templates templates) {
+  public FileMenu(final AddPicturesAction addPicturesAction, final UploadPicturesAction uploadPicturesAction,
+      final QuitAction quitAction) {
     super("file");
-    this.add(new JMenuItem(new AddPicturesAction(templates, core)));
-    this.add(new JMenuItem(new UploadPicturesAction(core)));
+    this.add(new JMenuItem(addPicturesAction));
+    this.add(new JMenuItem(uploadPicturesAction));
     this.add(new JSeparator());
-    this.add(new JMenuItem(new QuitAction()));
+    this.add(new JMenuItem(quitAction));
   }
 }

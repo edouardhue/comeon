@@ -10,14 +10,19 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import comeon.core.Core;
 import comeon.core.UploadMonitor;
 
+@Singleton
 public final class UploadPicturesAction extends BaseAction {
   private static final long serialVersionUID = 1L;
 
   private final Core core;
 
+  @Inject
   public UploadPicturesAction(final Core core) {
     super("upload");
     this.core = core;
