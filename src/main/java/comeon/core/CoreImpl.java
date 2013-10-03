@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.mediawiki.FailedLoginException;
@@ -94,6 +95,7 @@ public final class CoreImpl implements Core {
     });
   }
   
+  @Subscribe
   public void handleActiveWikiChangeEvent(final ActiveWikiChangeEvent event) {
     if (this.activeMediaWiki.isLoggedIn()) {
       try {
