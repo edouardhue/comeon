@@ -37,6 +37,7 @@ public final class AddPicturesAction extends BaseAction {
     this.chooser = new JFileChooser();
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     chooser.setMultiSelectionEnabled(true);
+    // TODO i18n
     chooser.setFileFilter(new FileNameExtensionFilter("JPEG files", "jpg", "jpeg"));
     if (templates.getTemplates().isEmpty()) {
       this.setEnabled(false);

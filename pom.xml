@@ -11,7 +11,7 @@
   <inceptionYear>2013</inceptionYear>
 
   <organization>
-    <name>Édouard Hue</name>
+    <name>Wikimedia France</name>
   </organization>
 
   <developers>
@@ -33,7 +33,17 @@
     </license>
   </licenses>
 
+  <properties>
+    <version.mwapi>1.4-SNAPSHOT</version.mwapi>
+  </properties>
+
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -42,6 +52,14 @@
         <configuration>
           <source>7</source>
           <target>7</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <encoding>ISO-8859-1</encoding>
         </configuration>
       </plugin>
       <plugin>
@@ -141,7 +159,7 @@
     <dependency>
       <groupId>org.mediawiki</groupId>
       <artifactId>api</artifactId>
-      <version>1.4-SNAPSHOT</version>
+      <version>${version.mwapi}</version>
       <exclusions>
         <exclusion>
           <artifactId>commons-logging</artifactId>

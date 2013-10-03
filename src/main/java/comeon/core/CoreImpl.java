@@ -47,6 +47,7 @@ public final class CoreImpl implements Core {
     this.pool = pool;
     this.bus = bus;
     this.wikis = wikis;
+    // TODO Use dependecy injection
     this.activeMediaWiki = new MediaWikiImpl(wikis.getActiveWiki());
   }
 
