@@ -5,6 +5,7 @@
   <groupId>comeon</groupId>
   <artifactId>comeon</artifactId>
   <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
   <name>ComeOn</name>
   <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
   <url>https://github.com/edouardhue/comeon</url>
@@ -36,6 +37,7 @@
   <properties>
     <version.mwapi>1.4-SNAPSHOT</version.mwapi>
     <version.mdextractor>2.6.2</version.mdextractor>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <build>
@@ -80,27 +82,6 @@
             </manifestEntries>
           </archive>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>webstart-maven-plugin</artifactId>
-        <version>1.0-beta-3</version>
-        <executions>
-          <execution>
-            <id>jnlp</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jnlp-inline</goal>
-            </goals>
-            <inherited>false</inherited>
-            <configuration>
-              <jnlp>
-                <inputTemplate>src/main/jnlp/jnlp.vm</inputTemplate>
-                <mainClass>comeon.ComeOn</mainClass>
-              </jnlp>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
