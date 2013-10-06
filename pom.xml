@@ -6,7 +6,7 @@
   <artifactId>comeon</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>ComeOn</name>
+  <name>ComeOn!</name>
   <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
   <url>https://github.com/edouardhue/comeon</url>
   <inceptionYear>2013</inceptionYear>
@@ -74,10 +74,13 @@
             <compress>true</compress>
             <index>true</index>
             <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addClasspath>true</addClasspath>
               <mainClass>comeon.ComeOn</mainClass>
             </manifest>
             <manifestEntries>
+              <Implementation-Title>${project.name}</Implementation-Title>
+              <Implementation-Version>${project.version}</Implementation-Version>
+              <Implementation-Vendor>Édouard Hue</Implementation-Vendor>
               <Splashscreen-Image>comeon_128_128.png</Splashscreen-Image>
             </manifestEntries>
           </archive>
