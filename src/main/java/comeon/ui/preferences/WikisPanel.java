@@ -129,7 +129,7 @@ public final class WikisPanel extends JPanel {
           new ComeOnTableColumn(1, UI.BUNDLE.getString("prefs.wikis.url")),
           new ComeOnTableColumn(2, UI.BUNDLE.getString("prefs.wikis.displayName")),
           new ComeOnTableColumn(3, UI.BUNDLE.getString("prefs.wikis.login")),
-          new ComeOnTableColumn(4, UI.BUNDLE.getString("prefs.wikis.password"))
+          new ComeOnTableColumn(4, UI.BUNDLE.getString("prefs.wikis.default"))
       ));
     }
   }

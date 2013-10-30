@@ -66,6 +66,10 @@ public final class WikisImpl implements Wikis, WithPreferences {
     for (final Wiki wiki : wikis) {
       final Preferences node = preferences.node(wiki.getName());
       node.put(WikiPreferencesKeys.URL.name(), wiki.getUrl());
+      final Preferences userNode = node.node("user");
+      userNode.put(UserPreferencesKeys.LOGIN.name(), wiki.getUser().getLogin());
+      userNode.put(UserPreferencesKeys.PASSWORD.name(), wiki.getUser().getPassword());
+      userNode.put(UserPreferencesKeys.DISPLAY_NAME.name(), wiki.getUser().getDisplayName());
     }
   }
 
