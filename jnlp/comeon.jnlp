@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
     spec="1.0+"
-    codebase="https://github.com/edouardhue/comeon/jnlp"
+    codebase="http://edouardhue.github.io/comeon/jnlp"
     href="comeon.jnlp">
   <information>
     <title>ComeOn!</title>
