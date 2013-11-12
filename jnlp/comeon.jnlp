@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp
+    spec="1.0+"
+    codebase="https://github.com/edouardhue/comeon/jnlp"
+    href="comeon.jnlp">
+  <information>
+    <title>ComeOn!</title>
+    <vendor>Wikimedia France</vendor>
+    <homepage href="https://github.com/edouardhue/comeon"/>
+    <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
+  </information>
+  <security>
+     <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.5+"/>
+         
+    <jar href="lib/comeon-1.0.0-SNAPSHOT.jar" main="true"/>
+    <jar href="lib/metadata-extractor-2.6.2.jar"/>
+    <jar href="lib/xmpcore-5.1.2.jar"/>
+    <jar href="lib/xercesImpl-2.11.0.jar"/>
+    <jar href="lib/xml-apis-1.4.01.jar"/>
+    <jar href="lib/slf4j-api-1.7.2.jar"/>
+    <jar href="lib/logback-classic-1.0.9.jar"/>
+    <jar href="lib/logback-core-1.0.9.jar"/>
+    <jar href="lib/guava-14.0.1.jar"/>
+    <jar href="lib/reflections-0.9.9-RC1.jar"/>
+    <jar href="lib/javassist-3.16.1-GA.jar"/>
+    <jar href="lib/dom4j-1.6.1.jar"/>
+    <jar href="lib/velocity-1.7.jar"/>
+    <jar href="lib/commons-collections-3.2.1.jar"/>
+    <jar href="lib/commons-lang-2.4.jar"/>
+    <jar href="lib/jcl-over-slf4j-1.7.2.jar"/>
+    <jar href="lib/commons-beanutils-core-1.8.3.jar"/>
+    <jar href="lib/api-1.4-SNAPSHOT.jar"/>
+    <jar href="lib/http.fluent-1.3.jar"/>
+    <jar href="lib/httpclient-4.2.2.jar"/>
+    <jar href="lib/httpcore-4.2.2.jar"/>
+    <jar href="lib/commons-codec-1.6.jar"/>
+    <jar href="lib/httpmime-4.2.2.jar"/>
+    <jar href="lib/guice-3.0-no_aop.jar"/>
+    <jar href="lib/javax.inject-1.jar"/>
+    <jar href="lib/aopalliance-1.0.jar"/>
+    <jar href="lib/args4j-2.0.25.jar"/>
+
+     $extensions
+  </resources>
+  <application-desc main-class="comeon.ComeOn"/>
+</jnlp>
+
