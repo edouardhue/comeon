@@ -13,7 +13,7 @@
      <all-permissions/>
   </security>
   <resources>
-    <j2se version="1.5+"/>
+    <j2se version="1.7+"/>
          
     <jar href="lib/comeon-1.0.0-SNAPSHOT.jar" main="true"/>
     <jar href="lib/metadata-extractor-2.6.2.jar"/>
@@ -43,8 +43,6 @@
     <jar href="lib/aopalliance-1.0.jar"/>
     <jar href="lib/args4j-2.0.25.jar"/>
 
-     $extensions
   </resources>
   <application-desc main-class="comeon.ComeOn"/>
 </jnlp>
-
