@@ -30,7 +30,7 @@ public final class Picture {
   }
 
   public void renderTemplate(final User user) {
-    this.renderedTemplate = template.getKind().render(templateText, user, this);
+    this.renderedTemplate = template.getKind().render(template, templateText, user, this);
   }
 
   public File getFile() {

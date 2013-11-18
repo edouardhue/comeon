@@ -1,34 +1,30 @@
 package comeon.templates.velocity;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.velocity.app.VelocityEngine;
 
 public final class VelocityTemplates {
-  private static final String VELOCITY_TEMPLATE_ROOT_KEY = VelocityTemplates.class.getName() + ".templateRoot";
-
   private static final VelocityTemplates INSTANCE = new VelocityTemplates();
 
-  private final VelocityEngine engine;
+  final Properties commonProps;
 
   private VelocityTemplates() {
-    engine = new VelocityEngine();
-    if (System.getProperties().containsKey(VELOCITY_TEMPLATE_ROOT_KEY)) {
-      final Properties veloProps = new Properties();
-      veloProps.put("file.resource.loader.path", System.getProperty(VELOCITY_TEMPLATE_ROOT_KEY));
-      veloProps.put("input.encoding", "UTF-8");
-      veloProps.put("output.encoding", "UTF-8");
-      engine.init(veloProps);
-    } else {
-      engine.init();
-    }
+    commonProps = new Properties();
+    commonProps.put("input.encoding", "UTF-8");
+    commonProps.put("output.encoding", "UTF-8");
   }
 
   public static VelocityTemplates getInstance() {
     return INSTANCE;
   }
 
-  public VelocityEngine getEngine() {
+  public VelocityEngine getEngine(final Map<String, String> additionalProps) {
+    final VelocityEngine engine = new VelocityEngine();
+    final Properties engineProps = new Properties(commonProps);
+    engineProps.putAll(additionalProps);
+    engine.init(engineProps);
     return engine;
   }
 }

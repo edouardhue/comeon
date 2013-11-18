@@ -4,6 +4,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,8 +19,8 @@ import comeon.templates.velocity.VelocityTemplates;
 public enum TemplateKind {
   VELOCITY {
     @Override
-    protected String doRender(final String templateText, final Map<String, Object> context) {
-      final VelocityEngine engine = VelocityTemplates.getInstance().getEngine();
+    protected String doRender(final Template template, final String templateText, final Map<String, Object> context) {
+      final VelocityEngine engine = VelocityTemplates.getInstance().getEngine(Collections.singletonMap("file.resource.loader.path", template.getFile().getParent()));
       final Reader templateReader = new StringReader(templateText);
       final Writer outWriter = new StringWriter((int) (templateText.length() * 1.5));
       final Context vContext = new VelocityContext(context);
@@ -28,13 +29,13 @@ public enum TemplateKind {
     }
   };
 
-  public final String render(final String templateText, final User user, final Picture picture) {
+  public final String render(final Template template, final String templateText, final User user, final Picture picture) {
     final Map<String, Object> context = new HashMap<>();
     for (final PostProcessor processor : Processors.getInstance().getPostProcessors()) {
       processor.process(user, picture, context);
     }
-    return this.doRender(templateText, context);
+    return this.doRender(template, templateText, context);
   }
 
-  protected abstract String doRender(final String templateText, final Map<String, Object> context);
+  protected abstract String doRender(final Template template, final String templateText, final Map<String, Object> context);
 }
