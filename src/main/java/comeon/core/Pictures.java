@@ -71,14 +71,14 @@ final class Pictures {
     return pictures;
   }
 
-  private final class PictureReader implements Runnable {
+  final class PictureReader implements Runnable {
     private static final String NON_WORD_CHARS = "[^\\w]";
 
     private final File file;
 
     private final User user;
 
-    private PictureReader(final File file, final User user) {
+    PictureReader(final File file, final User user) {
       this.file = file;
       this.user = user;
     }
@@ -87,28 +87,34 @@ final class Pictures {
     public void run() {
       final String fileName = file.getAbsolutePath();
       try {
-        final Metadata rawMetadata = ImageMetadataReader.readMetadata(file);
-        final ExifThumbnailDirectory thumbnailDirectory = rawMetadata.getDirectory(ExifThumbnailDirectory.class);
-        final byte[] thumbnail;
-        if (thumbnailDirectory.hasThumbnailData()) {
-          thumbnail = thumbnailDirectory.getThumbnailData();
-        } else {
-          thumbnail = new byte[0];
-        }
-        final Map<String, Object> metadata = new HashMap<>(rawMetadata.getDirectoryCount());
-        for (final Directory directory : rawMetadata.getDirectories()) {
-          copy(metadata, directory);
-          preProcess(metadata, directory);
-        }
-        final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
+        final Picture picture = buildPicture();
         picture.renderTemplate(user);
         pictures.add(picture);
       } catch (final ImageProcessingException e) {
         LOGGER.warn("Can't read metadata from {}", fileName, e);
       } catch (final IOException e) {
         LOGGER.warn("Can't read file {}", fileName, e);
+      } finally {
+        latch.countDown();
       }
-      latch.countDown();
+    }
+    
+    Picture buildPicture() throws ImageProcessingException, IOException {
+      final String fileName = file.getAbsolutePath();
+      final Metadata rawMetadata = ImageMetadataReader.readMetadata(file);
+      final ExifThumbnailDirectory thumbnailDirectory = rawMetadata.getDirectory(ExifThumbnailDirectory.class);
+      final byte[] thumbnail;
+      if (thumbnailDirectory.hasThumbnailData()) {
+        thumbnail = thumbnailDirectory.getThumbnailData();
+      } else {
+        thumbnail = new byte[0];
+      }
+      final Map<String, Object> metadata = new HashMap<>(rawMetadata.getDirectoryCount());
+      for (final Directory directory : rawMetadata.getDirectories()) {
+        copy(metadata, directory);
+        preProcess(metadata, directory);
+      }
+      return new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
     }
 
     private void copy(final Map<String, Object> metadata, final Directory directory) {

@@ -3,7 +3,7 @@ package comeon.model;
 import java.io.File;
 import java.nio.charset.Charset;
 
-public final class Template {
+public class Template {
   private final String name;
 
   private final String description;
