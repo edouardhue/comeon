@@ -43,6 +43,7 @@
     <jar href="lib/javax.inject-1.jar"/>
     <jar href="lib/aopalliance-1.0.jar"/>
     <jar href="lib/args4j-2.0.25.jar"/>
+    <jar href="lib/log4j-over-slf4j-1.7.2.jar"/>
 
   </resources>
   <application-desc main-class="comeon.ComeOn"/>
