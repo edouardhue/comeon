@@ -19,8 +19,6 @@
     <jar href="lib/comeon-1.0.0-SNAPSHOT.jar" main="true"/>
     <jar href="lib/metadata-extractor-2.6.2.jar"/>
     <jar href="lib/xmpcore-5.1.2.jar"/>
-    <jar href="lib/xercesImpl-2.11.0.jar"/>
-    <jar href="lib/xml-apis-1.4.01.jar"/>
     <jar href="lib/slf4j-api-1.7.2.jar"/>
     <jar href="lib/logback-classic-1.0.9.jar"/>
     <jar href="lib/logback-core-1.0.9.jar"/>
