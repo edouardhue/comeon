@@ -5,9 +5,10 @@
     href="comeon.jnlp">
   <information>
     <title>ComeOn!</title>
-    <vendor>Wikimedia France</vendor>
+    <vendor>Édouard Hue</vendor>
     <homepage href="https://github.com/edouardhue/comeon"/>
     <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
+    <offline-allowed/>
   </information>
   <security>
      <all-permissions/>
