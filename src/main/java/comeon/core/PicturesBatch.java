@@ -26,14 +26,15 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.User;
 import comeon.model.processors.PreProcessor;
-import comeon.model.processors.Processors;
 
-final class Pictures {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Pictures.class);
+public final class PicturesBatch {
+  private static final Logger LOGGER = LoggerFactory.getLogger(PicturesBatch.class);
 
   private final File[] files;
 
@@ -44,16 +45,19 @@ final class Pictures {
   private final ExecutorService pool;
 
   private final CountDownLatch latch;
+  
+  private final Set<PreProcessor> preProcessors;
 
-  Pictures(final File[] files, final Template defautTemplate, final ExecutorService pool) {
+  PicturesBatch(final File[] files, final Template defautTemplate, final ExecutorService pool, final Set<PreProcessor> preProcessors) {
     this.files = files;
     this.defaultTemplate = defautTemplate;
     this.pool = pool;
     this.pictures = Collections.synchronizedList(new ArrayList<Picture>(files.length));
     this.latch = new CountDownLatch(files.length);
+    this.preProcessors = preProcessors;
   }
 
-  public Pictures readFiles(final User user) {
+  public PicturesBatch readFiles(final User user) {
     for (final File file : files) {
       pool.execute(new PictureReader(file, user));
     }
@@ -136,10 +140,20 @@ final class Pictures {
     }
 
     private void preProcess(final Map<String, Object> metadata, final Directory directory) {
-      final Set<PreProcessor> preProcessors = Processors.getInstance().getPreProcessors(directory.getClass());
+      final Set<PreProcessor> preProcessors = filterPreProcessors(directory.getClass());
       for (final PreProcessor preProcessor : preProcessors) {
         preProcessor.process(directory, metadata);
       }
+    }
+    
+    private Set<PreProcessor> filterPreProcessors(final Class<? extends Directory> clazz) {
+      final Predicate<PreProcessor> predicate = new Predicate<PreProcessor>() {
+        @Override
+        public boolean apply(final PreProcessor processor) {
+          return clazz.isAssignableFrom(processor.getSupportedClass());
+        }
+      };
+      return Sets.filter(preProcessors, predicate);
     }
   }
 }

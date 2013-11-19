@@ -39,21 +39,25 @@ public final class CoreImpl implements Core {
 
   private final EventBus bus;
   
+  private final PicturesBatchFactory picturesBatchFactory;
+
   private MediaWiki activeMediaWiki;
+  
 
   @Inject
-  private CoreImpl(final Wikis wikis, final ExecutorService pool, final EventBus bus) {
+  private CoreImpl(final Wikis wikis, final ExecutorService pool, final EventBus bus, final PicturesBatchFactory picturesBatchFactory) {
     this.pictures = new ArrayList<>();
     this.pool = pool;
     this.bus = bus;
     this.wikis = wikis;
+    this.picturesBatchFactory = picturesBatchFactory;
     // TODO Use dependecy injection
     this.activeMediaWiki = new MediaWikiImpl(wikis.getActiveWiki());
   }
 
   @Override
   public void addPictures(final File[] files, final Template defautTemplate) {
-    final Pictures picturesReader = new Pictures(files, defautTemplate, pool);
+    final PicturesBatch picturesReader = picturesBatchFactory.makePicturesBatch(files, defautTemplate);
     final List<Picture> newPictures = picturesReader.readFiles(wikis.getActiveWiki().getUser()).getPictures();
     this.pictures.addAll(newPictures);
     bus.post(new PicturesAddedEvent());

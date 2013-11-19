@@ -22,9 +22,17 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.multibindings.Multibinder;
 import comeon.core.Core;
 import comeon.core.CoreImpl;
+import comeon.core.PicturesBatchFactory;
+import comeon.core.RealPicturesBatchFactory;
 import comeon.core.WithPreferences;
+import comeon.model.processors.DefaultPostProcessor;
+import comeon.model.processors.GpsPreProcessor;
+import comeon.model.processors.IptcPreProcessor;
+import comeon.model.processors.PostProcessor;
+import comeon.model.processors.PreProcessor;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesImpl;
 import comeon.ui.UI;
@@ -56,7 +64,17 @@ public final class ComeOn extends AbstractModule {
     bind(Core.class).to(CoreImpl.class);
     bind(Templates.class).to(TemplatesImpl.class);
     bind(Wikis.class).to(WikisImpl.class);
+    bind(PicturesBatchFactory.class).to(RealPicturesBatchFactory.class);
+    
+    Multibinder<PreProcessor> preProcessorsBinder = Multibinder.newSetBinder(binder(), PreProcessor.class);
+    preProcessorsBinder.addBinding().to(GpsPreProcessor.class);
+    preProcessorsBinder.addBinding().to(IptcPreProcessor.class);
+    
+    Multibinder<PostProcessor> postProcessorsBinder = Multibinder.newSetBinder(binder(), PostProcessor.class);
+    postProcessorsBinder.addBinding().to(DefaultPostProcessor.class);
+    
     bind(ExecutorService.class).toInstance(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+    
     bind(UI.class);
     bind(MenuBar.class);
     bind(FileMenu.class);

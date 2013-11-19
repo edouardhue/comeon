@@ -12,7 +12,7 @@
   <inceptionYear>2013</inceptionYear>
 
   <organization>
-    <name>Wikimedia France</name>
+    <name>Édouard Hue</name>
   </organization>
 
   <developers>
@@ -38,6 +38,7 @@
     <version.mwapi>1.4-SNAPSHOT</version.mwapi>
     <version.mdextractor>2.6.2</version.mdextractor>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <codebase>http://edouardhue.github.io/comeon/jnlp</codebase>
   </properties>
 
   <build>
@@ -83,11 +84,12 @@
       <groupId>com.drewnoakes</groupId>
       <artifactId>metadata-extractor</artifactId>
       <version>${version.mdextractor}</version>
-    </dependency>
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.11.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>xercesImpl</artifactId>
+          <groupId>xerces</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -108,6 +110,12 @@
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
       <version>0.9.9-RC1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>xml-apis</artifactId>
+          <groupId>xml-apis</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
@@ -163,6 +171,16 @@
       <artifactId>mockito-core</artifactId>
       <version>1.9.5</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>1.7.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-multibindings</artifactId>
+      <version>3.0</version>
     </dependency>
   </dependencies>
 
@@ -250,13 +268,20 @@
                 </goals>
                 <configuration>
                   <libPath>lib</libPath>
-                  <codebase>http://edouardhue.github.io/comeon/jnlp</codebase>
+                  <codebase>${codebase}</codebase>
                   <jnlp>
                     <inputTemplate>template.vm</inputTemplate>
                     <outputFile>comeon.jnlp</outputFile>
                     <mainClass>comeon.ComeOn</mainClass>
                     <j2seVersion>1.7+</j2seVersion>
+                    <offlineAllowed>true</offlineAllowed>
                   </jnlp>
+                  <updateManifestEntries>
+                    <Permissions>all-permissions</Permissions>
+                    <Codebase>${codebase}</Codebase>
+                    <Application-Name>${project.name}</Application-Name>
+                    <Trusted-Only>true</Trusted-Only>
+                  </updateManifestEntries>
                   <sign>
                     <keystore>${keystorePath}</keystore>
                     <storepass>${keystorePassword}</storepass>
@@ -295,7 +320,7 @@
             <version>1.0-beta-4</version>
             <configuration>
               <siteJnlpFile>comeon.jnlp</siteJnlpFile>
-              <codebase>http://edouardhue.github.io/comeon/jnlp</codebase>
+              <codebase>${codebase}</codebase>
             </configuration>
           </plugin>
         </plugins>

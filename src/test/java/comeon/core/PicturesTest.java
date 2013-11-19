@@ -35,7 +35,7 @@ public class PicturesTest {
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
   
-  private Pictures.PictureReader reader;
+  private PicturesBatch.PictureReader reader;
   
   @Before
   public void createReader() throws IOException {
@@ -43,7 +43,7 @@ public class PicturesTest {
     Files.copy(Resources.newInputStreamSupplier(Resources.getResource("long-category-titles.jpg")), file);
     final Template mockTemplate = Mockito.mock(Template.class);
     Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
-    final Pictures pics = new Pictures(new File[0], mockTemplate, null);
+    final PicturesBatch pics = new PicturesBatch(new File[0], mockTemplate, null);
     this.reader = pics.new PictureReader(file, null);
   }
 

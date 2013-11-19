@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.log.Log4JLogChute;
 
 public final class VelocityTemplates {
   private static final VelocityTemplates INSTANCE = new VelocityTemplates();
@@ -12,8 +14,10 @@ public final class VelocityTemplates {
 
   private VelocityTemplates() {
     commonProps = new Properties();
-    commonProps.put("input.encoding", "UTF-8");
-    commonProps.put("output.encoding", "UTF-8");
+    commonProps.put(RuntimeConstants.INPUT_ENCODING, "UTF-8");
+    commonProps.put(RuntimeConstants.OUTPUT_ENCODING, "UTF-8");
+    commonProps.put(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
+    commonProps.put("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
   }
 
   public static VelocityTemplates getInstance() {
