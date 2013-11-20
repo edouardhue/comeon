@@ -23,9 +23,6 @@
     <jar href="lib/logback-classic-1.0.9.jar"/>
     <jar href="lib/logback-core-1.0.9.jar"/>
     <jar href="lib/guava-14.0.1.jar"/>
-    <jar href="lib/reflections-0.9.9-RC1.jar"/>
-    <jar href="lib/javassist-3.16.1-GA.jar"/>
-    <jar href="lib/dom4j-1.6.1.jar"/>
     <jar href="lib/velocity-1.7.jar"/>
     <jar href="lib/commons-collections-3.2.1.jar"/>
     <jar href="lib/commons-lang-2.4.jar"/>
@@ -42,6 +39,8 @@
     <jar href="lib/aopalliance-1.0.jar"/>
     <jar href="lib/args4j-2.0.25.jar"/>
     <jar href="lib/log4j-over-slf4j-1.7.2.jar"/>
+    <jar href="lib/guice-multibindings-3.0.jar"/>
+    <jar href="lib/guice-3.0.jar"/>
 
   </resources>
   <application-desc main-class="comeon.ComeOn"/>
