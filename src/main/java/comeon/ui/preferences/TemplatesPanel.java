@@ -17,6 +17,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
 
 import comeon.model.Template;
+import comeon.templates.Templates;
 import comeon.ui.ComeOnTableColumn;
 import comeon.ui.UI;
 
@@ -27,10 +28,13 @@ public final class TemplatesPanel extends JPanel {
   private final TemplatesTableModel tableModel;
 
   private final JTable table;
+  
+  private final Templates templates;
 
-  public TemplatesPanel(final List<Template> templates) {
+  public TemplatesPanel(final Templates templates) {
     super(new BorderLayout());
-    this.tableModel = new TemplatesTableModel(templates);
+    this.templates = templates;
+    this.tableModel = new TemplatesTableModel(templates.getTemplates());
     this.table = new JTable(tableModel, new TemplatesColumnModel());
     this.add(new JScrollPane(table), BorderLayout.CENTER);
     final JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -54,7 +58,7 @@ public final class TemplatesPanel extends JPanel {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-      final TemplatePanel panel = new TemplatePanel(null);
+      final TemplatePanel panel = new TemplatePanel(null, templates.getTemplateKinds());
       final int value = panel.showDialog();
       if (value == JOptionPane.OK_OPTION) {
         final Template template = panel.getTemplate();
@@ -75,7 +79,7 @@ public final class TemplatesPanel extends JPanel {
       final int selectedRow = table.getSelectedRow();
       if (selectedRow != -1) {
         final Template selectedTemplate = tableModel.getTemplates().get(selectedRow);
-        final TemplatePanel panel = new TemplatePanel(selectedTemplate);
+        final TemplatePanel panel = new TemplatePanel(selectedTemplate, templates.getTemplateKinds());
         final int value = panel.showDialog();
         if (value == JOptionPane.OK_OPTION) {
           final Template editedTemplate = panel.getTemplate();
@@ -146,7 +150,7 @@ public final class TemplatesPanel extends JPanel {
         value = template.getDescription();
         break;
       case 2:
-        value = template.getKind().name();
+        value = template.getKind().getClass().getSimpleName();
         break;
       case 3:
         value = template.getCharset().displayName();

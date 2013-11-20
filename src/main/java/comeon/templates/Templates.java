@@ -5,6 +5,7 @@ import java.util.prefs.BackingStoreException;
 
 import comeon.core.WithPreferences;
 import comeon.model.Template;
+import comeon.model.TemplateKind;
 
 public interface Templates extends WithPreferences {
 
@@ -14,4 +15,5 @@ public interface Templates extends WithPreferences {
 
   void save() throws BackingStoreException;
 
+  List<TemplateKind> getTemplateKinds();
 }

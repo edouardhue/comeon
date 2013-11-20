@@ -22,12 +22,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 import comeon.core.Core;
 import comeon.core.CoreImpl;
 import comeon.core.PicturesBatchFactory;
 import comeon.core.RealPicturesBatchFactory;
 import comeon.core.WithPreferences;
+import comeon.model.TemplateKind;
 import comeon.model.processors.DefaultPostProcessor;
 import comeon.model.processors.GpsPreProcessor;
 import comeon.model.processors.IptcPreProcessor;
@@ -35,6 +37,7 @@ import comeon.model.processors.PostProcessor;
 import comeon.model.processors.PreProcessor;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesImpl;
+import comeon.templates.velocity.VelocityTemplate;
 import comeon.ui.UI;
 import comeon.ui.actions.AddPicturesAction;
 import comeon.ui.actions.QuitAction;
@@ -74,6 +77,9 @@ public final class ComeOn extends AbstractModule {
     postProcessorsBinder.addBinding().to(DefaultPostProcessor.class);
     
     bind(ExecutorService.class).toInstance(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+    
+    MapBinder<String, TemplateKind> templateKinds = MapBinder.newMapBinder(binder(), String.class, TemplateKind.class);
+    templateKinds.addBinding(VelocityTemplate.class.getSimpleName()).to(VelocityTemplate.class);
     
     bind(UI.class);
     bind(MenuBar.class);

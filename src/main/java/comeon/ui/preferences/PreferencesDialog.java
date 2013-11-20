@@ -40,7 +40,7 @@ public final class PreferencesDialog extends JOptionPane {
     this.templates = templates;
     this.wikis = wikis;
     this.tabs = new JTabbedPane(SwingConstants.TOP);
-    this.templatesPanel = new TemplatesPanel(templates.getTemplates());
+    this.templatesPanel = new TemplatesPanel(templates);
     tabs.add(UI.BUNDLE.getString("prefs.tab.templates"), templatesPanel);
     final List<Wiki> wikisList = wikis.getWikis();
     assert wikisList.contains(wikis.getActiveWiki());

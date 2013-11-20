@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -18,6 +19,7 @@ import com.google.inject.Singleton;
 import comeon.ComeOn;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
+import comeon.templates.velocity.VelocityTemplate;
 
 @Singleton
 public final class TemplatesImpl implements Templates {
@@ -26,13 +28,16 @@ public final class TemplatesImpl implements Templates {
   private final ArrayList<Template> templates;
 
   private final Preferences prefs;
+  
+  private final Map<String, TemplateKind> templateKinds;
 
   private final EventBus bus;
   
   @Inject
-  private TemplatesImpl(final EventBus bus) {
+  private TemplatesImpl(final Map<String, TemplateKind> templateKinds, final EventBus bus) {
     this.templates = new ArrayList<>(0);
     this.prefs = Preferences.userNodeForPackage(ComeOn.class).node("templates");
+    this.templateKinds = templateKinds;
     this.bus = bus;
   }
 
@@ -59,6 +64,12 @@ public final class TemplatesImpl implements Templates {
   }
 
   @Override
+  public List<TemplateKind> getTemplateKinds() {
+    // TODO use a predictive sort
+    return new ArrayList<>(templateKinds.values());
+  }
+  
+  @Override
   public void save() throws BackingStoreException {
     for (final String name : prefs.childrenNames()) {
       prefs.node(name).removeNode();
@@ -68,7 +79,7 @@ public final class TemplatesImpl implements Templates {
       node.put(PreferencesKeys.DESCRIPTION.name(), template.getDescription());
       node.put(PreferencesKeys.FILE.name(), template.getFile().getAbsolutePath());
       node.put(PreferencesKeys.CHARSET.name(), template.getCharset().name());
-      node.put(PreferencesKeys.KIND.name(), template.getKind().name());
+      node.put(PreferencesKeys.KIND.name(), template.getKind().getClass().getSimpleName());
     }
   }
 
@@ -79,7 +90,7 @@ public final class TemplatesImpl implements Templates {
       final Charset charset = Charset.forName(node.get(PreferencesKeys.CHARSET.name(), null));
       final File file = new File(node.get(PreferencesKeys.FILE.name(), null));
       final String templateText = Files.toString(file, charset);
-      final TemplateKind kind = TemplateKind.valueOf(node.get(PreferencesKeys.KIND.name(), ""));
+      final TemplateKind kind = templateKinds.get(node.get(PreferencesKeys.KIND.name(), VelocityTemplate.class.getSimpleName()));
       final Template template = new Template(templateName, description, file, charset, templateText, kind);
       templates.add(template);
     } catch (final IllegalArgumentException | NullPointerException | IOException e) {

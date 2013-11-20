@@ -2,7 +2,9 @@ package comeon.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,6 +20,7 @@ import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import comeon.model.Picture;
 import comeon.model.Template;
+import comeon.model.processors.PreProcessor;
 
 /**
  * IPTC Keywords are limited to 64 bytes. Too bad !
@@ -43,7 +46,7 @@ public class PicturesTest {
     Files.copy(Resources.newInputStreamSupplier(Resources.getResource("long-category-titles.jpg")), file);
     final Template mockTemplate = Mockito.mock(Template.class);
     Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
-    final PicturesBatch pics = new PicturesBatch(new File[0], mockTemplate, null);
+    final PicturesBatch pics = new PicturesBatch(new File[0], mockTemplate, (ExecutorService) null, new HashSet<PreProcessor>());
     this.reader = pics.new PictureReader(file, null);
   }
 

@@ -1,17 +1,21 @@
 package comeon.ui.preferences;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -58,7 +62,7 @@ final class TemplatePanel extends JOptionPane {
   
   private String templateText;
 
-  public TemplatePanel(final Template template) {
+  public TemplatePanel(final Template template, final List<TemplateKind> templateKinds) {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
     this.fileChooser = new JFileChooser();
     this.fieldsPanel = new JPanel(new SpringLayout());
@@ -69,7 +73,8 @@ final class TemplatePanel extends JOptionPane {
       this.templateText = template.getTemplateText();
     }
     this.pathField = new JTextField(templateFile == null ? "" : templateFile.getAbsolutePath(), 20);
-    this.kindField = new JComboBox<>(TemplateKind.values());
+    this.kindField = new JComboBox<>(templateKinds.toArray(new TemplateKind[templateKinds.size()]));
+    this.kindField.setRenderer(new TemplateKindCellRenderer());
     this.charsetField = new JComboBox<>(new Charset[] {
         Charsets.UTF_8,
         Charsets.ISO_8859_1
@@ -111,6 +116,16 @@ final class TemplatePanel extends JOptionPane {
     fieldsPanel.add(kindField);
     
     SpringUtilities.makeCompactGrid(fieldsPanel, 5, 2, 6, 6, 6, 6);
+  }
+
+  private final class TemplateKindCellRenderer extends DefaultListCellRenderer {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
+        final boolean cellHasFocus) {
+      return super.getListCellRendererComponent(list, value.getClass().getSimpleName(), index, isSelected, cellHasFocus);
+    }
   }
   
   private final class ChooseFileAction extends AbstractAction {
