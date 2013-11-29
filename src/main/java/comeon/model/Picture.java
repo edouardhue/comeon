@@ -68,4 +68,23 @@ public final class Picture {
   public String getFileName() {
     return fileName;
   }
+  
+  @Override
+  public boolean equals(final Object obj) {
+    final boolean isEqual;
+    if (obj == null) {
+      isEqual = false;
+    } else if (obj instanceof Picture) {
+      final Picture o = (Picture) obj;
+      isEqual = this.file.equals(o.file);
+    } else {
+      isEqual = false;
+    }
+    return isEqual;
+  }
+  
+  @Override
+  public int hashCode() {
+    return this.file.hashCode();
+  }
 }

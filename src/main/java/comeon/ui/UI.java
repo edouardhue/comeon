@@ -32,13 +32,13 @@ import com.google.inject.Singleton;
 import comeon.core.Core;
 import comeon.model.Picture;
 import comeon.templates.Templates;
+import comeon.ui.actions.PictureRemovedEvent;
 import comeon.ui.actions.PicturesAddedEvent;
 import comeon.ui.menu.MenuBar;
 import comeon.ui.pictures.PicturePanels;
 
 @Singleton
 public final class UI extends JFrame {
-
   private static final long serialVersionUID = 1L;
 
   public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("comeon.ui.comeon");
@@ -101,42 +101,61 @@ public final class UI extends JFrame {
     this.refreshPictures();
   }
 
+  @Subscribe
+  public void handlePictureRemovedEvent(final PictureRemovedEvent event) {
+    this.refreshPictures();
+  }
+
   private void refreshPictures() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         previews.removeAll();
         editContainer.removeAll();
+        validate();
         for (final Picture picture : core.getPictures()) {
           add(picture);
         }
+        validate();
       }
     });
   }
 
-  public void add(final Picture picture) {
+  private void add(final Picture picture) {
     final PicturePanels panels = new PicturePanels(picture);
+    final JComponent previewPanel = panels.getPreviewPanel();
 
     this.previews.remove(previewsGlue);
-    this.previews.add(panels.getPreviewPanel());
+    this.previews.add(previewPanel);
     this.previews.add(previewsGlue);
 
     this.editContainer.add(panels.getEditPanel(), picture.getFileName());
 
-    ((JComponent) panels.getPreviewPanel()).addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(final MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
+    previewPanel.addMouseListener(new PreviewPanelMouseAdapter(picture));
+  }
+
+  private final class PreviewPanelMouseAdapter extends MouseAdapter {
+    private final Picture picture;
+
+    private PreviewPanelMouseAdapter(Picture picture) {
+      this.picture = picture;
+    }
+
+    @Override
+    public void mouseClicked(final MouseEvent e) {
+      if (e.getButton() == MouseEvent.BUTTON1) {
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            if (e.isControlDown()) {
+              core.removePicture(picture);
+            } else {
               ((CardLayout) editContainer.getLayout()).show(editContainer, picture.getFileName());
             }
-          });
-        }
+          }
+        });
       }
-    });
-
-    this.validate();
+    }
   }
+
 }

@@ -8,10 +8,12 @@ import comeon.model.Template;
 
 public interface Core {
 
-  public abstract void addPictures(File[] files, Template defautTemplate);
+  void addPictures(File[] files, Template defautTemplate);
 
-  public abstract List<Picture> getPictures();
+  void removePicture(Picture picture);
+  
+  List<Picture> getPictures();
 
-  public abstract void uploadPictures(UploadMonitor monitor);
+  void uploadPictures(UploadMonitor monitor);
 
 }

@@ -23,6 +23,7 @@ import comeon.mediawiki.MediaWikiImpl;
 import comeon.mediawiki.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
+import comeon.ui.actions.PictureRemovedEvent;
 import comeon.ui.actions.PicturesAddedEvent;
 import comeon.wikis.ActiveWikiChangeEvent;
 import comeon.wikis.Wikis;
@@ -63,6 +64,12 @@ public final class CoreImpl implements Core {
     bus.post(new PicturesAddedEvent());
   }
 
+  @Override
+  public void removePicture(final Picture picture) {
+    pictures.remove(picture);
+    bus.post(new PictureRemovedEvent());
+  }
+  
   @Override
   public List<Picture> getPictures() {
     return pictures;
