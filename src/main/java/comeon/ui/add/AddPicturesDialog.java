@@ -1,7 +1,5 @@
 package comeon.ui.add;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -9,6 +7,8 @@ import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -23,7 +23,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.google.common.base.Strings;
-
 import comeon.ui.UI;
 
 public final class AddPicturesDialog extends JOptionPane {
@@ -54,16 +53,28 @@ public final class AddPicturesDialog extends JOptionPane {
     
     private final JFileChooser fileChooser;
     
-    private final JButton pickFileButton;
+    private final JLabel metadataFileLabel;
+    
+    private final JTextField metadataFileLocation;
+    
+    private final JButton pickMetadataFileButton;
+    
+    private final JLabel metadataMatchLabel;
     
     private final JTextField pictureExpression;
     
-    private final JTextField metatadataExpression;
+    private final JLabel metadataMatchSymbol;
+    
+    private final JTextField metadataExpression;
     
     private File file;
 
     public FilesPanel() {
-      super(new GridBagLayout());
+      super();
+      final GroupLayout layout = new GroupLayout(this);
+      layout.setAutoCreateGaps(true);
+      layout.setAutoCreateContainerGaps(true);
+      this.setLayout(layout);
       
       this.filesChooser = new JFileChooser();
       filesChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -74,67 +85,82 @@ public final class AddPicturesDialog extends JOptionPane {
       fileChooser.setMultiSelectionEnabled(false);
       fileChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("addpictures.metadata.filter"), "csv"));
 
-      final JLabel filesListLabel = new JLabel("Images");
+      final JLabel filesListLabel = new JLabel(UI.BUNDLE.getString("addpictures.pictures.label"));
+
       this.filesListModel = new DefaultListModel<>();
       final JList<File> filesList = new JList<>(filesListModel);
       filesList.setPrototypeCellValue(new File(Strings.repeat("x", 30)));
+      final JScrollPane filesListPanel = new JScrollPane(filesList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       
+      final JButton pickPicturesFilesButton = new JButton(new PickPicturesFilesAction());
+
       final UseExternalMetadataCheckboxHandler checkboxHandler = new UseExternalMetadataCheckboxHandler();
       this.metatadataCheckbox = new JCheckBox(checkboxHandler);
       metatadataCheckbox.addItemListener(checkboxHandler);
 
-      final JLabel metadataFileLabel = new JLabel("Métadonnées");
-      final JTextField metadataFileLocation = new JTextField(30);
-      this.pickFileButton = new JButton(new PickMetadataFileAction());
+      this.metadataFileLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.label"));
+      this.metadataFileLocation = new JTextField(30);
+      this.pickMetadataFileButton = new JButton(new PickMetadataFileAction());
+      this.metadataMatchLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.label"));
       this.pictureExpression = new JTextField(20);
-      this.metatadataExpression = new JTextField(20);
+      this.metadataExpression = new JTextField(20);
+      this.metadataMatchSymbol = new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.symbol"));
 
-      final GridBagConstraints constraints = new GridBagConstraints();
-      
-      this.add(filesListLabel, constraints);
-      constraints.gridx = 1;
-      constraints.gridwidth= 3;
-      constraints.fill = GridBagConstraints.BOTH;
-      this.add(new JScrollPane(filesList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), constraints);
-      constraints.gridx = 4;
-      constraints.gridwidth = 1;
-      constraints.gridheight = 1;
-      constraints.fill = GridBagConstraints.NONE;
-      this.add(new JButton(new PickPicturesFilesAction()), constraints);
-      
-      constraints.gridy = 1;
-
-      constraints.gridx = 1;
-      constraints.gridwidth = 3;
-      this.add(metatadataCheckbox, constraints);
-      
-      constraints.gridy = 2;
-      
-      constraints.gridx = 0;
-      constraints.gridwidth = 1;
-      this.add(metadataFileLabel, constraints);
-      constraints.gridx = 1;
-      constraints.gridwidth = 3;
-      constraints.fill = GridBagConstraints.BOTH;
-      this.add(metadataFileLocation, constraints);
-      constraints.gridx = 4;
-      constraints.gridwidth = 1;
-      constraints.fill = GridBagConstraints.NONE;
-      this.add(new JButton(new PickPicturesFilesAction()), constraints);
-      
-      constraints.gridy = 3;
-      
-      constraints.gridx = 0;
-      this.add(new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.label")), constraints);
-      constraints.gridx = 1;
-      constraints.fill = GridBagConstraints.BOTH;
-      this.add(pictureExpression, constraints);
-      constraints.gridx = 2;
-      constraints.fill = GridBagConstraints.NONE;
-      this.add(new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.symbol")), constraints);
-      constraints.gridx = 3;
-      constraints.fill = GridBagConstraints.BOTH;
-      this.add(metatadataExpression, constraints);
+      layout.setVerticalGroup(
+          layout.createSequentialGroup()
+          .addComponent(filesListLabel)
+          .addGroup(
+              layout.createParallelGroup(Alignment.BASELINE)
+              .addComponent(filesListPanel)
+              .addComponent(pickPicturesFilesButton)
+          )
+          .addComponent(metatadataCheckbox)
+          .addGroup(
+              layout.createParallelGroup(Alignment.BASELINE)
+              .addComponent(metadataFileLabel)
+              .addComponent(metadataFileLocation)
+              .addComponent(pickMetadataFileButton)
+          )
+          .addGroup(
+              layout.createParallelGroup(Alignment.BASELINE)
+              .addComponent(metadataMatchLabel)
+              .addComponent(pictureExpression)
+              .addComponent(metadataMatchSymbol)
+              .addComponent(metadataExpression)
+          )
+      );
+      layout.setHorizontalGroup(
+          layout.createSequentialGroup()
+          .addGroup(
+              layout.createParallelGroup(Alignment.LEADING)
+              .addComponent(filesListLabel)
+              .addComponent(filesListPanel)
+              .addComponent(metatadataCheckbox)
+              .addGroup(
+                  layout.createSequentialGroup()
+                  .addGroup(
+                      layout.createParallelGroup()
+                      .addComponent(metadataFileLabel)
+                      .addComponent(metadataMatchLabel)
+                  )
+                  .addGroup(
+                      layout.createParallelGroup()
+                      .addComponent(metadataFileLocation)
+                      .addGroup(
+                          layout.createSequentialGroup()
+                          .addComponent(metadataExpression)
+                          .addComponent(metadataMatchSymbol)
+                          .addComponent(pictureExpression)
+                      )
+                  )
+              )
+          )
+          .addGroup(
+              layout.createParallelGroup(Alignment.LEADING)
+              .addComponent(pickPicturesFilesButton)
+              .addComponent(pickMetadataFileButton)
+          )
+      );
       
       this.deactivateMetadataZone();
     }
@@ -152,19 +178,25 @@ public final class AddPicturesDialog extends JOptionPane {
     }
     
     public String getMetadataExpression() {
-      return metatadataExpression.getText();
+      return metadataExpression.getText();
+    }
+    
+    private void toggleMetadataZone(final boolean state) {
+      pickMetadataFileButton.setEnabled(state);
+      metadataFileLabel.setEnabled(state);
+      metadataFileLocation.setEnabled(state);
+      metadataMatchLabel.setEnabled(state);
+      pictureExpression.setEnabled(state);
+      metadataMatchSymbol.setEnabled(state);
+      metadataExpression.setEnabled(state);
     }
     
     public void activateMetadataZone() {
-      pickFileButton.setEnabled(true);
-      pictureExpression.setEnabled(true);
-      metatadataExpression.setEnabled(true);
+      this.toggleMetadataZone(true);
     }
     
     public void deactivateMetadataZone() {
-      pickFileButton.setEnabled(false);
-      pictureExpression.setEnabled(false);
-      metatadataExpression.setEnabled(false);
+      this.toggleMetadataZone(false);
     }
     
     private class PickPicturesFilesAction extends AbstractAction {
