@@ -31,15 +31,40 @@ public final class AddPicturesDialog extends JOptionPane {
 
   private final JDialog dialog;
   
+  private final FilesPanel filesPanel;
+  
   public AddPicturesDialog() {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-    this.setMessage(new FilesPanel());
+    this.filesPanel = new FilesPanel();
+    this.setMessage(this.filesPanel);
     this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("action.addpictures.title"));
   }
 
   public int showDialog() {
     this.dialog.setVisible(true);
     return ((Integer) this.getValue()).intValue();
+  }
+  
+  public File[] getPicturesFiles() {
+    final File[] files = new File[filesPanel.filesListModel.size()];
+    filesPanel.filesListModel.copyInto(files);
+    return files;
+  }
+  
+  public boolean getUseMetadata() {
+    return filesPanel.metatadataCheckbox.isSelected();
+  }
+  
+  public File getMetadataFile() {
+    return filesPanel.metadataFile;
+  }
+  
+  public String getPictureExpression() {
+    return filesPanel.pictureExpression.getText();
+  }
+  
+  public String getMetadataExpression() {
+    return filesPanel.metadataExpression.getText();
   }
   
   private class FilesPanel extends JPanel {
@@ -67,7 +92,7 @@ public final class AddPicturesDialog extends JOptionPane {
     
     private final JTextField metadataExpression;
     
-    private File file;
+    private File metadataFile;
 
     public FilesPanel() {
       super();
@@ -165,22 +190,6 @@ public final class AddPicturesDialog extends JOptionPane {
       this.deactivateMetadataZone();
     }
     
-    public boolean getUseMetadata() {
-      return metatadataCheckbox.isSelected();
-    }
-    
-    public File getFile() {
-      return this.file;
-    }
-    
-    public String getPictureExpression() {
-      return pictureExpression.getText();
-    }
-    
-    public String getMetadataExpression() {
-      return metadataExpression.getText();
-    }
-    
     private void toggleMetadataZone(final boolean state) {
       pickMetadataFileButton.setEnabled(state);
       metadataFileLabel.setEnabled(state);
@@ -260,7 +269,7 @@ public final class AddPicturesDialog extends JOptionPane {
       public void actionPerformed(final ActionEvent e) {
         final int returnVal = fileChooser.showOpenDialog(JOptionPane.getRootFrame());
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-          file = fileChooser.getSelectedFile();
+          metadataFile = fileChooser.getSelectedFile();
         }
       }
     }
