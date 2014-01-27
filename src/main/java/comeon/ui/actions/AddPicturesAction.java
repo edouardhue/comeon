@@ -12,11 +12,15 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.core.Core;
+import comeon.core.CsvMetadataSource;
+import comeon.core.ExternalMetadataSource;
+import comeon.core.NullMetadataSource;
 import comeon.model.Template;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesChangedEvent;
 import comeon.ui.UI;
 import comeon.ui.add.AddPicturesDialog;
+import comeon.ui.add.Model;
 
 @Singleton
 public final class AddPicturesAction extends BaseAction {
@@ -56,7 +60,8 @@ public final class AddPicturesAction extends BaseAction {
         final AddPicturesDialog dialog = new AddPicturesDialog();
         final int value = dialog.showDialog();
         if (value == JOptionPane.OK_OPTION) {
-          final File[] files = dialog.getModel().getPicturesFiles();
+          final Model model = dialog.getModel();
+          final File[] files = model.getPicturesFiles();
           if (files.length > 0) {
             final TemplateWrapper[] templates = getWrapperTemplates();
             final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(
@@ -66,7 +71,13 @@ public final class AddPicturesAction extends BaseAction {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 templates, templates.length > 0 ? templates[0] : null);
-            core.addPictures(files, wrapper.template);
+            final ExternalMetadataSource<?> externalMetadataSource;
+            if (model.getUseMetadata()) {
+              externalMetadataSource = new CsvMetadataSource(model.getPictureExpression(), model.getMetadataExpression(), model.getMetadataFile());
+            } else {
+              externalMetadataSource = new NullMetadataSource();
+            }
+            core.addPictures(files, wrapper.template, externalMetadataSource);
           }
         }
       }

@@ -11,10 +11,13 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 import org.apache.commons.beanutils.DynaBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import comeon.ui.UI;
 
 final class PictureMetadataPanel extends JPanel {
+  private static final Logger LOGGER = LoggerFactory.getLogger(PictureMetadataPanel.class);
 
   private static final long serialVersionUID = 1L;
 
@@ -42,6 +45,8 @@ final class PictureMetadataPanel extends JPanel {
       if (dir.getValue() instanceof DynaBean) {
         final MetadataTable table = new MetadataTable(dir.getKey(), (DynaBean) dir.getValue());
         metadataBox.add(table);
+      } else {
+        LOGGER.info("Hidden metadata: {}, {}", dir.getKey(), dir.getValue());
       }
     }
     final JScrollPane metadataScrollPane = new JScrollPane(metadataBox,

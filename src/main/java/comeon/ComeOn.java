@@ -31,6 +31,7 @@ import comeon.core.RealPicturesBatchFactory;
 import comeon.core.WithPreferences;
 import comeon.model.TemplateKind;
 import comeon.model.processors.DefaultPostProcessor;
+import comeon.model.processors.XmpPreProcessor;
 import comeon.model.processors.GpsPreProcessor;
 import comeon.model.processors.IptcPreProcessor;
 import comeon.model.processors.PostProcessor;
@@ -72,6 +73,7 @@ public final class ComeOn extends AbstractModule {
     Multibinder<PreProcessor> preProcessorsBinder = Multibinder.newSetBinder(binder(), PreProcessor.class);
     preProcessorsBinder.addBinding().to(GpsPreProcessor.class);
     preProcessorsBinder.addBinding().to(IptcPreProcessor.class);
+    preProcessorsBinder.addBinding().to(XmpPreProcessor.class);
     
     Multibinder<PostProcessor> postProcessorsBinder = Multibinder.newSetBinder(binder(), PostProcessor.class);
     postProcessorsBinder.addBinding().to(DefaultPostProcessor.class);

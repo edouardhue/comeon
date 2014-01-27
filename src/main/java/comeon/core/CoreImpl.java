@@ -57,8 +57,8 @@ public final class CoreImpl implements Core {
   }
 
   @Override
-  public void addPictures(final File[] files, final Template defautTemplate) {
-    final PicturesBatch picturesReader = picturesBatchFactory.makePicturesBatch(files, defautTemplate);
+  public void addPictures(final File[] files, final Template defautTemplate, final ExternalMetadataSource<?> externalMetadataSource) {
+    final PicturesBatch picturesReader = picturesBatchFactory.makePicturesBatch(files, defautTemplate, externalMetadataSource);
     final List<Picture> newPictures = picturesReader.readFiles(wikis.getActiveWiki().getUser()).getPictures();
     this.pictures.addAll(newPictures);
     bus.post(new PicturesAddedEvent());

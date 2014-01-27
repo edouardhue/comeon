@@ -8,7 +8,7 @@ import comeon.model.Template;
 
 public interface Core {
 
-  void addPictures(File[] files, Template defautTemplate);
+  void addPictures(File[] files, Template defautTemplate, ExternalMetadataSource<?> externalMetadataSource);
 
   void removePicture(Picture picture);
   

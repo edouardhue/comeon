@@ -22,8 +22,8 @@ public final class RealPicturesBatchFactory implements PicturesBatchFactory {
   }
   
   @Override
-  public PicturesBatch makePicturesBatch(final File[] files, final Template defautTemplate) {
-    return new PicturesBatch(files, defautTemplate, pool, preProcessors);
+  public PicturesBatch makePicturesBatch(final File[] files, final Template defautTemplate, final ExternalMetadataSource<?> externalMetadataSource) {
+    return new PicturesBatch(files, defautTemplate, pool, preProcessors, externalMetadataSource);
   }
 
 }

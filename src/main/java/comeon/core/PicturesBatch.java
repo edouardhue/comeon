@@ -47,14 +47,17 @@ public final class PicturesBatch {
   private final CountDownLatch latch;
   
   private final Set<PreProcessor> preProcessors;
+  
+  private final ExternalMetadataSource<?> externalMetadataSource;
 
-  PicturesBatch(final File[] files, final Template defautTemplate, final ExecutorService pool, final Set<PreProcessor> preProcessors) {
+  PicturesBatch(final File[] files, final Template defautTemplate, final ExecutorService pool, final Set<PreProcessor> preProcessors, final ExternalMetadataSource<?> externalMetadataSource) {
     this.files = files;
     this.defaultTemplate = defautTemplate;
     this.pool = pool;
     this.pictures = Collections.synchronizedList(new ArrayList<Picture>(files.length));
     this.latch = new CountDownLatch(files.length);
     this.preProcessors = preProcessors;
+    this.externalMetadataSource = externalMetadataSource;
   }
 
   public PicturesBatch readFiles(final User user) {
@@ -76,6 +79,8 @@ public final class PicturesBatch {
   }
 
   final class PictureReader implements Runnable {
+    private static final String EXTERNAL_METADATA_KEY = "external";
+
     private static final String NON_WORD_CHARS = "[^\\w]";
 
     private final File file;
@@ -118,7 +123,9 @@ public final class PicturesBatch {
         copy(directory, metadata);
         preProcess(directory, metadata);
       }
-      return new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
+      final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
+      metadata.put(EXTERNAL_METADATA_KEY, externalMetadataSource.getPictureMetadata(picture));
+      return picture;
     }
 
     private void copy(final Directory directory, final Map<String, Object> metadata) {
