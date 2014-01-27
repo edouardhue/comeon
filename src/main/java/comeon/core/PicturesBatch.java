@@ -115,13 +115,13 @@ public final class PicturesBatch {
       }
       final Map<String, Object> metadata = new HashMap<>(rawMetadata.getDirectoryCount());
       for (final Directory directory : rawMetadata.getDirectories()) {
-        copy(metadata, directory);
-        preProcess(metadata, directory);
+        copy(directory, metadata);
+        preProcess(directory, metadata);
       }
       return new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
     }
 
-    private void copy(final Map<String, Object> metadata, final Directory directory) {
+    private void copy(final Directory directory, final Map<String, Object> metadata) {
       final TagDescriptor<?> descriptor = MetadataHelper.getDescriptor(directory);
       final List<DynaProperty> properties = new LinkedList<>();
       for (final Tag tag : directory.getTags()) {
@@ -139,7 +139,7 @@ public final class PicturesBatch {
       metadata.put(directory.getName(), directoryMetadata);
     }
 
-    private void preProcess(final Map<String, Object> metadata, final Directory directory) {
+    private void preProcess(final Directory directory, final Map<String, Object> metadata) {
       final Set<PreProcessor> preProcessors = filterPreProcessors(directory.getClass());
       for (final PreProcessor preProcessor : preProcessors) {
         preProcessor.process(directory, metadata);
