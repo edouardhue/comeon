@@ -56,7 +56,7 @@ public final class AddPicturesAction extends BaseAction {
         final AddPicturesDialog dialog = new AddPicturesDialog();
         final int value = dialog.showDialog();
         if (value == JOptionPane.OK_OPTION) {
-          final File[] files = dialog.getPicturesFiles();
+          final File[] files = dialog.getModel().getPicturesFiles();
           if (files.length > 0) {
             final TemplateWrapper[] templates = getWrapperTemplates();
             final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(
