@@ -90,25 +90,8 @@ class FilesPanel extends JPanel {
     
     this.metadataMatchLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.label"));
     
-    this.pictureExpression = new JTextField(20);
-    this.pictureExpression.getDocument().addDocumentListener(new DocumentListener() {
-      @Override
-      public void removeUpdate(final DocumentEvent e) {
-        pictureExpressionChanged(e);
-      }
-      
-      @Override
-      public void insertUpdate(final DocumentEvent e) {
-        pictureExpressionChanged(e);
-      }
-      
-      @Override
-      public void changedUpdate(final DocumentEvent e) {
-        pictureExpressionChanged(e);
-      }
-    });
-    
     this.metadataExpression = new JTextField(20);
+    this.metadataExpression.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.match.metadata"));
     this.metadataExpression.getDocument().addDocumentListener(new DocumentListener() {
       
       @Override
@@ -124,6 +107,25 @@ class FilesPanel extends JPanel {
       @Override
       public void changedUpdate(final DocumentEvent e) {
         metadataExpressionChanged(e);
+      }
+    });
+    
+    this.pictureExpression = new JTextField(20);
+    this.pictureExpression.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.match.picture"));
+    this.pictureExpression.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void removeUpdate(final DocumentEvent e) {
+        pictureExpressionChanged(e);
+      }
+      
+      @Override
+      public void insertUpdate(final DocumentEvent e) {
+        pictureExpressionChanged(e);
+      }
+      
+      @Override
+      public void changedUpdate(final DocumentEvent e) {
+        pictureExpressionChanged(e);
       }
     });
     

@@ -46,12 +46,7 @@ public class PicturesTest {
     Files.copy(Resources.newInputStreamSupplier(Resources.getResource("long-category-titles.jpg")), file);
     final Template mockTemplate = Mockito.mock(Template.class);
     Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
-    final PicturesBatch pics = new PicturesBatch(new File[0], mockTemplate, (ExecutorService) null, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new ExternalMetadataSource<String>() {
-      @Override
-      public String getPictureMetadata(final Picture picture) {
-        return "";
-      }
-    });
+    final PicturesBatch pics = new PicturesBatch(new File[0], mockTemplate, (ExecutorService) null, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
     this.reader = pics.new PictureReader(file, null);
   }
 

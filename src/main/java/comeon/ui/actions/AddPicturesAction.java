@@ -77,6 +77,7 @@ public final class AddPicturesAction extends BaseAction {
             } else {
               externalMetadataSource = new NullMetadataSource();
             }
+            externalMetadataSource.loadMetadata();
             core.addPictures(files, wrapper.template, externalMetadataSource);
           }
         }
