@@ -25,40 +25,36 @@ public final class ExternalMetadataTable extends AbstractMetadataTable<Object> {
     return new ExternalMetadataTableModel(content);
   }
 
-  private static final class ExternalMetadataTableModel extends AbstractPictureMetadataTableModel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalMetadataTableModel.class);
+  private static final class ExternalMetadataTableModel extends SimpleMetadataTableModel<Object> {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<String[]> values;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalMetadataTableModel.class);
 
-    @SuppressWarnings("unchecked")
+    private static final String CLASS_PROPERTY_NAME = "class";
+
     public ExternalMetadataTableModel(final Object content) {
-      List<String[]> values;
+      super(content);
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    protected List<Entry> getValues(Object content) {
+      List<Entry> values;
       try {
         final Map<String, Class<?>> properties = BeanUtils.describe(content);
-        properties.remove("class");
+        properties.remove(CLASS_PROPERTY_NAME);
         values = new ArrayList<>(properties.size());
         for (final Map.Entry<String, Class<?>> property : properties.entrySet()) {
           final String propertyName = property.getKey();
           final String propertyValue = BeanUtils.getProperty(content, propertyName);
-          values.add(new String[] {propertyName, propertyValue});
+          values.add(new Entry(propertyName, propertyValue));
         }
       } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
         LOGGER.warn("Could not extract properties", e);
         values = Collections.emptyList();
       }
-      this.values = values;
-    }
-
-    @Override
-    public int getRowCount() {
-      return values.size();
-    }
-
-    @Override
-    public Object getValueAt(final int rowIndex, final int columnIndex) {
-      return values.get(rowIndex)[columnIndex];
+      return values;
     }
 
   }

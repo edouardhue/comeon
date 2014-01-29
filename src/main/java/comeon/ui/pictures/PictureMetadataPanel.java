@@ -16,6 +16,7 @@ import org.apache.commons.beanutils.DynaBean;
 import comeon.core.Core;
 import comeon.ui.UI;
 import comeon.ui.pictures.metadata.ExternalMetadataTable;
+import comeon.ui.pictures.metadata.OtherMetadataTable;
 import comeon.ui.pictures.metadata.PictureMetadataTable;
 
 final class PictureMetadataPanel extends JPanel {
@@ -45,7 +46,7 @@ final class PictureMetadataPanel extends JPanel {
     for (final Map.Entry<String, Object> dir : panels.getPicture().getMetadata().entrySet()) {
       if (dir.getValue() instanceof DynaBean) {
         final PictureMetadataTable table = new PictureMetadataTable(dir.getKey(), (DynaBean) dir.getValue());
-        metadataBox.add(table);
+        metadataBox.add(table, 0);
       } else if (Core.EXTERNAL_METADATA_KEY.equals(dir.getKey())) {
         final ExternalMetadataTable table = new ExternalMetadataTable(UI.BUNDLE.getString("picture.metadata.external"), dir.getValue());
         metadataBox.add(table);
@@ -53,7 +54,9 @@ final class PictureMetadataPanel extends JPanel {
         otherMetadata.put(dir.getKey(), dir.getValue());
       }
     }
-    //TODO show other metadata
+    if (!otherMetadata.isEmpty()) {
+      metadataBox.add(new OtherMetadataTable(UI.BUNDLE.getString("picture.metadata.other"), otherMetadata));
+    }
     
     final JScrollPane metadataScrollPane = new JScrollPane(metadataBox,
         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

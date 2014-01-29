@@ -2,7 +2,7 @@ package comeon.ui.pictures.metadata;
 
 import javax.swing.table.AbstractTableModel;
 
-abstract class AbstractPictureMetadataTableModel extends AbstractTableModel {
+abstract class AbstractMetadataTableModel extends AbstractTableModel {
 
   private static final long serialVersionUID = 1L;
 

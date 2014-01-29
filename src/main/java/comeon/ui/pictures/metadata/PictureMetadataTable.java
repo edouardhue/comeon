@@ -17,7 +17,7 @@ public final class PictureMetadataTable extends AbstractMetadataTable<DynaBean> 
     return new PictureMetadataTableModel(content);
   }
   
-  private static final class PictureMetadataTableModel extends AbstractPictureMetadataTableModel {
+  private static final class PictureMetadataTableModel extends AbstractMetadataTableModel {
     private static final long serialVersionUID = 1L;
 
     private final DynaProperty[] properties;
