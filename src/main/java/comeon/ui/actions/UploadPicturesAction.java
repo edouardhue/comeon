@@ -49,7 +49,6 @@ public final class UploadPicturesAction extends BaseAction {
       this.pictureBar = new JProgressBar(SwingConstants.HORIZONTAL);
       this.pictureBar.setStringPainted(true);
       this.setMessage(new Object[] { batchBar, pictureBar });
-      // TODO i18n
       this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("upload.title"));
     }
 
