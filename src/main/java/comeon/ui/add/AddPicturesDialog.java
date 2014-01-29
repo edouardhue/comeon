@@ -27,6 +27,7 @@ public final class AddPicturesDialog extends JOptionPane {
     this.controller.registerView(filesPanel);
     this.setMessage(this.filesPanel);
     this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("action.addpictures.title"));
+    this.dialog.setIconImages(UI.ICON_IMAGES);
   }
 
   public int showDialog() {
