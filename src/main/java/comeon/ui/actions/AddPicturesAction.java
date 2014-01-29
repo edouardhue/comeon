@@ -41,7 +41,7 @@ public final class AddPicturesAction extends BaseAction {
     }
   }
 
-  private TemplateWrapper[] getWrapperTemplates() {
+  private TemplateWrapper[] getWrappedTemplates() {
     final List<Template> templates = this.templates.getTemplates();
     final TemplateWrapper[] wrappers = new TemplateWrapper[templates.size()];
     int i = 0;
@@ -63,7 +63,7 @@ public final class AddPicturesAction extends BaseAction {
           final Model model = dialog.getModel();
           final File[] files = model.getPicturesFiles();
           if (files.length > 0) {
-            final TemplateWrapper[] templates = getWrapperTemplates();
+            final TemplateWrapper[] templates = getWrappedTemplates();
             final TemplateWrapper wrapper = (TemplateWrapper) JOptionPane.showInputDialog(
                 SwingUtilities.getWindowAncestor((Component) e.getSource()),
                 UI.BUNDLE.getString("action.addpictures.choosetemplate.message"),

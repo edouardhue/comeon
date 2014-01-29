@@ -1,6 +1,7 @@
 package comeon.ui.add;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -10,6 +11,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -28,6 +30,12 @@ import com.google.common.base.Strings;
 import comeon.ui.UI;
 
 class FilesPanel extends JPanel {
+  private static final int MEDIUM_PROTOTYPE_LENGTH = 20;
+
+  private static final String PROTOTYPE_CHAR = "x";
+
+  private static final int LONG_PROTOTYPE_LENGTH = 30;
+
   private static final long serialVersionUID = 1L;
 
   private final JFileChooser filesChooser;
@@ -48,7 +56,7 @@ class FilesPanel extends JPanel {
   
   private final JLabel metadataMatchSymbol;
   
-  private final JTextField metadataExpression;
+  private final JComboBox<String> metadataExpression;
   
   private final Controller controller;
   
@@ -73,7 +81,7 @@ class FilesPanel extends JPanel {
     final JLabel filesListLabel = new JLabel(UI.BUNDLE.getString("addpictures.pictures.label"));
 
     final JList<File> filesList = new JList<>(controller.getPicturesListModel());
-    filesList.setPrototypeCellValue(new File(Strings.repeat("x", 30)));
+    filesList.setPrototypeCellValue(new File(Strings.repeat(PROTOTYPE_CHAR, LONG_PROTOTYPE_LENGTH)));
     final JScrollPane filesListPanel = new JScrollPane(filesList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
     final JButton pickPicturesFilesButton = new JButton(new PickPicturesFilesAction(controller));
@@ -83,34 +91,24 @@ class FilesPanel extends JPanel {
     metatadataCheckbox.addItemListener(checkboxHandler);
 
     this.metadataFileLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.label"));
-    this.metadataFileLocation = new JTextField(30);
+    this.metadataFileLocation = new JTextField(LONG_PROTOTYPE_LENGTH);
     this.metadataFileLocation.setEditable(false);
     
     this.pickMetadataFileButton = new JButton(new PickMetadataFileAction());
     
     this.metadataMatchLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.label"));
     
-    this.metadataExpression = new JTextField(20);
+    this.metadataExpression = new JComboBox<>(controller.getMetadataExpressionModel());
+    this.metadataExpression.setPrototypeDisplayValue(Strings.repeat(PROTOTYPE_CHAR, MEDIUM_PROTOTYPE_LENGTH));
     this.metadataExpression.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.match.metadata"));
-    this.metadataExpression.getDocument().addDocumentListener(new DocumentListener() {
-      
+    this.metadataExpression.addActionListener(new ActionListener() {
       @Override
-      public void removeUpdate(final DocumentEvent e) {
-        metadataExpressionChanged(e);
-      }
-      
-      @Override
-      public void insertUpdate(final DocumentEvent e) {
-        metadataExpressionChanged(e);
-      }
-      
-      @Override
-      public void changedUpdate(final DocumentEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         metadataExpressionChanged(e);
       }
     });
     
-    this.pictureExpression = new JTextField(20);
+    this.pictureExpression = new JTextField(MEDIUM_PROTOTYPE_LENGTH);
     this.pictureExpression.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.match.picture"));
     this.pictureExpression.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -198,12 +196,9 @@ class FilesPanel extends JPanel {
     }
   }
   
-  private void metadataExpressionChanged(final DocumentEvent e) {
-    final Document document = e.getDocument();
-    try {
-      controller.setMetadataExpression(document.getText(0, document.getLength()));
-    } catch (final BadLocationException e1) {
-    }
+  private void metadataExpressionChanged(final ActionEvent e) {
+    final String selectedValue = (String) this.metadataExpression.getModel().getSelectedItem();
+    controller.setMetadataExpression(selectedValue);
   }
   
   private void toggleMetadataZone(final boolean state) {
@@ -214,9 +209,9 @@ class FilesPanel extends JPanel {
         metadataFileLabel.setEnabled(state);
         metadataFileLocation.setEnabled(state);
         metadataMatchLabel.setEnabled(state);
-        pictureExpression.setEnabled(state);
-        metadataMatchSymbol.setEnabled(state);
         metadataExpression.setEnabled(state);
+        metadataMatchSymbol.setEnabled(state);
+        pictureExpression.setEnabled(state);
       }
     });
   }
