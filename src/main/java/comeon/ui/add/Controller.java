@@ -64,6 +64,54 @@ class Controller implements PropertyChangeListener {
   public void setMetadataExpression(final String metadataExpression) {
     model.setMetadataExpression(metadataExpression);
   }
+
+  public char getSeparator() {
+    return model.getSeparator();
+  }
+  
+  public void setSeparator(final char separator) {
+    model.setSeparator(separator);
+  }
+  
+  public char getQuote() {
+    return model.getQuote();
+  }
+
+  public void setQuote(final char quote) {
+    model.setQuote(quote);
+  }
+
+  public char getEscape() {
+    return model.getEscape();
+  }
+  
+  public void setEscape(final char escape) {
+    model.setEscape(escape);
+  }
+  
+  public int getSkipLines() {
+    return model.getSkipLines();
+  }
+
+  public void setSkipLines(final int skipLines) {
+    model.setSkipLines(skipLines);
+  }
+  
+  public boolean isStrictQuotes() {
+    return model.isStrictQuotes();
+  }
+  
+  public void setStrictQuotes(final boolean strictQuotes) {
+    model.setStrictQuotes(strictQuotes);
+  }
+  
+  public boolean isIgnoreLeadingWhiteSpace() {
+    return model.isIgnoreLeadingWhiteSpace();
+  }
+
+  public void setIgnoreLeadingWhiteSpace(final boolean ignoreLeadingWhiteSpace) {
+    model.setIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpace);
+  }
   
   @Override
   public void propertyChange(final PropertyChangeEvent evt) {
@@ -100,7 +148,8 @@ class Controller implements PropertyChangeListener {
   }
   
   private String[] peekMetadataFileHeader(final File metadataFile) throws IOException {
-    try (final CSVReader reader = new CSVReader(new FileReader(metadataFile))) {
+    try (final CSVReader reader = new CSVReader(new FileReader(metadataFile), model.getSeparator(), model.getQuote(), model.getEscape(), model.getSkipLines(),
+        model.isStrictQuotes(), model.isIgnoreLeadingWhiteSpace())) {
       return reader.readNext();
     }
   }

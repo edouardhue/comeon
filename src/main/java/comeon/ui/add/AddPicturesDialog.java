@@ -22,8 +22,8 @@ public final class AddPicturesDialog extends JOptionPane {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
     this.controller = new Controller();
     this.model = new Model();
-    this.filesPanel = new FilesPanel(controller);
     this.controller.registerModel(model);
+    this.filesPanel = new FilesPanel(controller);
     this.controller.registerView(filesPanel);
     this.setMessage(this.filesPanel);
     this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("action.addpictures.title"));

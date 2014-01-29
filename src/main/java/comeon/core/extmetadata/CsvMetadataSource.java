@@ -27,10 +27,29 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   
   private final String metadataExpression;
   
-  public CsvMetadataSource(final String pictureExpression, final String metadataExpression, final File metadataFile) {
+  private final char separator;
+
+  private final char quote;
+
+  private final char escape;
+
+  private final int skipLines;
+
+  private final boolean strictQuotes;
+
+  private final boolean ignoreLeadingWhiteSpace;
+  
+  public CsvMetadataSource(final String pictureExpression, final String metadataExpression, final File metadataFile, final char separator, final char quote, final char escape,
+      final int skipLines, final boolean strictQuotes, final boolean ignoreLeadingWhiteSpace) {
     this.pictureExpression = pictureExpression;
     this.metadataExpression = metadataExpression;
     this.metadataFile = metadataFile;
+    this.separator = separator;
+    this.quote = quote;
+    this.escape = escape;
+    this.skipLines = skipLines;
+    this.strictQuotes = strictQuotes;
+    this.ignoreLeadingWhiteSpace = ignoreLeadingWhiteSpace;
   }
   
   @Override
@@ -38,7 +57,7 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
     final CGLibMappingStrategy strategy = new CGLibMappingStrategy();
     final CsvToBean<Object> csvToBean = new CsvToBean<>();
     //TODO Support setting an encoding
-    try (final CSVReader reader = new CSVReader(new FileReader(metadataFile))) {
+    try (final CSVReader reader = new CSVReader(new FileReader(metadataFile), separator, quote, escape, skipLines, strictQuotes, ignoreLeadingWhiteSpace)) {
       final List<Object> beans = csvToBean.parse(strategy, reader);
       this.metadata = new HashMap<>(beans.size());
       for (final Object bean : beans) {

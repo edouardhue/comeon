@@ -5,26 +5,34 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.text.ParseException;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.MaskFormatter;
 
 import com.google.common.base.Strings;
 import comeon.ui.UI;
@@ -77,6 +85,7 @@ class FilesPanel extends JPanel {
     fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     fileChooser.setMultiSelectionEnabled(false);
     fileChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("addpictures.metadata.filter"), "csv"));
+    fileChooser.setAccessory(new CSVAccessoryPanel());
 
     final JLabel filesListLabel = new JLabel(UI.BUNDLE.getString("addpictures.pictures.label"));
 
@@ -264,7 +273,6 @@ class FilesPanel extends JPanel {
     
     @Override
     public void actionPerformed(final ActionEvent e) {
-      
     };
     
     @Override
@@ -297,6 +305,169 @@ class FilesPanel extends JPanel {
       final int returnVal = fileChooser.showOpenDialog(JOptionPane.getRootFrame());
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         controller.setMetadataFile(fileChooser.getSelectedFile());
+      }
+    }
+  }
+  
+  //TODO i18n
+  //TODO add encoding selector
+  private class CSVAccessoryPanel extends JPanel {
+    private static final long serialVersionUID = 1L;
+
+    
+    public CSVAccessoryPanel() {
+      final GroupLayout layout = new GroupLayout(this);
+      layout.setAutoCreateContainerGaps(true);
+      layout.setAutoCreateGaps(true);
+      this.setLayout(layout);
+      
+      this.setBorder(BorderFactory.createTitledBorder("CSV settings"));
+      
+      final MaskFormatter singleCharFormatter = new MaskFormatter();
+      try {
+        singleCharFormatter.setMask("*");
+        singleCharFormatter.setAllowsInvalid(false);
+        singleCharFormatter.setCommitsOnValidEdit(false);
+      } catch (final ParseException e) {
+        throw new Error("Bad formatter", e);
+      }
+      
+      final JLabel separatorLabel = new JLabel("separator");
+      final JFormattedTextField separatorField = new JFormattedTextField(singleCharFormatter);
+      separatorLabel.setLabelFor(separatorField);
+      separatorField.setText(String.valueOf(controller.getSeparator()));
+      separatorField.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void removeUpdate(final DocumentEvent e) {
+          separatorChanged(e);
+        }
+        
+        @Override
+        public void insertUpdate(final DocumentEvent e) {
+          separatorChanged(e);
+        }
+        
+        @Override
+        public void changedUpdate(final DocumentEvent e) {
+          separatorChanged(e);
+        }
+      });
+      
+      final JLabel quoteLabel = new JLabel("quote");
+      final JFormattedTextField quoteField = new JFormattedTextField(singleCharFormatter);
+      quoteLabel.setLabelFor(quoteField);
+      quoteField.setText(String.valueOf(controller.getQuote()));
+      quoteField.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void removeUpdate(final DocumentEvent e) {
+          quoteChanged(e);
+        }
+        
+        @Override
+        public void insertUpdate(final DocumentEvent e) {
+          quoteChanged(e);
+        }
+        
+        @Override
+        public void changedUpdate(final DocumentEvent e) {
+          quoteChanged(e);
+        }
+      });
+      
+      final JLabel escapeLabel = new JLabel("escape");
+      final JFormattedTextField escapeField = new JFormattedTextField(singleCharFormatter);
+      escapeLabel.setLabelFor(escapeField);
+      escapeField.setText(String.valueOf(controller.getEscape()));
+      escapeField.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void removeUpdate(final DocumentEvent e) {
+          escapeChanged(e);
+        }
+        
+        @Override
+        public void insertUpdate(final DocumentEvent e) {
+          escapeChanged(e);
+        }
+        
+        @Override
+        public void changedUpdate(final DocumentEvent e) {
+          escapeChanged(e);
+        }
+      });
+      
+      final JLabel skipLinesLabel = new JLabel("skip lines");
+      final JSpinner skipLinesField = new JSpinner(new SpinnerNumberModel(controller.getSkipLines(), 0, Integer.MAX_VALUE, 1) {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void setValue(final Object value) {
+          controller.setSkipLines((int) value);
+          super.setValue(value);
+        }
+      });
+      skipLinesLabel.setLabelFor(skipLinesField);
+      
+      final JCheckBox strictQuotesBox = new JCheckBox("strict quotes", controller.isStrictQuotes());
+      strictQuotesBox.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+          controller.setStrictQuotes(strictQuotesBox.isSelected());
+        }
+      });
+      
+      final JCheckBox ignoreLeadingWhiteSpaceBox = new JCheckBox("ignore leading white space", controller.isIgnoreLeadingWhiteSpace());
+      ignoreLeadingWhiteSpaceBox.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+          controller.setIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpaceBox.isSelected());
+        }
+      });
+      
+      layout.setVerticalGroup(
+        layout.createSequentialGroup()
+        .addComponent(separatorLabel)
+        .addComponent(separatorField)
+        .addComponent(quoteLabel)
+        .addComponent(quoteField)
+        .addComponent(escapeLabel)
+        .addComponent(escapeField)
+        .addComponent(skipLinesLabel)
+        .addComponent(skipLinesField)
+        .addComponent(strictQuotesBox)
+        .addComponent(ignoreLeadingWhiteSpaceBox)
+      );
+      layout.setHorizontalGroup(
+        layout.createParallelGroup()
+        .addComponent(separatorLabel)
+        .addComponent(separatorField)
+        .addComponent(quoteLabel)
+        .addComponent(quoteField)
+        .addComponent(escapeLabel)
+        .addComponent(escapeField)
+        .addComponent(skipLinesLabel)
+        .addComponent(skipLinesField)
+        .addComponent(strictQuotesBox)
+        .addComponent(ignoreLeadingWhiteSpaceBox)
+      );
+    }
+    
+    private void separatorChanged(final DocumentEvent e) {
+      controller.setSeparator(getFirstChar(e));
+    }
+    
+    private void quoteChanged(final DocumentEvent e) {
+      controller.setQuote(getFirstChar(e));
+    }
+    
+    private void escapeChanged(final DocumentEvent e) {
+      controller.setEscape(getFirstChar(e));
+    }
+    
+    private char getFirstChar(final DocumentEvent e) {
+      final Document document = e.getDocument();
+      try {
+        return document.getLength() == 0 ? 0 : document.getText(0, document.getLength()).charAt(0);
+      } catch (final BadLocationException e1) {
+        return 0;
       }
     }
   }
