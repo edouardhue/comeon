@@ -1,4 +1,4 @@
-package comeon.core;
+package comeon.core.extmetadata;
 
 import java.io.File;
 import java.io.FileReader;

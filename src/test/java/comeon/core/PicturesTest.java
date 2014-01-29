@@ -17,6 +17,8 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+
+import comeon.core.extmetadata.NullMetadataSource;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.processors.GpsPreProcessor;

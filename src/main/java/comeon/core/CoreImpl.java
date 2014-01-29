@@ -15,6 +15,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import comeon.core.extmetadata.ExternalMetadataSource;
 import comeon.mediawiki.FailedLoginException;
 import comeon.mediawiki.FailedLogoutException;
 import comeon.mediawiki.FailedUploadException;

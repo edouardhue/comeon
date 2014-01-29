@@ -1,4 +1,4 @@
-package comeon.core;
+package comeon.core.extmetadata;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -11,7 +11,7 @@ import net.sf.cglib.beans.BeanGenerator;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.bean.MappingStrategy;
 
-public final class CGLibMappingStrategy implements MappingStrategy<Object> {
+final class CGLibMappingStrategy implements MappingStrategy<Object> {
   private static final Logger LOGGER = LoggerFactory.getLogger(CGLibMappingStrategy.class);
   
   private Class<?> clazz;

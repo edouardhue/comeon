@@ -28,6 +28,8 @@ import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
+
+import comeon.core.extmetadata.ExternalMetadataSource;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.User;
@@ -79,8 +81,6 @@ public final class PicturesBatch {
   }
 
   final class PictureReader implements Runnable {
-    private static final String EXTERNAL_METADATA_KEY = "external";
-
     private static final String NON_WORD_CHARS = "[^\\w]";
 
     private final File file;
@@ -124,7 +124,7 @@ public final class PicturesBatch {
         preProcess(directory, metadata);
       }
       final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
-      metadata.put(EXTERNAL_METADATA_KEY, externalMetadataSource.getPictureMetadata(picture));
+      metadata.put(Core.EXTERNAL_METADATA_KEY, externalMetadataSource.getPictureMetadata(picture));
       return picture;
     }
 

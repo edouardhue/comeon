@@ -2,6 +2,7 @@ package comeon.ui.pictures;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.Box;
@@ -11,14 +12,13 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 import org.apache.commons.beanutils.DynaBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import comeon.core.Core;
 import comeon.ui.UI;
+import comeon.ui.pictures.metadata.ExternalMetadataTable;
+import comeon.ui.pictures.metadata.PictureMetadataTable;
 
 final class PictureMetadataPanel extends JPanel {
-  private static final Logger LOGGER = LoggerFactory.getLogger(PictureMetadataPanel.class);
-
   private static final long serialVersionUID = 1L;
 
   public static final int PREVIEW_WIDTH = (int) (UI.METADATA_PANEL_WIDTH * 0.9);
@@ -41,14 +41,20 @@ final class PictureMetadataPanel extends JPanel {
         (previewPanelDimension.height - previewDimension.height) / 2);
     this.add(previewPanel, BorderLayout.NORTH);
     final Box metadataBox = new Box(BoxLayout.Y_AXIS);
+    final Map<String, Object> otherMetadata = new HashMap<>();
     for (final Map.Entry<String, Object> dir : panels.getPicture().getMetadata().entrySet()) {
       if (dir.getValue() instanceof DynaBean) {
-        final MetadataTable table = new MetadataTable(dir.getKey(), (DynaBean) dir.getValue());
+        final PictureMetadataTable table = new PictureMetadataTable(dir.getKey(), (DynaBean) dir.getValue());
+        metadataBox.add(table);
+      } else if (Core.EXTERNAL_METADATA_KEY.equals(dir.getKey())) {
+        final ExternalMetadataTable table = new ExternalMetadataTable(UI.BUNDLE.getString("picture.metadata.external"), dir.getValue());
         metadataBox.add(table);
       } else {
-        LOGGER.info("Hidden metadata: {}, {}", dir.getKey(), dir.getValue());
+        otherMetadata.put(dir.getKey(), dir.getValue());
       }
     }
+    //TODO show other metadata
+    
     final JScrollPane metadataScrollPane = new JScrollPane(metadataBox,
         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     this.add(metadataScrollPane, BorderLayout.CENTER);

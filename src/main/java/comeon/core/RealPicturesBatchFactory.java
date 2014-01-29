@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 
 import com.google.inject.Inject;
 
+import comeon.core.extmetadata.ExternalMetadataSource;
 import comeon.model.Template;
 import comeon.model.processors.PreProcessor;
 

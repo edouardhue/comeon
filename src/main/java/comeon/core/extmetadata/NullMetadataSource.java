@@ -1,4 +1,4 @@
-package comeon.core;
+package comeon.core.extmetadata;
 
 import comeon.model.Picture;
 
