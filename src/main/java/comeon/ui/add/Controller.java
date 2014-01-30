@@ -3,8 +3,10 @@ package comeon.ui.add;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -49,7 +51,7 @@ class Controller implements PropertyChangeListener {
     model.setUseMetadata(useMetadata);
   }
   
-  public void setMetadataFile(final File metadataFile) {
+  public void setMetadataFile(final Path metadataFile) {
     model.setMetadataFile(metadataFile);
   }
 
@@ -113,6 +115,14 @@ class Controller implements PropertyChangeListener {
     model.setIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpace);
   }
   
+  public Charset getCharset() {
+    return model.getCharset();
+  }
+  
+  public void setCharset(final Charset charset) {
+    model.setCharset(charset);
+  }
+  
   @Override
   public void propertyChange(final PropertyChangeEvent evt) {
     if (Model.Properties.USE_METADATA.name().equals(evt.getPropertyName())) {
@@ -128,7 +138,7 @@ class Controller implements PropertyChangeListener {
         picturesListModel.addElement(file);
       } 
     } else if (Model.Properties.METADATA_FILE.name().equals(evt.getPropertyName())) {
-      final File location = (File) evt.getNewValue();
+      final Path location = (Path) evt.getNewValue();
       try {
         final String[] columns = this.peekMetadataFileHeader(location);
         metadataExpressionModel.removeAllElements();
@@ -138,7 +148,7 @@ class Controller implements PropertyChangeListener {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            view.updateMetadataFileLocation(location.getAbsolutePath());
+            view.updateMetadataFileLocation(location.toString());
           }
         });
       } catch (final IOException e) {
@@ -147,8 +157,8 @@ class Controller implements PropertyChangeListener {
     }
   }
   
-  private String[] peekMetadataFileHeader(final File metadataFile) throws IOException {
-    try (final CSVReader reader = new CSVReader(new FileReader(metadataFile), model.getSeparator(), model.getQuote(), model.getEscape(), model.getSkipLines(),
+  private String[] peekMetadataFileHeader(final Path metadataFile) throws IOException {
+    try (final CSVReader reader = new CSVReader(Files.newBufferedReader(metadataFile, model.getCharset()), model.getSeparator(), model.getQuote(), model.getEscape(), model.getSkipLines(),
         model.isStrictQuotes(), model.isIgnoreLeadingWhiteSpace())) {
       return reader.readNext();
     }

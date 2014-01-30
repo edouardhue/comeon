@@ -74,7 +74,7 @@ public final class AddPicturesAction extends BaseAction {
             final ExternalMetadataSource<?> externalMetadataSource;
             if (model.getUseMetadata()) {
               externalMetadataSource = new CsvMetadataSource(model.getPictureExpression(), model.getMetadataExpression(), model.getMetadataFile(), model.getSeparator(),
-                  model.getQuote(), model.getEscape(), model.getSkipLines(), model.isStrictQuotes(), model.isIgnoreLeadingWhiteSpace());
+                  model.getQuote(), model.getEscape(), model.getSkipLines(), model.isStrictQuotes(), model.isIgnoreLeadingWhiteSpace(), model.getCharset());
             } else {
               externalMetadataSource = new NullMetadataSource();
             }

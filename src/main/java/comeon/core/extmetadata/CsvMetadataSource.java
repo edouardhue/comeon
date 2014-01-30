@@ -1,9 +1,10 @@
 package comeon.core.extmetadata;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   
   private HashMap<String, Object> metadata;
   
-  private final File metadataFile;
+  private final Path metadataFile;
 
   private final String pictureExpression;
   
@@ -39,8 +40,10 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
 
   private final boolean ignoreLeadingWhiteSpace;
   
-  public CsvMetadataSource(final String pictureExpression, final String metadataExpression, final File metadataFile, final char separator, final char quote, final char escape,
-      final int skipLines, final boolean strictQuotes, final boolean ignoreLeadingWhiteSpace) {
+  private final Charset charset;
+  
+  public CsvMetadataSource(final String pictureExpression, final String metadataExpression, final Path metadataFile, final char separator, final char quote, final char escape,
+      final int skipLines, final boolean strictQuotes, final boolean ignoreLeadingWhiteSpace, final Charset charset) {
     this.pictureExpression = pictureExpression;
     this.metadataExpression = metadataExpression;
     this.metadataFile = metadataFile;
@@ -50,6 +53,7 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
     this.skipLines = skipLines;
     this.strictQuotes = strictQuotes;
     this.ignoreLeadingWhiteSpace = ignoreLeadingWhiteSpace;
+    this.charset = charset;
   }
   
   @Override
@@ -57,7 +61,7 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
     final CGLibMappingStrategy strategy = new CGLibMappingStrategy();
     final CsvToBean<Object> csvToBean = new CsvToBean<>();
     //TODO Support setting an encoding
-    try (final CSVReader reader = new CSVReader(new FileReader(metadataFile), separator, quote, escape, skipLines, strictQuotes, ignoreLeadingWhiteSpace)) {
+    try (final CSVReader reader = new CSVReader(Files.newBufferedReader(metadataFile, charset), separator, quote, escape, skipLines, strictQuotes, ignoreLeadingWhiteSpace)) {
       final List<Object> beans = csvToBean.parse(strategy, reader);
       this.metadata = new HashMap<>(beans.size());
       for (final Object bean : beans) {

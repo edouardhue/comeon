@@ -3,8 +3,12 @@ package comeon.ui.add;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 
 import au.com.bytecode.opencsv.CSVParser;
+
+import com.google.common.base.Charsets;
 
 public class Model {
   private final PropertyChangeSupport pcs;
@@ -13,7 +17,7 @@ public class Model {
 
   private Boolean useMetadata;
 
-  private File metadataFile;
+  private Path metadataFile;
 
   private String pictureExpression;
 
@@ -23,7 +27,7 @@ public class Model {
 
   public enum Properties {
     PICTURES_FILES, USE_METADATA, METADATA_FILE, PICTURE_EXPRESSION, METADATA_EXPRESSION,
-    CSV_SEPARATOR, CSV_QUOTE, CSV_ESCAPE, CSV_SKIP_LINES, CSV_STRICT_QUOTES, CSV_IGNORE_LEADING_WHITESPACE
+    CSV_SEPARATOR, CSV_QUOTE, CSV_ESCAPE, CSV_SKIP_LINES, CSV_STRICT_QUOTES, CSV_IGNORE_LEADING_WHITESPACE, CSV_CHARSET
   }
 
   public Model() {
@@ -60,12 +64,12 @@ public class Model {
     pcs.firePropertyChange(Properties.USE_METADATA.name(), oldUseMetadata, useMetadata);
   }
 
-  public File getMetadataFile() {
+  public Path getMetadataFile() {
     return metadataFile;
   }
 
-  public void setMetadataFile(final File metadataFile) {
-    final File oldMetadataFile = this.metadataFile;
+  public void setMetadataFile(final Path metadataFile) {
+    final Path oldMetadataFile = this.metadataFile;
     this.metadataFile = metadataFile;
     pcs.firePropertyChange(Properties.METADATA_FILE.name(), oldMetadataFile, metadataFile);
   }
@@ -149,6 +153,16 @@ public class Model {
     csvSettings.ignoreLeadingWhiteSpace = ignoreLeadingWhiteSpace;
     pcs.firePropertyChange(Properties.CSV_IGNORE_LEADING_WHITESPACE.name(), oldIgnoreLeadingWhiteSpace, ignoreLeadingWhiteSpace);
   }
+  
+  public Charset getCharset() {
+    return csvSettings.charset;
+  }
+  
+  public void setCharset(final Charset charset) {
+    final Charset oldCharset = csvSettings.charset;
+    csvSettings.charset = charset;
+    pcs.firePropertyChange(Properties.CSV_CHARSET.name(), oldCharset, charset);
+  }
 
   public class CSVSettings {
     private char separator;
@@ -162,6 +176,8 @@ public class Model {
     private boolean strictQuotes;
 
     private boolean ignoreLeadingWhiteSpace;
+    
+    private Charset charset;
 
     public CSVSettings() {
       this.separator = CSVParser.DEFAULT_SEPARATOR;
@@ -170,6 +186,7 @@ public class Model {
       this.skipLines = 0;
       this.strictQuotes = CSVParser.DEFAULT_STRICT_QUOTES;
       this.ignoreLeadingWhiteSpace = CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE;
+      this.charset = Charsets.UTF_8;
     }
   }
 }

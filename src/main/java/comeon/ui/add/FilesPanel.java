@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.text.ParseException;
 
 import javax.swing.AbstractAction;
@@ -34,6 +36,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.MaskFormatter;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import comeon.ui.UI;
 
@@ -304,12 +307,11 @@ class FilesPanel extends JPanel {
     public void actionPerformed(final ActionEvent e) {
       final int returnVal = fileChooser.showOpenDialog(JOptionPane.getRootFrame());
       if (returnVal == JFileChooser.APPROVE_OPTION) {
-        controller.setMetadataFile(fileChooser.getSelectedFile());
+        controller.setMetadataFile(Paths.get(fileChooser.getSelectedFile().toURI()));
       }
     }
   }
   
-  //TODO add encoding selector
   private class CSVAccessoryPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
@@ -426,6 +428,25 @@ class FilesPanel extends JPanel {
         }
       });
       
+      final JLabel charsetLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.charset"));
+      final JComboBox<Charset> charsetField = new JComboBox<>(new Charset[] {
+          Charsets.ISO_8859_1,
+          Charsets.UTF_8,
+          Charsets.US_ASCII
+      });
+      charsetLabel.setLabelFor(charsetField);
+      charsetField.setEditable(true);
+      charsetField.setSelectedItem(controller.getCharset());
+      charsetField.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+          final Object item = charsetField.getSelectedItem();
+          if (item instanceof Charset) {
+            controller.setCharset((Charset) item);
+          }
+        }
+      });
+      
       layout.setVerticalGroup(
         layout.createSequentialGroup()
         .addComponent(separatorLabel)
@@ -438,6 +459,8 @@ class FilesPanel extends JPanel {
         .addComponent(skipLinesField)
         .addComponent(strictQuotesBox)
         .addComponent(ignoreLeadingWhiteSpaceBox)
+        .addComponent(charsetLabel)
+        .addComponent(charsetField)
       );
       layout.setHorizontalGroup(
         layout.createParallelGroup()
@@ -451,6 +474,8 @@ class FilesPanel extends JPanel {
         .addComponent(skipLinesField)
         .addComponent(strictQuotesBox)
         .addComponent(ignoreLeadingWhiteSpaceBox)
+        .addComponent(charsetLabel)
+        .addComponent(charsetField)
       );
     }
     
