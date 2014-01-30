@@ -309,7 +309,6 @@ class FilesPanel extends JPanel {
     }
   }
   
-  //TODO i18n
   //TODO add encoding selector
   private class CSVAccessoryPanel extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -321,7 +320,7 @@ class FilesPanel extends JPanel {
       layout.setAutoCreateGaps(true);
       this.setLayout(layout);
       
-      this.setBorder(BorderFactory.createTitledBorder("CSV settings"));
+      this.setBorder(BorderFactory.createTitledBorder(UI.BUNDLE.getString("addpictures.metadata.csv.title")));
       
       final MaskFormatter singleCharFormatter = new MaskFormatter();
       try {
@@ -332,9 +331,10 @@ class FilesPanel extends JPanel {
         throw new Error("Bad formatter", e);
       }
       
-      final JLabel separatorLabel = new JLabel("separator");
+      final JLabel separatorLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.separator"));
       final JFormattedTextField separatorField = new JFormattedTextField(singleCharFormatter);
       separatorLabel.setLabelFor(separatorField);
+      separatorField.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.separator.tooltip"));
       separatorField.setText(String.valueOf(controller.getSeparator()));
       separatorField.getDocument().addDocumentListener(new DocumentListener() {
         @Override
@@ -353,9 +353,10 @@ class FilesPanel extends JPanel {
         }
       });
       
-      final JLabel quoteLabel = new JLabel("quote");
+      final JLabel quoteLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.quote"));
       final JFormattedTextField quoteField = new JFormattedTextField(singleCharFormatter);
       quoteLabel.setLabelFor(quoteField);
+      quoteField.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.quote.tooltip"));
       quoteField.setText(String.valueOf(controller.getQuote()));
       quoteField.getDocument().addDocumentListener(new DocumentListener() {
         @Override
@@ -374,9 +375,10 @@ class FilesPanel extends JPanel {
         }
       });
       
-      final JLabel escapeLabel = new JLabel("escape");
+      final JLabel escapeLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.escape"));
       final JFormattedTextField escapeField = new JFormattedTextField(singleCharFormatter);
       escapeLabel.setLabelFor(escapeField);
+      escapeField.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.escape.tooltip"));
       escapeField.setText(String.valueOf(controller.getEscape()));
       escapeField.getDocument().addDocumentListener(new DocumentListener() {
         @Override
@@ -395,7 +397,7 @@ class FilesPanel extends JPanel {
         }
       });
       
-      final JLabel skipLinesLabel = new JLabel("skip lines");
+      final JLabel skipLinesLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.skipLines"));
       final JSpinner skipLinesField = new JSpinner(new SpinnerNumberModel(controller.getSkipLines(), 0, Integer.MAX_VALUE, 1) {
         private static final long serialVersionUID = 1L;
         @Override
@@ -405,16 +407,18 @@ class FilesPanel extends JPanel {
         }
       });
       skipLinesLabel.setLabelFor(skipLinesField);
+      skipLinesField.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.skipLines.tooltip"));
       
-      final JCheckBox strictQuotesBox = new JCheckBox("strict quotes", controller.isStrictQuotes());
+      final JCheckBox strictQuotesBox = new JCheckBox(UI.BUNDLE.getString("addpictures.metadata.csv.strictQuotes"), controller.isStrictQuotes());
       strictQuotesBox.addChangeListener(new ChangeListener() {
         @Override
         public void stateChanged(final ChangeEvent e) {
           controller.setStrictQuotes(strictQuotesBox.isSelected());
         }
       });
+      strictQuotesBox.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.strictQuotes.tooltip"));
       
-      final JCheckBox ignoreLeadingWhiteSpaceBox = new JCheckBox("ignore leading white space", controller.isIgnoreLeadingWhiteSpace());
+      final JCheckBox ignoreLeadingWhiteSpaceBox = new JCheckBox(UI.BUNDLE.getString("addpictures.metadata.csv.ignoreLeadingWhiteSpace"), controller.isIgnoreLeadingWhiteSpace());
       ignoreLeadingWhiteSpaceBox.addChangeListener(new ChangeListener() {
         @Override
         public void stateChanged(final ChangeEvent e) {
