@@ -15,22 +15,22 @@ import javax.swing.SwingUtilities;
 import au.com.bytecode.opencsv.CSVReader;
 
 
-class Controller implements PropertyChangeListener {
+class AddController implements PropertyChangeListener {
   
   private final DefaultListModel<File> picturesListModel;
   
   private final DefaultComboBoxModel<String> metadataExpressionModel;
   
-  private Model model;
+  private AddModel model;
   
   private FilesPanel view;
 
-  public Controller() {
+  public AddController() {
     this.picturesListModel = new DefaultListModel<>();
     this.metadataExpressionModel = new DefaultComboBoxModel<>();
   }
   
-  public void registerModel(final Model model) {
+  public void registerModel(final AddModel model) {
     this.model = model;
     this.model.addPropertyChangeListener(this);
   }
@@ -125,19 +125,19 @@ class Controller implements PropertyChangeListener {
   
   @Override
   public void propertyChange(final PropertyChangeEvent evt) {
-    if (Model.Properties.USE_METADATA.name().equals(evt.getPropertyName())) {
+    if (AddModel.Properties.USE_METADATA.name().equals(evt.getPropertyName())) {
       if ((Boolean) evt.getNewValue()) {
         view.activateMetadataZone();
       } else {
         view.deactivateMetadataZone();
       }
-    } else if (Model.Properties.PICTURES_FILES.name().equals(evt.getPropertyName())) {
+    } else if (AddModel.Properties.PICTURES_FILES.name().equals(evt.getPropertyName())) {
       picturesListModel.removeAllElements();
       final File[] files = (File[]) evt.getNewValue();
       for (final File file : files) {
         picturesListModel.addElement(file);
       } 
-    } else if (Model.Properties.METADATA_FILE.name().equals(evt.getPropertyName())) {
+    } else if (AddModel.Properties.METADATA_FILE.name().equals(evt.getPropertyName())) {
       final Path location = (Path) evt.getNewValue();
       try {
         final String[] columns = this.peekMetadataFileHeader(location);
@@ -152,7 +152,7 @@ class Controller implements PropertyChangeListener {
           }
         });
       } catch (final IOException e) {
-        
+        //TODO handle exception
       }
     }
   }

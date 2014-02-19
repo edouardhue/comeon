@@ -10,7 +10,7 @@ import au.com.bytecode.opencsv.CSVParser;
 
 import com.google.common.base.Charsets;
 
-public class Model {
+public class AddModel {
   private final PropertyChangeSupport pcs;
 
   private File[] picturesFiles;
@@ -30,7 +30,7 @@ public class Model {
     CSV_SEPARATOR, CSV_QUOTE, CSV_ESCAPE, CSV_SKIP_LINES, CSV_STRICT_QUOTES, CSV_IGNORE_LEADING_WHITESPACE, CSV_CHARSET
   }
 
-  public Model() {
+  public AddModel() {
     this.pcs = new PropertyChangeSupport(this);
     this.picturesFiles = new File[0];
     this.useMetadata = Boolean.FALSE;

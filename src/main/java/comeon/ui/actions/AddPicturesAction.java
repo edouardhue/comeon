@@ -20,7 +20,7 @@ import comeon.templates.Templates;
 import comeon.templates.TemplatesChangedEvent;
 import comeon.ui.UI;
 import comeon.ui.add.AddPicturesDialog;
-import comeon.ui.add.Model;
+import comeon.ui.add.AddModel;
 
 @Singleton
 public final class AddPicturesAction extends BaseAction {
@@ -60,7 +60,7 @@ public final class AddPicturesAction extends BaseAction {
         final AddPicturesDialog dialog = new AddPicturesDialog();
         final int value = dialog.showDialog();
         if (value == JOptionPane.OK_OPTION) {
-          final Model model = dialog.getModel();
+          final AddModel model = dialog.getModel();
           final File[] files = model.getPicturesFiles();
           if (files.length > 0) {
             final TemplateWrapper[] templates = getWrappedTemplates();

@@ -69,9 +69,9 @@ class FilesPanel extends JPanel {
   
   private final JComboBox<String> metadataExpression;
   
-  private final Controller controller;
+  private final AddController controller;
   
-  public FilesPanel(final Controller controller) {
+  public FilesPanel(final AddController controller) {
     super();
     this.controller = controller;
     
@@ -248,9 +248,9 @@ class FilesPanel extends JPanel {
   private class PickPicturesFilesAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
     
-    private final Controller controller;
+    private final AddController controller;
 
-    public PickPicturesFilesAction(final Controller controller) {
+    public PickPicturesFilesAction(final AddController controller) {
       super(UI.BUNDLE.getString("addpictures.pictures.pick"));
       this.controller = controller;
     }
@@ -267,9 +267,9 @@ class FilesPanel extends JPanel {
   private class UseExternalMetadataCheckboxHandler extends AbstractAction implements ItemListener {
     private static final long serialVersionUID = 1L;
     
-    private final Controller controller;
+    private final AddController controller;
 
-    public UseExternalMetadataCheckboxHandler(final Controller controller) {
+    public UseExternalMetadataCheckboxHandler(final AddController controller) {
       super(UI.BUNDLE.getString("addpictures.metadata.use"));
       this.controller = controller;
     }

@@ -10,9 +10,9 @@ public final class AddPicturesDialog extends JOptionPane {
 
   private static final long serialVersionUID = 1L;
 
-  private final Model model;
+  private final AddModel model;
   
-  private final Controller controller;
+  private final AddController controller;
   
   private final JDialog dialog;
   
@@ -20,8 +20,8 @@ public final class AddPicturesDialog extends JOptionPane {
   
   public AddPicturesDialog() {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-    this.controller = new Controller();
-    this.model = new Model();
+    this.controller = new AddController();
+    this.model = new AddModel();
     this.controller.registerModel(model);
     this.filesPanel = new FilesPanel(controller);
     this.controller.registerView(filesPanel);
@@ -35,7 +35,7 @@ public final class AddPicturesDialog extends JOptionPane {
     return ((Integer) this.getValue()).intValue();
   }
   
-  public Model getModel() {
+  public AddModel getModel() {
     return model;
   }
 }
