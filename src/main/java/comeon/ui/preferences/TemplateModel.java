@@ -5,6 +5,8 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.nio.charset.Charset;
 
+import com.google.common.base.Strings;
+
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 
@@ -92,4 +94,10 @@ public final class TemplateModel {
     pcs.firePropertyChange(Properties.KIND.name(), oldKind, kind);
   }
 
+  static TemplateModel getPrototype() {
+    final TemplateModel prototype = new TemplateModel();
+    prototype.name = Strings.repeat("x", 32);
+    prototype.description = Strings.repeat("xxxxxx ", 12);
+    return prototype;
+  }
 }

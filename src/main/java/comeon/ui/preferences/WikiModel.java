@@ -3,6 +3,8 @@ package comeon.ui.preferences;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import com.google.common.base.Strings;
+
 import comeon.model.Wiki;
 
 public final class WikiModel {
@@ -87,5 +89,12 @@ public final class WikiModel {
     final String oldDisplayName = this.displayName;
     this.displayName = displayName;
     pcs.firePropertyChange(Properties.DISPLAY_NAME.name(), oldDisplayName, displayName);
+  }
+
+  static WikiModel getPrototype() {
+    final WikiModel prototype = new WikiModel();
+    prototype.name = Strings.repeat("x", 32);
+    prototype.displayName = Strings.repeat("xxxxxx ", 3);
+    return prototype;
   }
 }

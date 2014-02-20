@@ -1,11 +1,9 @@
 package comeon.ui.preferences;
 
-import java.awt.BorderLayout;
-
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,50 +11,72 @@ import javax.swing.JTabbedPane;
 import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 
+import comeon.ui.UI;
+
 public final class PreferencesPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private final JTabbedPane tabs;
+  private final ListPanel<TemplateModel> templatesPanel;
   
-  public PreferencesPanel(final PreferencesController controller) {
-    this.tabs = new JTabbedPane(JTabbedPane.TOP);
-    this.tabs.add(new ListPanel<>(controller.getWikis()));
-    this.tabs.add(new ListPanel<>(controller.getTemplates()));
+  private final ListPanel<WikiModel> wikisPanel;
+  
+  public PreferencesPanel() {
+    this.templatesPanel = new ListPanel<>(new TemplateListCellRenderer(), TemplateModel.getPrototype());
+    this.wikisPanel = new ListPanel<>(new WikiListCellRenderer(), WikiModel.getPrototype());
+    final JTabbedPane tabs = new JTabbedPane(JTabbedPane.TOP);
+    tabs.add(UI.BUNDLE.getString("prefs.tab.templates"), templatesPanel);
+    tabs.add(UI.BUNDLE.getString("prefs.tab.wikis"), wikisPanel);
     this.add(tabs);
+  }
+  
+  void updateModels(final ListModel<TemplateModel> templatesModel, final ListModel<WikiModel> wikisModel) {
+    this.templatesPanel.updateModel(templatesModel);
+    this.wikisPanel.updateModel(wikisModel);
   }
   
   private class ListPanel<M> extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    public ListPanel(final ListModel<M> listModel) {
-      super(new BorderLayout());
-      final JList<M> list = new JList<>(listModel);
+    private final JList<M> list;
+    
+    public ListPanel(final BaseListCellRenderer<M> renderer, final M prototypeValue) {
+      super();
+      
+      this.list = new JList<>();
+      this.list.setCellRenderer(renderer);
+      this.list.setPrototypeCellValue(prototypeValue);
       final JScrollPane scrollPane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      this.add(scrollPane, BorderLayout.CENTER);
+      final JPanel toolbox = buildToolbox();
+      
+      final GroupLayout layout = new GroupLayout(this);
+      this.setLayout(layout);
+      layout.setAutoCreateContainerGaps(true);
+      layout.setAutoCreateGaps(true);
+      layout.setHorizontalGroup(layout.createSequentialGroup()
+          .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+          .addComponent(toolbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
+      layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(scrollPane).addComponent(toolbox));
+    }
+
+    private JPanel buildToolbox() {
       final JPanel toolbox = new JPanel();
+      toolbox.setBorder(BorderFactory.createEtchedBorder());
       final GroupLayout toolboxLayout = new GroupLayout(toolbox);
       toolbox.setLayout(toolboxLayout);
-      final JButton addButton = new JButton("+");
-      final JButton removeButton = new JButton("-");
-      final JButton changeButton = new JButton("Δ");
+      final JButton addButton = new JButton(UI.BUNDLE.getString("prefs.add"));
+      final JButton removeButton = new JButton(UI.BUNDLE.getString("prefs.remove"));
+      final JButton changeButton = new JButton(UI.BUNDLE.getString("prefs.change"));
       toolboxLayout.setAutoCreateContainerGaps(true);
       toolboxLayout.setAutoCreateGaps(true);
       toolboxLayout.setHorizontalGroup(toolboxLayout.createParallelGroup(Alignment.CENTER).addComponent(addButton).addComponent(removeButton).addComponent(changeButton));
       toolboxLayout.setVerticalGroup(toolboxLayout.createSequentialGroup().addComponent(addButton).addComponent(removeButton).addComponent(changeButton));
       toolboxLayout.linkSize(SwingConstants.HORIZONTAL, addButton, removeButton, changeButton);
-      this.add(toolbox, BorderLayout.EAST);
+      return toolbox;
     }
-  }
-  
-  public static void main(final String... args) {
-    final JFrame f = new JFrame();
-    final PreferencesController controller = new PreferencesController();
-    final PreferencesModel model = new PreferencesModel();
-    controller.registerModel(model);
-    f.add(new PreferencesPanel(controller));
-    f.setSize(800, 600);
-    f.setVisible(true);
-    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    private void updateModel(final ListModel<M> model) {
+      this.list.setModel(model);
+    }
   }
 }

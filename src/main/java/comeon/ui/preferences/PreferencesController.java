@@ -1,63 +1,57 @@
 package comeon.ui.preferences;
 
-import javax.swing.ListModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import comeon.model.Template;
+import comeon.model.Wiki;
+import comeon.templates.Templates;
+import comeon.wikis.Wikis;
 
 
 public final class PreferencesController {
   
   private PreferencesModel model;
   
-  public PreferencesController() {
+  private final Templates templates;
+  
+  private final Wikis wikis;
+  
+  public PreferencesController(final Templates templates, final Wikis wikis) {
+    this.templates = templates;
+    this.wikis = wikis;
   }
   
   public void registerModel(final PreferencesModel model) {
     this.model = model;
-    this.model.getTemplates().addListDataListener(new ListDataListener() {
-      
-      @Override
-      public void intervalRemoved(ListDataEvent e) {
-        
-      }
-      
-      @Override
-      public void intervalAdded(ListDataEvent e) {
-        
-      }
-      
-      @Override
-      public void contentsChanged(ListDataEvent e) {
-        
-      }
-    });
-    
-    this.model.getWikis().addListDataListener(new ListDataListener() {
-      
-      @Override
-      public void intervalRemoved(ListDataEvent e) {
-        
-      }
-      
-      @Override
-      public void intervalAdded(ListDataEvent e) {
-        
-      }
-      
-      @Override
-      public void contentsChanged(ListDataEvent e) {
-        
-      }
-    });
-  }
-
-  public ListModel<TemplateModel> getTemplates() {
-    return model.getTemplates();
-  }
-
-  public ListModel<WikiModel> getWikis() {
-    return model.getWikis();
+    this.model.updateModel(getTemplateModels(), getWikiModels());
   }
   
+  private List<TemplateModel> getTemplateModels() {
+    final List<Template> templates = this.templates.getTemplates();
+    final List<TemplateModel> templateModels = new ArrayList<>(templates.size());
+    for (final Template template : templates) {
+      templateModels.add(new TemplateModel(template));
+    }
+    return templateModels;
+  }
+  
+  private List<WikiModel> getWikiModels() {
+    final List<Wiki> wikis = this.wikis.getWikis();
+    final List<WikiModel> wikiModels = new ArrayList<>(wikis.size());
+    for (final Wiki wiki : wikis) {
+      wikiModels.add(new WikiModel(wiki));
+    }
+    return wikiModels;
+    
+  }
+  
+  public void registerView(final PreferencesPanel view) {
+    view.updateModels(model.getTemplates(), model.getWikis());
+  }
+
+  public void persist() {
+    
+  }
   
 }
