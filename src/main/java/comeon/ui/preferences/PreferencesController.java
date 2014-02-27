@@ -11,14 +11,17 @@ import comeon.wikis.Wikis;
 
 public final class PreferencesController {
   
-  private PreferencesModel model;
-  
   private final Templates templates;
+  
+  private final TemplateSubController templateSubController;
   
   private final Wikis wikis;
   
+  private PreferencesModel model;
+
   public PreferencesController(final Templates templates, final Wikis wikis) {
     this.templates = templates;
+    this.templateSubController = new TemplateSubController();
     this.wikis = wikis;
   }
   
@@ -48,6 +51,7 @@ public final class PreferencesController {
   
   public void registerView(final PreferencesPanel view) {
     view.updateModels(model.getTemplates(), model.getWikis());
+    templateSubController.registerView(view.getTemplateSubPanel());
   }
 
   public void persist() {

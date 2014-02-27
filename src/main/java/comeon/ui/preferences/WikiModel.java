@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 
 import comeon.model.Wiki;
 
-public final class WikiModel {
+public final class WikiModel implements Model {
   private final PropertyChangeSupport pcs;
 
   private String name;
@@ -37,10 +37,16 @@ public final class WikiModel {
     this.displayName = wiki.getUser().getDisplayName();
   }
 
+  @Override
   public void addPropertyChangeListener(final PropertyChangeListener pcl) {
     this.pcs.addPropertyChangeListener(pcl);
   }
 
+  @Override
+  public void removePropertyChangeListener(final PropertyChangeListener pcl) {
+    this.pcs.removePropertyChangeListener(pcl);
+  }
+  
   public String getName() {
     return name;
   }

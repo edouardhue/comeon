@@ -1,17 +1,18 @@
 package comeon.ui.preferences;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import comeon.model.Template;
+import comeon.model.TemplateKind;
 import comeon.model.User;
 import comeon.model.Wiki;
 import comeon.model.processors.PostProcessor;
@@ -43,27 +44,20 @@ public final class PreferencesDialogTest {
       
       @Override
       public void run() {
-        try {
-          for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-              if ("Nimbus".equals(info.getName())) {
-                  UIManager.setLookAndFeel(info.getClassName());
-                  break;
-              }
-          }
-          final JFrame f = new JFrame();
-          final PreferencesModel model = new PreferencesModel();
-          final PreferencesPanel view = new PreferencesPanel();
+        final JFrame f = new JFrame();
+        final PreferencesModel model = new PreferencesModel();
+        final PreferencesPanel view = new PreferencesPanel(
+          new Charset[] {Charsets.ISO_8859_1, Charsets.UTF_8},
+          new TemplateKind[] { kind }
+        );
 
-          controller.registerModel(model);
-          controller.registerView(view);
-          
-          f.add(view);
-          f.setSize(800, 600);
-          f.setVisible(true);
-          f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      } catch (Exception e) {
-          // If Nimbus is not available, you can set the GUI to another look and feel.
-      }        
+        controller.registerModel(model);
+        controller.registerView(view);
+        
+        f.add(view);
+        f.setSize(800, 600);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setVisible(true);
       }
     });
   }

@@ -2,22 +2,21 @@ package comeon.ui.preferences;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 
 import com.google.common.base.Strings;
-
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 
-public final class TemplateModel {
+public final class TemplateModel implements Model {
   private final PropertyChangeSupport pcs;
 
   private String name;
 
   private String description;
 
-  private File file;
+  private Path file;
 
   private Charset charset;
 
@@ -35,13 +34,19 @@ public final class TemplateModel {
     this();
     this.name = template.getName();
     this.description = template.getDescription();
-    this.file = template.getFile();
+    this.file = template.getFile().toPath();
     this.charset = template.getCharset();
     this.kind = template.getKind();
   }
 
+  @Override
   public void addPropertyChangeListener(final PropertyChangeListener pcl) {
     this.pcs.addPropertyChangeListener(pcl);
+  }
+  
+  @Override
+  public void removePropertyChangeListener(final PropertyChangeListener pcl) {
+    this.pcs.removePropertyChangeListener(pcl);
   }
 
   public String getName() {
@@ -64,12 +69,12 @@ public final class TemplateModel {
     pcs.firePropertyChange(Properties.DESCRIPTION.name(), oldDescription, description);
   }
 
-  public File getFile() {
+  public Path getFile() {
     return file;
   }
 
-  public void setFile(final File file) {
-    final File oldFile = this.file;
+  public void setFile(final Path file) {
+    final Path oldFile = this.file;
     this.file = file;
     pcs.firePropertyChange(Properties.FILE.name(), oldFile, file);
   }
