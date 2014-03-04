@@ -11,15 +11,19 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
 abstract class SubController<M extends Model, V extends SubPanel<M>> implements ListSelectionListener, PropertyChangeListener {
+  private final PreferencesController mainController;
+  
   private V view;
   
   private M model;
   
+  protected SubController(final PreferencesController mainController) {
+    this.mainController = mainController;
+  }
+  
   public final void registerView(final V view) {
     this.view = view;
   }
-  
-  protected void registerViewInterval(final V view) {}
   
   protected final V getView() {
     return this.view;
@@ -27,6 +31,10 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
   
   protected final M getModel() {
     return model;
+  }
+  
+  protected final PreferencesController getMainController() {
+    return mainController;
   }
   
   private void registerModel(final M model) {
@@ -43,6 +51,8 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
     this.registerModel(model);
   }
   
+  public abstract void remove(final int index);
+  
   private void onModelChanged(final M oldModel, final M newModel) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -53,6 +63,8 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
       }
     });
   }
+  
+  protected abstract void registerViewInterval(final V view);
   
   protected abstract void onModelChangedInternal(final M oldModel, final M newModel);
 

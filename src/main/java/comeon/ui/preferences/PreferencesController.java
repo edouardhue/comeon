@@ -17,12 +17,23 @@ public final class PreferencesController {
   
   private final Wikis wikis;
   
+  private final WikiSubController wikiSubController;
+  
   private PreferencesModel model;
 
   public PreferencesController(final Templates templates, final Wikis wikis) {
     this.templates = templates;
-    this.templateSubController = new TemplateSubController();
+    this.templateSubController = new TemplateSubController(this);
+    this.wikiSubController = new WikiSubController(this);
     this.wikis = wikis;
+  }
+  
+  public TemplateSubController getTemplateSubController() {
+    return templateSubController;
+  }
+  
+  public WikiSubController getWikiSubController() {
+    return wikiSubController;
   }
   
   public void registerModel(final PreferencesModel model) {
@@ -49,11 +60,21 @@ public final class PreferencesController {
     
   }
   
+  public void removeTemplate(final int index) {
+    model.getTemplates().removeElementAt(index);
+  }
+  
+  public void removeWiki(final int index) {
+    model.getWikis().removeElementAt(index);
+  }
+  
   public void registerView(final PreferencesPanel view) {
     view.updateModels(model.getTemplates(), model.getWikis());
+    view.setController(this);
     templateSubController.registerView(view.getTemplateSubPanel());
+    wikiSubController.registerView(view.getWikiSubPanel());
   }
-
+  
   public void persist() {
     
   }

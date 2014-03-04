@@ -15,6 +15,10 @@ import comeon.model.TemplateKind;
 
 final class TemplateSubController extends SubController<TemplateModel, TemplateSubPanel> {
 
+  public TemplateSubController(final PreferencesController mainController) {
+    super(mainController);
+  }
+
   @Override
   protected void registerViewInterval(final TemplateSubPanel view) {
     view.getNameField().getDocument().addDocumentListener(new AbstractDocumentListener() {
@@ -79,5 +83,10 @@ final class TemplateSubController extends SubController<TemplateModel, TemplateS
         }
       });
     }
+  }
+
+  @Override
+  public void remove(final int index) {
+    getMainController().removeTemplate(index);
   }
 }

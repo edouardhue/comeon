@@ -3,7 +3,6 @@ package comeon.ui.preferences;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
-import javax.swing.ListModel;
 
 final class PreferencesModel {
   private DefaultListModel<TemplateModel> templatesModel;
@@ -29,11 +28,11 @@ final class PreferencesModel {
     listModel.trimToSize();
   }
   
-  public ListModel<TemplateModel> getTemplates() {
+  public DefaultListModel<TemplateModel> getTemplates() {
     return templatesModel;
   }
   
-  public ListModel<WikiModel> getWikis() {
+  public DefaultListModel<WikiModel> getWikis() {
     return wikisModel;
   }
 }
