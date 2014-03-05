@@ -60,6 +60,14 @@ public final class PreferencesController {
     
   }
   
+  public void add(final TemplateModel model) {
+    this.model.getTemplates().addElement(model);
+  }
+  
+  public void add(final WikiModel model) {
+    this.model.getWikis().addElement(model);
+  }
+  
   public void removeTemplate(final int index) {
     model.getTemplates().removeElementAt(index);
   }

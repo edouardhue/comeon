@@ -10,11 +10,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import comeon.model.TemplateKind;
+import comeon.ui.UI;
 
 final class TemplateSubPanel extends SubPanel<TemplateModel> {
   
@@ -25,6 +27,8 @@ final class TemplateSubPanel extends SubPanel<TemplateModel> {
   private final JTextField nameField;
   
   private final JTextArea descriptionField;
+  
+  private final JScrollPane descriptionPane;
   
   private final JTextField fileField;
   
@@ -38,9 +42,10 @@ final class TemplateSubPanel extends SubPanel<TemplateModel> {
 
   public TemplateSubPanel(final Charset[] charsets, final TemplateKind[] kinds) {
     this.nameField = new JTextField();
-    this.descriptionField = new JTextArea();
+    this.descriptionField = new JTextArea(3, 0);
+    this.descriptionPane = new JScrollPane(descriptionField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     this.fileField = new JTextField();
-    this.fileButton = new JButton();
+    this.fileButton = new JButton(UI.BUNDLE.getString("prefs.templates.path.pick"));
     this.charsetField = new JComboBox<>(charsets);
     this.kindField = new JComboBox<TemplateKind>(kinds);
     this.fileChooser = new JFileChooser();
@@ -107,7 +112,7 @@ final class TemplateSubPanel extends SubPanel<TemplateModel> {
     layout.setVerticalGroup(
         layout.createSequentialGroup()
         .addGroup(layout.createParallelGroup().addComponent(labels[0]).addComponent(nameField))
-        .addGroup(layout.createParallelGroup().addComponent(labels[1]).addComponent(descriptionField))
+        .addGroup(layout.createParallelGroup().addComponent(labels[1]).addComponent(descriptionPane))
         .addGroup(layout.createParallelGroup().addComponent(labels[2]).addComponent(fileField).addComponent(fileButton))
         .addGroup(layout.createParallelGroup().addComponent(labels[3]).addComponent(charsetField))
         .addGroup(layout.createParallelGroup().addComponent(labels[4]).addComponent(kindField))
@@ -115,7 +120,7 @@ final class TemplateSubPanel extends SubPanel<TemplateModel> {
     layout.setHorizontalGroup(
         layout.createSequentialGroup()
         .addGroup(layout.createParallelGroup().addComponent(labels[0]).addComponent(labels[1]).addComponent(labels[2]).addComponent(labels[3]).addComponent(labels[4]))
-        .addGroup(layout.createParallelGroup().addComponent(nameField).addComponent(descriptionField).addComponent(fileField).addComponent(charsetField).addComponent(kindField))
+        .addGroup(layout.createParallelGroup().addComponent(nameField).addComponent(descriptionPane).addComponent(fileField).addComponent(charsetField).addComponent(kindField))
         .addGroup(layout.createParallelGroup().addComponent(fileButton))
     );
   }

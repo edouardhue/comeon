@@ -85,9 +85,9 @@ public final class PreferencesPanel extends JPanel {
 
       this.subPanel = subPanel;
       
-      this.addAction = new AddAction();
+      this.addAction = new AddAction(stringsKey);
       this.removeAction = new RemoveAction(stringsKey);
-      this.changeAction = new ChangeAction();
+      this.changeAction = new ChangeAction(stringsKey);
       
       this.list = new JList<>();
       this.list.setCellRenderer(renderer);
@@ -138,17 +138,21 @@ public final class PreferencesPanel extends JPanel {
     
     void setSubController(final SubController<M, ? extends SubPanel<M>> subController) {
       this.subController = subController;
+      this.list.addListSelectionListener(subController);
     }
 
     private void updateModel(final ListModel<M> model) {
       this.list.setModel(model);
     }
-    
+
     private class AddAction extends AbstractAction {
       private static final long serialVersionUID = 1L;
 
-      public AddAction() {
+      private final String titleKey;
+      
+      public AddAction(final String stringsKey) {
         super(UI.BUNDLE.getString("prefs.add"));
+        this.titleKey = "prefs." + stringsKey + ".new.title";
       }
       
       @Override
@@ -156,7 +160,13 @@ public final class PreferencesPanel extends JPanel {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            JOptionPane.showMessageDialog(PreferencesPanel.this, subPanel, UI.BUNDLE.getString("prefs.add"), JOptionPane.OK_CANCEL_OPTION);
+            subController.switchToBlankModel();
+            final int result = JOptionPane.showOptionDialog(PreferencesPanel.this, subPanel, UI.BUNDLE.getString(titleKey), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (JOptionPane.OK_OPTION == result) {
+              subController.addCurrentModel();
+            } else {
+              subController.registerModel(list.getSelectedValue());
+            }
           }
         });
       }
@@ -190,14 +200,22 @@ public final class PreferencesPanel extends JPanel {
     private class ChangeAction extends AbstractAction {
       private static final long serialVersionUID = 1L;
 
-      public ChangeAction() {
+      private final String titleKey;
+
+      public ChangeAction(final String stringsKey) {
         super(UI.BUNDLE.getString("prefs.change"));
+        this.titleKey = "prefs." + stringsKey + ".change.title";
         this.setEnabled(false);
       }
       
       @Override
       public void actionPerformed(final ActionEvent e) {
-        
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            JOptionPane.showOptionDialog(PreferencesPanel.this, subPanel, UI.BUNDLE.getString(titleKey), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+          }
+        });
       }
     }
   }

@@ -64,11 +64,13 @@ final class TemplateSubController extends SubController<TemplateModel, TemplateS
   
   @Override
   protected void onModelChangedInternal(final TemplateModel oldModel, final TemplateModel newModel) {
-    getView().getNameField().setText(newModel.getName());
-    getView().getDescriptionField().setText(newModel.getDescription());
-    getView().getFileField().setText(newModel.getFile().toString());
-    getView().getCharsetField().setSelectedItem(newModel.getCharset());
-    getView().getKindField().setSelectedItem(newModel.getKind());
+    if (newModel != null) {
+      getView().getNameField().setText(newModel.getName());
+      getView().getDescriptionField().setText(newModel.getDescription());
+      getView().getFileField().setText(newModel.getFile() == null ? null : newModel.getFile().toString());
+      getView().getCharsetField().setSelectedItem(newModel.getCharset());
+      getView().getKindField().setSelectedItem(newModel.getKind());
+    }
   }
 
   @Override
@@ -85,6 +87,16 @@ final class TemplateSubController extends SubController<TemplateModel, TemplateS
     }
   }
 
+  @Override
+  protected TemplateModel makeNewModel() {
+    return new TemplateModel();
+  }
+  
+  @Override
+  protected void addModel(final TemplateModel model) {
+    getMainController().add(model);
+  }
+  
   @Override
   public void remove(final int index) {
     getMainController().removeTemplate(index);

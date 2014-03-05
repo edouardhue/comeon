@@ -10,6 +10,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 abstract class SubController<M extends Model, V extends SubPanel<M>> implements ListSelectionListener, PropertyChangeListener {
   private final PreferencesController mainController;
   
@@ -23,6 +26,7 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
   
   public final void registerView(final V view) {
     this.view = view;
+    this.registerViewInterval(view);
   }
   
   protected final V getView() {
@@ -37,7 +41,7 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
     return mainController;
   }
   
-  private void registerModel(final M model) {
+  public final void registerModel(final M model) {
     final M oldModel = this.model;
     this.model = model;
     onModelChanged(oldModel, model);
@@ -51,13 +55,28 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
     this.registerModel(model);
   }
   
+  public final void switchToBlankModel() {
+    final M newModel = this.makeNewModel();
+    this.registerModel(newModel);
+  }
+  
+  public final void addCurrentModel() {
+    this.addModel(model);
+  }
+  
+  protected abstract void addModel(final M model);
+  
+  protected abstract M makeNewModel();
+  
   public abstract void remove(final int index);
   
   private void onModelChanged(final M oldModel, final M newModel) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        oldModel.removePropertyChangeListener(SubController.this);
+        if (oldModel != null) {
+          oldModel.removePropertyChangeListener(SubController.this);
+        }
         onModelChangedInternal(oldModel, newModel);
         newModel.addPropertyChangeListener(SubController.this);
       }
@@ -69,6 +88,7 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
   protected abstract void onModelChangedInternal(final M oldModel, final M newModel);
 
   protected abstract class AbstractDocumentListener implements DocumentListener {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public final void removeUpdate(final DocumentEvent e) {
@@ -88,6 +108,7 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
       try {
         this.doUpdate(getText(e));
       } catch (final BadLocationException e1) {
+        logger.warn("Can't update field", e1);
       }
     }
 

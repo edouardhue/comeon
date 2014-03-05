@@ -57,6 +57,16 @@ final class WikiSubController extends SubController<WikiModel, WikiSubPanel> {
   }
   
   @Override
+  protected WikiModel makeNewModel() {
+    return new WikiModel();
+  }
+  
+  @Override
+  protected void addModel(final WikiModel model) {
+    getMainController().add(model);
+  }
+  
+  @Override
   public void remove(final int index) {
     getMainController().removeWiki(index);
   }
