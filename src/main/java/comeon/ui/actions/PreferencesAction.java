@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import comeon.templates.Templates;
-import comeon.ui.preferences.PreferencesDialog;
+import comeon.ui.preferences.main.PreferencesDialog;
 import comeon.wikis.Wikis;
 
 public final class PreferencesAction extends BaseAction {

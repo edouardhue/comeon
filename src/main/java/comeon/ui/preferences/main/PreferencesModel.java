@@ -1,4 +1,4 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.main;
 
 import java.util.List;
 

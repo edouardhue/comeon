@@ -6,6 +6,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import comeon.ui.preferences.SubPanel;
+import comeon.ui.preferences.input.UrlInputVerifier;
 
 public final class WikiSubPanel extends SubPanel<WikiModel> {
   private static final long serialVersionUID = 1L;
@@ -22,10 +23,15 @@ public final class WikiSubPanel extends SubPanel<WikiModel> {
   
   public WikiSubPanel() {
     this.nameField = new JTextField();
+    this.nameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.urlField = new JTextField();
+    this.urlField.setInputVerifier(new UrlInputVerifier());
     this.displayNameField = new JTextField();
+    this.displayNameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.loginField = new JTextField();
+    this.loginField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.passwordField = new JPasswordField();
+    this.passwordField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.layoutComponents();
   }
 

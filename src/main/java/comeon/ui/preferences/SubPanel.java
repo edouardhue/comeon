@@ -6,11 +6,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import comeon.ui.UI;
+import comeon.ui.preferences.input.NotBlankInputVerifier;
 
 public abstract class SubPanel<M> extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
+  protected static final NotBlankInputVerifier NOT_BLANK_INPUT_VERIFIER = new NotBlankInputVerifier();
+  
   private final GroupLayout layout;
   
   protected SubPanel() {

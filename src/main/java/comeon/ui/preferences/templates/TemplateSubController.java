@@ -12,8 +12,8 @@ import javax.swing.JComboBox;
 import javax.swing.SwingUtilities;
 
 import comeon.model.TemplateKind;
-import comeon.ui.preferences.PreferencesController;
 import comeon.ui.preferences.SubController;
+import comeon.ui.preferences.main.PreferencesController;
 
 public final class TemplateSubController extends SubController<TemplateModel, TemplateSubPanel> {
 

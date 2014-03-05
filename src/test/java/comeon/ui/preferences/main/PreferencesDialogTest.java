@@ -1,4 +1,4 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.main;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -18,6 +18,9 @@ import comeon.model.Wiki;
 import comeon.model.processors.PostProcessor;
 import comeon.templates.Templates;
 import comeon.templates.velocity.VelocityTemplate;
+import comeon.ui.preferences.main.PreferencesController;
+import comeon.ui.preferences.main.PreferencesModel;
+import comeon.ui.preferences.main.PreferencesPanel;
 import comeon.wikis.Wikis;
 
 public final class PreferencesDialogTest {

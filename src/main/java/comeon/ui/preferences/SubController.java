@@ -12,6 +12,8 @@ import javax.swing.text.BadLocationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import comeon.ui.preferences.main.PreferencesController;
+
 public abstract class SubController<M extends Model, V extends SubPanel<M>> implements ListSelectionListener, PropertyChangeListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(SubController.class);
   
@@ -58,7 +60,13 @@ public abstract class SubController<M extends Model, V extends SubPanel<M>> impl
   @SuppressWarnings("unchecked")
   public final void rollback() {
     try {
-      this.switchToModel((M) lastSelectedModel.clone());
+      final M newModel;
+      if (lastSelectedModel == null) {
+        newModel = null;
+      } else {
+        newModel = (M) lastSelectedModel.clone();
+      }
+      this.switchToModel(newModel);
     } catch (final CloneNotSupportedException e) {
       LOGGER.error("Could not clone {}", lastSelectedModel, e);
     }
@@ -89,12 +97,16 @@ public abstract class SubController<M extends Model, V extends SubPanel<M>> impl
     final JList<M> list = (JList<M>) e.getSource();
     final M selectedValue = list.getSelectedValue();
     this.lastSelectedModel = selectedValue;
-    if (selectedValue != null) {
-      try {
-        this.switchToModel((M) selectedValue.clone());
-      } catch (final CloneNotSupportedException ex) {
-        LOGGER.error("Could not clone {}", selectedValue, e);
+    try {
+      final M newModel;
+      if (selectedValue == null) {
+        newModel = null;
+      } else {
+        newModel = (M) selectedValue.clone();
       }
+      this.switchToModel(newModel);
+    } catch (final CloneNotSupportedException ex) {
+      LOGGER.error("Could not clone {}", selectedValue, e);
     }
   }
   

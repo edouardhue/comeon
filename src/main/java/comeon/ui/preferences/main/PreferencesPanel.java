@@ -1,4 +1,4 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.main;
 
 import java.awt.event.ActionEvent;
 import java.nio.charset.Charset;
@@ -21,6 +21,10 @@ import javax.swing.event.ListSelectionListener;
 
 import comeon.model.TemplateKind;
 import comeon.ui.UI;
+import comeon.ui.preferences.BaseListCellRenderer;
+import comeon.ui.preferences.Model;
+import comeon.ui.preferences.SubController;
+import comeon.ui.preferences.SubPanel;
 import comeon.ui.preferences.templates.TemplateListCellRenderer;
 import comeon.ui.preferences.templates.TemplateModel;
 import comeon.ui.preferences.templates.TemplateSubPanel;
@@ -102,7 +106,7 @@ public final class PreferencesPanel extends JPanel {
         @Override
         public void valueChanged(final ListSelectionEvent e) {
           if (!e.getValueIsAdjusting()) {
-            final boolean isSomethingSelected = e.getFirstIndex() >= 0;
+            final boolean isSomethingSelected = list.getSelectedIndex() >= 0;
             SwingUtilities.invokeLater(new Runnable() {
               @Override
               public void run() {

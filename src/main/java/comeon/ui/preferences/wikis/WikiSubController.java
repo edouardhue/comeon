@@ -2,8 +2,8 @@ package comeon.ui.preferences.wikis;
 
 import java.beans.PropertyChangeEvent;
 
-import comeon.ui.preferences.PreferencesController;
 import comeon.ui.preferences.SubController;
+import comeon.ui.preferences.main.PreferencesController;
 
 public final class WikiSubController extends SubController<WikiModel, WikiSubPanel> {
 
