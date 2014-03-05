@@ -4,7 +4,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import com.google.common.base.Strings;
-
 import comeon.model.Wiki;
 
 public final class WikiModel implements Model {
@@ -102,5 +101,10 @@ public final class WikiModel implements Model {
     prototype.name = Strings.repeat("x", 32);
     prototype.displayName = Strings.repeat("xxxxxx ", 3);
     return prototype;
+  }
+  
+  @Override
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
   }
 }

@@ -105,4 +105,9 @@ public final class TemplateModel implements Model {
     prototype.description = Strings.repeat("xxxxxx ", 12);
     return prototype;
   }
+  
+  @Override
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
 }

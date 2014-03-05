@@ -48,6 +48,16 @@ final class WikiSubController extends SubController<WikiModel, WikiSubPanel> {
   }
 
   @Override
+  protected void doCommit(final WikiModel source, final WikiModel target, final int index) {
+    target.setName(source.getName());
+    target.setUrl(source.getUrl());
+    target.setDisplayName(source.getDisplayName());
+    target.setLogin(source.getLogin());
+    target.setPassword(source.getPassword());
+    getMainController().update(target, index);
+  }
+
+  @Override
   protected void onModelChangedInternal(final WikiModel oldModel, final WikiModel newModel) {
     getView().getNameField().setText(newModel.getName());
     getView().getUrlField().setText(newModel.getUrl());
@@ -55,7 +65,7 @@ final class WikiSubController extends SubController<WikiModel, WikiSubPanel> {
     getView().getLoginField().setText(newModel.getLogin());
     getView().getPasswordField().setText(newModel.getPassword());
   }
-  
+
   @Override
   protected WikiModel makeNewModel() {
     return new WikiModel();

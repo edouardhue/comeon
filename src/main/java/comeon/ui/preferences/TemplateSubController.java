@@ -88,6 +88,16 @@ final class TemplateSubController extends SubController<TemplateModel, TemplateS
   }
 
   @Override
+  protected void doCommit(final TemplateModel source, final TemplateModel target, final int index) {
+    target.setName(source.getName());
+    target.setDescription(source.getDescription());
+    target.setFile(source.getFile());
+    target.setCharset(source.getCharset());
+    target.setKind(source.getKind());
+    getMainController().update(target, index);
+  }
+
+  @Override
   protected TemplateModel makeNewModel() {
     return new TemplateModel();
   }

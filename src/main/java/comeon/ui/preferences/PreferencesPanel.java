@@ -165,7 +165,7 @@ public final class PreferencesPanel extends JPanel {
             if (JOptionPane.OK_OPTION == result) {
               subController.addCurrentModel();
             } else {
-              subController.registerModel(list.getSelectedValue());
+              subController.rollback();
             }
           }
         });
@@ -213,7 +213,12 @@ public final class PreferencesPanel extends JPanel {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            JOptionPane.showOptionDialog(PreferencesPanel.this, subPanel, UI.BUNDLE.getString(titleKey), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            final int result = JOptionPane.showOptionDialog(PreferencesPanel.this, subPanel, UI.BUNDLE.getString(titleKey), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (result == JOptionPane.OK_OPTION) {
+              subController.commit(list.getSelectedIndex());
+            } else {
+              subController.rollback();
+            }
           }
         });
       }

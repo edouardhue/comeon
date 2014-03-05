@@ -3,7 +3,6 @@ package comeon.ui.preferences;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JList;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -14,14 +13,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class SubController<M extends Model, V extends SubPanel<M>> implements ListSelectionListener, PropertyChangeListener {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SubController.class);
+  
   private final PreferencesController mainController;
   
   private V view;
   
   private M model;
   
+  private M lastSelectedModel;
+  
   protected SubController(final PreferencesController mainController) {
     this.mainController = mainController;
+    this.switchToBlankModel();
   }
   
   public final void registerView(final V view) {
@@ -41,27 +45,57 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
     return mainController;
   }
   
-  public final void registerModel(final M model) {
-    final M oldModel = this.model;
-    this.model = model;
-    onModelChanged(oldModel, model);
-  }
-  
-  @Override
-  public final void valueChanged(final ListSelectionEvent e) {
-    @SuppressWarnings("unchecked")
-    final JList<M> list = (JList<M>) e.getSource();
-    this.model = list.getSelectedValue();
-    this.registerModel(model);
-  }
-  
   public final void switchToBlankModel() {
-    final M newModel = this.makeNewModel();
-    this.registerModel(newModel);
+    this.switchToModel(this.makeNewModel());
+  }
+  
+  public final void commit(final int index) {
+    this.doCommit(model, lastSelectedModel, index);
+  }
+  
+  protected abstract void doCommit(final M source, final M target, final int index);
+  
+  @SuppressWarnings("unchecked")
+  public final void rollback() {
+    try {
+      this.switchToModel((M) lastSelectedModel.clone());
+    } catch (final CloneNotSupportedException e) {
+      LOGGER.error("Could not clone {}", lastSelectedModel, e);
+    }
   }
   
   public final void addCurrentModel() {
     this.addModel(model);
+    this.switchToBlankModel();
+  }
+  
+  private void switchToModel(final M model) {
+    final M oldModel = this.model;
+    if (oldModel != null) {
+      oldModel.removePropertyChangeListener(this);
+    }
+    this.model = model;
+    if (this.model != null) {
+      if (this.view != null) {
+        this.onModelChangedInternal(oldModel, model);
+      }
+      this.model.addPropertyChangeListener(this);
+    }
+  }
+  
+  @Override
+  @SuppressWarnings("unchecked")
+  public final void valueChanged(final ListSelectionEvent e) {
+    final JList<M> list = (JList<M>) e.getSource();
+    final M selectedValue = list.getSelectedValue();
+    this.lastSelectedModel = selectedValue;
+    if (selectedValue != null) {
+      try {
+        this.switchToModel((M) selectedValue.clone());
+      } catch (final CloneNotSupportedException ex) {
+        LOGGER.error("Could not clone {}", selectedValue, e);
+      }
+    }
   }
   
   protected abstract void addModel(final M model);
@@ -69,19 +103,6 @@ abstract class SubController<M extends Model, V extends SubPanel<M>> implements 
   protected abstract M makeNewModel();
   
   public abstract void remove(final int index);
-  
-  private void onModelChanged(final M oldModel, final M newModel) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if (oldModel != null) {
-          oldModel.removePropertyChangeListener(SubController.this);
-        }
-        onModelChangedInternal(oldModel, newModel);
-        newModel.addPropertyChangeListener(SubController.this);
-      }
-    });
-  }
   
   protected abstract void registerViewInterval(final V view);
   

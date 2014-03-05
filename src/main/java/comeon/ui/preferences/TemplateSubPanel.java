@@ -45,6 +45,7 @@ final class TemplateSubPanel extends SubPanel<TemplateModel> {
     this.descriptionField = new JTextArea(3, 0);
     this.descriptionPane = new JScrollPane(descriptionField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     this.fileField = new JTextField();
+    this.fileField.setEditable(false);
     this.fileButton = new JButton(UI.BUNDLE.getString("prefs.templates.path.pick"));
     this.charsetField = new JComboBox<>(charsets);
     this.kindField = new JComboBox<TemplateKind>(kinds);

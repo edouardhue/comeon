@@ -32,6 +32,14 @@ final class PreferencesModel {
     return templatesModel;
   }
   
+  public void update(final TemplateModel model, final int index) {
+    this.templatesModel.set(index, model);
+  }
+  
+  public void update(final WikiModel model, final int index) {
+    this.wikisModel.set(index, model);
+  }
+  
   public DefaultListModel<WikiModel> getWikis() {
     return wikisModel;
   }
