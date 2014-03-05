@@ -12,7 +12,7 @@ import javax.swing.text.BadLocationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class SubController<M extends Model, V extends SubPanel<M>> implements ListSelectionListener, PropertyChangeListener {
+public abstract class SubController<M extends Model, V extends SubPanel<M>> implements ListSelectionListener, PropertyChangeListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(SubController.class);
   
   private final PreferencesController mainController;

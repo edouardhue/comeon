@@ -6,6 +6,10 @@ import java.util.List;
 import comeon.model.Template;
 import comeon.model.Wiki;
 import comeon.templates.Templates;
+import comeon.ui.preferences.templates.TemplateModel;
+import comeon.ui.preferences.templates.TemplateSubController;
+import comeon.ui.preferences.wikis.WikiModel;
+import comeon.ui.preferences.wikis.WikiSubController;
 import comeon.wikis.Wikis;
 
 

@@ -1,4 +1,4 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.templates;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,8 +12,10 @@ import javax.swing.JComboBox;
 import javax.swing.SwingUtilities;
 
 import comeon.model.TemplateKind;
+import comeon.ui.preferences.PreferencesController;
+import comeon.ui.preferences.SubController;
 
-final class TemplateSubController extends SubController<TemplateModel, TemplateSubPanel> {
+public final class TemplateSubController extends SubController<TemplateModel, TemplateSubPanel> {
 
   public TemplateSubController(final PreferencesController mainController) {
     super(mainController);

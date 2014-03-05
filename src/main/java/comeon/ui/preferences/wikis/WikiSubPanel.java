@@ -1,11 +1,13 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.wikis;
 
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-final class WikiSubPanel extends SubPanel<WikiModel> {
+import comeon.ui.preferences.SubPanel;
+
+public final class WikiSubPanel extends SubPanel<WikiModel> {
   private static final long serialVersionUID = 1L;
   
   private final JTextField nameField;

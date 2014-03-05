@@ -2,7 +2,7 @@ package comeon.ui.preferences;
 
 import java.beans.PropertyChangeListener;
 
-interface Model extends Cloneable {
+public interface Model extends Cloneable {
 
   void addPropertyChangeListener(final PropertyChangeListener pcl);
   

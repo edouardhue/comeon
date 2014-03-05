@@ -7,7 +7,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
-abstract class BaseListCellRenderer<T> extends DefaultListCellRenderer {
+public abstract class BaseListCellRenderer<T> extends DefaultListCellRenderer {
 
   private static final long serialVersionUID = 1L;
 

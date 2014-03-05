@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.swing.DefaultListModel;
 
+import comeon.ui.preferences.templates.TemplateModel;
+import comeon.ui.preferences.wikis.WikiModel;
+
 final class PreferencesModel {
   private DefaultListModel<TemplateModel> templatesModel;
   

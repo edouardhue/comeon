@@ -1,6 +1,8 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.templates;
 
-final class TemplateListCellRenderer extends BaseListCellRenderer<TemplateModel> {
+import comeon.ui.preferences.BaseListCellRenderer;
+
+public final class TemplateListCellRenderer extends BaseListCellRenderer<TemplateModel> {
 
   private static final long serialVersionUID = 1L;
   

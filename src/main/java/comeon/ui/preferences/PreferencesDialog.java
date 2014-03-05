@@ -7,9 +7,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import comeon.model.Wiki;
 import comeon.templates.Templates;
 import comeon.ui.UI;
@@ -19,8 +16,6 @@ public final class PreferencesDialog extends JOptionPane {
 
   private static final long serialVersionUID = 1L;
   
-  private static final Logger LOGGER = LoggerFactory.getLogger(PreferencesDialog.class);
-
   private final JDialog dialog;
 
   private final JTabbedPane tabs;

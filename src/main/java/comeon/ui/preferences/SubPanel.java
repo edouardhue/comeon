@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 
 import comeon.ui.UI;
 
-abstract class SubPanel<M> extends JPanel {
+public abstract class SubPanel<M> extends JPanel {
 
   private static final long serialVersionUID = 1L;
 

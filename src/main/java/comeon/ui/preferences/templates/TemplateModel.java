@@ -1,4 +1,4 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.templates;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import com.google.common.base.Strings;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
+import comeon.ui.preferences.Model;
 
 public final class TemplateModel implements Model {
   private final PropertyChangeSupport pcs;
@@ -99,7 +100,7 @@ public final class TemplateModel implements Model {
     pcs.firePropertyChange(Properties.KIND.name(), oldKind, kind);
   }
 
-  static TemplateModel getPrototype() {
+  public static TemplateModel getPrototype() {
     final TemplateModel prototype = new TemplateModel();
     prototype.name = Strings.repeat("x", 32);
     prototype.description = Strings.repeat("xxxxxx ", 12);

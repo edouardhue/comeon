@@ -21,6 +21,12 @@ import javax.swing.event.ListSelectionListener;
 
 import comeon.model.TemplateKind;
 import comeon.ui.UI;
+import comeon.ui.preferences.templates.TemplateListCellRenderer;
+import comeon.ui.preferences.templates.TemplateModel;
+import comeon.ui.preferences.templates.TemplateSubPanel;
+import comeon.ui.preferences.wikis.WikiListCellRenderer;
+import comeon.ui.preferences.wikis.WikiModel;
+import comeon.ui.preferences.wikis.WikiSubPanel;
 
 public final class PreferencesPanel extends JPanel {
 

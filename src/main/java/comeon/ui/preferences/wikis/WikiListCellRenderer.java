@@ -1,6 +1,8 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.wikis;
 
-final class WikiListCellRenderer extends BaseListCellRenderer<WikiModel> {
+import comeon.ui.preferences.BaseListCellRenderer;
+
+public final class WikiListCellRenderer extends BaseListCellRenderer<WikiModel> {
   private static final long serialVersionUID = 1L;
   
   private static final String TEMPLATE = "<html><strong>%1$s</strong><br/><em>%2$s</em></html>";

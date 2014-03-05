@@ -1,4 +1,4 @@
-package comeon.ui.preferences;
+package comeon.ui.preferences.templates;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,8 +17,9 @@ import javax.swing.SwingUtilities;
 
 import comeon.model.TemplateKind;
 import comeon.ui.UI;
+import comeon.ui.preferences.SubPanel;
 
-final class TemplateSubPanel extends SubPanel<TemplateModel> {
+public final class TemplateSubPanel extends SubPanel<TemplateModel> {
   
   public static final String SELECTED_FILE_PROPERTY = "selectedFile";
 
