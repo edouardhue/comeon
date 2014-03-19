@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-
 import comeon.model.Template;
 import comeon.model.processors.PostProcessor;
 import comeon.templates.BaseTemplateKind;
@@ -41,6 +40,10 @@ public final class VelocityTemplate extends BaseTemplateKind {
       LOGGER.warn("Velocity template rendering failed, see Velocity log");
     }
     return outWriter.toString();
+  }
+  
+  public String toString() {
+    return "Velocity";
   }
 
 }
