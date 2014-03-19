@@ -30,7 +30,7 @@ public abstract class SubController<M extends Model, V extends SubPanel<M>> impl
     this.switchToBlankModel();
   }
   
-  public final void registerView(final V view) {
+  public void setView(V view) {
     this.view = view;
     this.registerViewInterval(view);
   }
@@ -56,6 +56,8 @@ public abstract class SubController<M extends Model, V extends SubPanel<M>> impl
   }
   
   protected abstract void doCommit(final M source, final M target, final int index);
+  
+  protected abstract void registerViewInterval(final V view);
   
   @SuppressWarnings("unchecked")
   public final void rollback() {
@@ -115,8 +117,6 @@ public abstract class SubController<M extends Model, V extends SubPanel<M>> impl
   protected abstract M makeNewModel();
   
   public abstract void remove(final int index);
-  
-  protected abstract void registerViewInterval(final V view);
   
   protected abstract void onModelChangedInternal(final M oldModel, final M newModel);
 

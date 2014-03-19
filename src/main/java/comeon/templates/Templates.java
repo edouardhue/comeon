@@ -1,5 +1,6 @@
 package comeon.templates;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 
@@ -16,4 +17,6 @@ public interface Templates extends WithPreferences {
   void save() throws BackingStoreException;
 
   List<TemplateKind> getTemplateKinds();
+  
+  Charset[] getSupportedCharsets();
 }

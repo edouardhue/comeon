@@ -41,12 +41,23 @@ import comeon.templates.TemplatesImpl;
 import comeon.templates.velocity.VelocityTemplate;
 import comeon.ui.UI;
 import comeon.ui.actions.AddPicturesAction;
+import comeon.ui.actions.PreferencesAction;
 import comeon.ui.actions.QuitAction;
 import comeon.ui.actions.UploadPicturesAction;
 import comeon.ui.menu.EditMenu;
 import comeon.ui.menu.FileMenu;
 import comeon.ui.menu.HelpMenu;
 import comeon.ui.menu.MenuBar;
+import comeon.ui.preferences.main.PreferencesController;
+import comeon.ui.preferences.main.PreferencesDialog;
+import comeon.ui.preferences.main.PreferencesModel;
+import comeon.ui.preferences.main.PreferencesPanel;
+import comeon.ui.preferences.main.TemplatesListPanel;
+import comeon.ui.preferences.main.WikisListPanel;
+import comeon.ui.preferences.templates.TemplateSubController;
+import comeon.ui.preferences.templates.TemplateSubPanel;
+import comeon.ui.preferences.wikis.WikiSubController;
+import comeon.ui.preferences.wikis.WikiSubPanel;
 import comeon.wikis.Wikis;
 import comeon.wikis.WikisImpl;
 
@@ -84,12 +95,27 @@ public final class ComeOn extends AbstractModule {
     templateKinds.addBinding(VelocityTemplate.class.getSimpleName()).to(VelocityTemplate.class);
     
     bind(UI.class);
+    
+    bind(PreferencesDialog.class);
+    bind(PreferencesController.class);
+    bind(PreferencesModel.class);
+    bind(PreferencesPanel.class);
+    bind(TemplatesListPanel.class);
+    bind(WikisListPanel.class);
+    
+    bind(TemplateSubController.class);
+    bind(TemplateSubPanel.class);
+    
+    bind(WikiSubController.class);
+    bind(WikiSubPanel.class);
+    
     bind(MenuBar.class);
     bind(FileMenu.class);
     bind(EditMenu.class);
     bind(HelpMenu.class);
     bind(AddPicturesAction.class);
     bind(UploadPicturesAction.class);
+    bind(PreferencesAction.class);
     bind(QuitAction.class);
     bind(EventBus.class).toInstance(bus);
   }
@@ -113,7 +139,7 @@ public final class ComeOn extends AbstractModule {
     }
   }
   
-  public static void main(final String[] args) throws Exception {
+  public static void main(final String... args) throws Exception {
     final Arguments arguments = new Arguments();
     final CmdLineParser parser = new CmdLineParser(arguments);
     try {

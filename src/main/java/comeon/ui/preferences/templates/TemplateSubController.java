@@ -11,12 +11,16 @@ import java.nio.file.Path;
 import javax.swing.JComboBox;
 import javax.swing.SwingUtilities;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import comeon.model.TemplateKind;
 import comeon.ui.preferences.SubController;
 import comeon.ui.preferences.main.PreferencesController;
 
+@Singleton
 public final class TemplateSubController extends SubController<TemplateModel, TemplateSubPanel> {
 
+  @Inject
   public TemplateSubController(final PreferencesController mainController) {
     super(mainController);
   }

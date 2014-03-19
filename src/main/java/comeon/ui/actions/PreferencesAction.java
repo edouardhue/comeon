@@ -5,22 +5,25 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import comeon.templates.Templates;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import comeon.ui.preferences.main.PreferencesController;
 import comeon.ui.preferences.main.PreferencesDialog;
-import comeon.wikis.Wikis;
 
+@Singleton
 public final class PreferencesAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
 
-  private final Templates templates;
-  
-  private final Wikis wikis;
+  private final PreferencesDialog dialog;
 
-  public PreferencesAction(final Templates templates, final Wikis wikis) {
+  private final PreferencesController controller;
+  
+  @Inject
+  public PreferencesAction(final PreferencesDialog dialog, final PreferencesController controller) {
     super("preferences");
-    this.templates = templates;
-    this.wikis = wikis;
+    this.dialog = dialog;
+    this.controller = controller;
   }
 
   @Override
@@ -28,10 +31,9 @@ public final class PreferencesAction extends BaseAction {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        final PreferencesDialog dialog = new PreferencesDialog(templates, wikis);
         final int value = dialog.showDialog();
         if (value == JOptionPane.OK_OPTION) {
-          dialog.save();
+          controller.persist();
         }
       }
     });

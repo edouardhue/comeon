@@ -5,9 +5,13 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import comeon.ui.preferences.SubPanel;
 import comeon.ui.preferences.input.UrlInputVerifier;
 
+@Singleton
 public final class WikiSubPanel extends SubPanel<WikiModel> {
   private static final long serialVersionUID = 1L;
   
@@ -21,7 +25,8 @@ public final class WikiSubPanel extends SubPanel<WikiModel> {
   
   private final JPasswordField passwordField;
   
-  public WikiSubPanel() {
+  @Inject
+  public WikiSubPanel(final WikiSubController subController) {
     this.nameField = new JTextField(COLUMNS);
     this.nameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.urlField = new JTextField(COLUMNS);
@@ -33,6 +38,7 @@ public final class WikiSubPanel extends SubPanel<WikiModel> {
     this.passwordField = new JPasswordField(COLUMNS);
     this.passwordField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.layoutComponents();
+    subController.setView(this);
   }
 
   JTextField getNameField() {

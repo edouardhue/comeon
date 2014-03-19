@@ -2,11 +2,16 @@ package comeon.ui.preferences.wikis;
 
 import java.beans.PropertyChangeEvent;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import comeon.ui.preferences.SubController;
 import comeon.ui.preferences.main.PreferencesController;
 
+@Singleton
 public final class WikiSubController extends SubController<WikiModel, WikiSubPanel> {
 
+  @Inject
   public WikiSubController(final PreferencesController mainController) {
     super(mainController);
   }

@@ -15,10 +15,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import comeon.model.TemplateKind;
+import comeon.templates.Templates;
 import comeon.ui.UI;
 import comeon.ui.preferences.SubPanel;
 
+@Singleton
 public final class TemplateSubPanel extends SubPanel<TemplateModel> {
   
   public static final String SELECTED_FILE_PROPERTY = "selectedFile";
@@ -41,7 +46,8 @@ public final class TemplateSubPanel extends SubPanel<TemplateModel> {
   
   private final JFileChooser fileChooser;
 
-  public TemplateSubPanel(final Charset[] charsets, final TemplateKind[] kinds) {
+  @Inject
+  public TemplateSubPanel(final TemplateSubController templateSubController, final Templates templates) {
     this.nameField = new JTextField(COLUMNS);
     this.nameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.descriptionField = new JTextArea(3, 0);
@@ -50,8 +56,8 @@ public final class TemplateSubPanel extends SubPanel<TemplateModel> {
     this.fileField.setEditable(false);
     this.fileField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.fileButton = new JButton(UI.BUNDLE.getString("prefs.templates.path.pick"));
-    this.charsetField = new JComboBox<>(charsets);
-    this.kindField = new JComboBox<>(kinds);
+    this.charsetField = new JComboBox<>(templates.getSupportedCharsets());
+    this.kindField = new JComboBox<>(templates.getTemplateKinds().toArray(new TemplateKind[0]));
     this.fileChooser = new JFileChooser();
     this.fileChooser.setMultiSelectionEnabled(false);
     this.fileButton.addActionListener(new ActionListener() {
@@ -74,6 +80,7 @@ public final class TemplateSubPanel extends SubPanel<TemplateModel> {
       }
     });
     this.layoutComponents();
+    templateSubController.setView(this);
   }
   
   JTextField getNameField() {

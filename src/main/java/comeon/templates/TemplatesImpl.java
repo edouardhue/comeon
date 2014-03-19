@@ -12,6 +12,7 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Charsets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
@@ -67,6 +68,11 @@ public final class TemplatesImpl implements Templates {
   public List<TemplateKind> getTemplateKinds() {
     // TODO use a predictive sort
     return new ArrayList<>(templateKinds.values());
+  }
+  
+  @Override
+  public Charset[] getSupportedCharsets() {
+    return new Charset[] {Charsets.UTF_8, Charsets.ISO_8859_1};
   }
   
   @Override
