@@ -12,6 +12,8 @@ public abstract class SubPanel<M> extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
+  protected static final int COLUMNS = 40;
+  
   protected static final NotBlankInputVerifier NOT_BLANK_INPUT_VERIFIER = new NotBlankInputVerifier();
   
   private final GroupLayout layout;

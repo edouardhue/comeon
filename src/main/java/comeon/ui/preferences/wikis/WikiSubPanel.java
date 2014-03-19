@@ -22,15 +22,15 @@ public final class WikiSubPanel extends SubPanel<WikiModel> {
   private final JPasswordField passwordField;
   
   public WikiSubPanel() {
-    this.nameField = new JTextField();
+    this.nameField = new JTextField(COLUMNS);
     this.nameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
-    this.urlField = new JTextField();
+    this.urlField = new JTextField(COLUMNS);
     this.urlField.setInputVerifier(new UrlInputVerifier());
-    this.displayNameField = new JTextField();
+    this.displayNameField = new JTextField(COLUMNS);
     this.displayNameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
-    this.loginField = new JTextField();
+    this.loginField = new JTextField(COLUMNS);
     this.loginField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
-    this.passwordField = new JPasswordField();
+    this.passwordField = new JPasswordField(COLUMNS);
     this.passwordField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.layoutComponents();
   }

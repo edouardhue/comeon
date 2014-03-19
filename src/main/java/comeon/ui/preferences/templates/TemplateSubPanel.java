@@ -42,16 +42,16 @@ public final class TemplateSubPanel extends SubPanel<TemplateModel> {
   private final JFileChooser fileChooser;
 
   public TemplateSubPanel(final Charset[] charsets, final TemplateKind[] kinds) {
-    this.nameField = new JTextField();
+    this.nameField = new JTextField(COLUMNS);
     this.nameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.descriptionField = new JTextArea(3, 0);
     this.descriptionPane = new JScrollPane(descriptionField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    this.fileField = new JTextField();
+    this.fileField = new JTextField(COLUMNS);
     this.fileField.setEditable(false);
     this.fileField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.fileButton = new JButton(UI.BUNDLE.getString("prefs.templates.path.pick"));
     this.charsetField = new JComboBox<>(charsets);
-    this.kindField = new JComboBox<TemplateKind>(kinds);
+    this.kindField = new JComboBox<>(kinds);
     this.fileChooser = new JFileChooser();
     this.fileChooser.setMultiSelectionEnabled(false);
     this.fileButton.addActionListener(new ActionListener() {
