@@ -12,8 +12,7 @@ public final class TemplatesListPanel extends ListPanel<TemplateModel> {
   private static final long serialVersionUID = 1L;
 
   @Inject
-  public TemplatesListPanel(final TemplateSubController subController,
-      final TemplateSubPanel subPanel) {
-    super(new TemplateListCellRenderer(), subController, subPanel, "templates", TemplateModel.getPrototype());
+  public TemplatesListPanel(final TemplateSubController subController, final TemplateSubPanel subPanel) {
+    super(new TemplateListCellRenderer(), subController, subPanel, subController.getMainController().getTemplates(), "templates", TemplateModel.getPrototype());
   }
 }

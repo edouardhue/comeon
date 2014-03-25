@@ -1,8 +1,9 @@
 package comeon.templates;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 import com.google.common.eventbus.EventBus;
-import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.ComeOn;
@@ -83,7 +83,7 @@ public final class TemplatesImpl implements Templates {
     for (final Template template : templates) {
       final Preferences node = prefs.node(template.getName());
       node.put(PreferencesKeys.DESCRIPTION.name(), template.getDescription());
-      node.put(PreferencesKeys.FILE.name(), template.getFile().getAbsolutePath());
+      node.put(PreferencesKeys.FILE.name(), template.getFile().toString());
       node.put(PreferencesKeys.CHARSET.name(), template.getCharset().name());
       node.put(PreferencesKeys.KIND.name(), template.getKind().getClass().getSimpleName());
     }
@@ -94,8 +94,8 @@ public final class TemplatesImpl implements Templates {
     final String description = node.get(PreferencesKeys.DESCRIPTION.name(), "");
     try {
       final Charset charset = Charset.forName(node.get(PreferencesKeys.CHARSET.name(), null));
-      final File file = new File(node.get(PreferencesKeys.FILE.name(), null));
-      final String templateText = Files.toString(file, charset);
+      final Path file = Paths.get(node.get(PreferencesKeys.FILE.name(), null));
+      final String templateText = Template.read(file, charset);
       final TemplateKind kind = templateKinds.get(node.get(PreferencesKeys.KIND.name(), VelocityTemplate.class.getSimpleName()));
       final Template template = new Template(templateName, description, file, charset, templateText, kind);
       templates.add(template);

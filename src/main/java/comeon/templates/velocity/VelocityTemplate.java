@@ -31,7 +31,7 @@ public final class VelocityTemplate extends BaseTemplateKind {
   
   @Override
   protected String doRender(final Template template, final String templateText, final Map<String, Object> context) {
-    final VelocityEngine engine = VelocityTemplates.getInstance().getEngine(Collections.singletonMap(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, template.getFile().getParent()));
+    final VelocityEngine engine = VelocityTemplates.getInstance().getEngine(Collections.singletonMap(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, template.getFile().getParent().toString()));
     final Reader templateReader = new StringReader(templateText);
     final Writer outWriter = new StringWriter((int) (templateText.length() * 1.5));
     final Context vContext = new VelocityContext(context);

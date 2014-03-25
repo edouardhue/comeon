@@ -25,6 +25,7 @@ import comeon.mediawiki.MediaWikiImpl;
 import comeon.mediawiki.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
+import comeon.model.Wiki;
 import comeon.ui.actions.PictureRemovedEvent;
 import comeon.ui.actions.PicturesAddedEvent;
 import comeon.wikis.ActiveWikiChangeEvent;
@@ -55,7 +56,12 @@ public final class CoreImpl implements Core {
     this.wikis = wikis;
     this.picturesBatchFactory = picturesBatchFactory;
     // TODO Use dependecy injection
-    this.activeMediaWiki = new MediaWikiImpl(wikis.getActiveWiki());
+    final Wiki activeWiki = wikis.getActiveWiki();
+    if (activeWiki == null) {
+      throw new IllegalStateException("There must be one active wiki.");
+    } else {
+      this.activeMediaWiki = new MediaWikiImpl(activeWiki);
+    }
   }
 
   @Override

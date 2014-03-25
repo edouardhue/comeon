@@ -14,6 +14,6 @@ public final class WikisListPanel extends ListPanel<WikiModel> {
   @Inject
   public WikisListPanel(final WikiSubController subController,
       final WikiSubPanel subPanel) {
-    super(new WikiListCellRenderer(), subController, subPanel, "wikis", WikiModel.getPrototype());
+    super(new WikiListCellRenderer(), subController, subPanel, subController.getMainController().getWikis(), "wikis", WikiModel.getPrototype());
   }
 }

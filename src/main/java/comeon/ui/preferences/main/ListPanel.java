@@ -12,6 +12,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -39,7 +40,8 @@ abstract class ListPanel<M extends Model> extends JPanel {
   
   private final SubController<M, ? extends SubPanel<M>> subController;
   
-  public ListPanel(final BaseListCellRenderer<M> renderer, final SubController<M, ? extends SubPanel<M>> subController, final SubPanel<M> subPanel, final String stringsKey, final M prototypeValue) {
+  public ListPanel(final BaseListCellRenderer<M> renderer, final SubController<M, ? extends SubPanel<M>> subController, final SubPanel<M> subPanel,
+      final ListModel<M> model, final String stringsKey, final M prototypeValue) {
     super();
     
     this.subPanel = subPanel;
@@ -48,7 +50,7 @@ abstract class ListPanel<M extends Model> extends JPanel {
     this.removeAction = new RemoveAction(stringsKey);
     this.changeAction = new ChangeAction(stringsKey);
     
-    this.list = new JList<>();
+    this.list = new JList<>(model);
     this.list.setCellRenderer(renderer);
     this.list.setPrototypeCellValue(prototypeValue);
     this.list.addListSelectionListener(new ListSelectionListener() {

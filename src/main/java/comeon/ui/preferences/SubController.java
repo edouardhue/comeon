@@ -43,7 +43,7 @@ public abstract class SubController<M extends Model, V extends SubPanel<M>> impl
     return model;
   }
   
-  protected final PreferencesController getMainController() {
+  public final PreferencesController getMainController() {
     return mainController;
   }
   

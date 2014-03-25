@@ -1,5 +1,6 @@
 package comeon.ui.preferences.main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,6 @@ import javax.swing.DefaultListModel;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.model.Template;
 import comeon.model.Wiki;
 import comeon.templates.Templates;
@@ -25,7 +25,7 @@ public final class PreferencesModel {
   public PreferencesModel(final Templates templates, final Wikis wikis) {
     this.templatesModel = new DefaultListModel<>();
     this.wikisModel = new DefaultListModel<>();
-    updateModels(getTemplateModels(templates.getTemplates()), getWikiModels(wikis.getWikis()));
+    updateModels(buildTemplateModels(templates.getTemplates()), buildWikiModels(wikis.getWikis()));
   }
   
   private void updateModels(final List<TemplateModel> templates, final List<WikiModel> wikis) {
@@ -33,7 +33,7 @@ public final class PreferencesModel {
     updateModel(wikis, this.wikisModel);
   }
 
-  private List<TemplateModel> getTemplateModels(final List<Template> templates) {
+  private List<TemplateModel> buildTemplateModels(final List<Template> templates) {
     final List<TemplateModel> templateModels = new ArrayList<>(templates.size());
     for (final Template template : templates) {
       templateModels.add(new TemplateModel(template));
@@ -41,7 +41,7 @@ public final class PreferencesModel {
     return templateModels;
   }
   
-  private List<WikiModel> getWikiModels(final List<Wiki> wikis) {
+  private List<WikiModel> buildWikiModels(final List<Wiki> wikis) {
     final List<WikiModel> wikiModels = new ArrayList<>(wikis.size());
     for (final Wiki wiki : wikis) {
       wikiModels.add(new WikiModel(wiki));
@@ -58,12 +58,30 @@ public final class PreferencesModel {
     listModel.trimToSize();
   }
   
-  public DefaultListModel<TemplateModel> getTemplates() {
+  public DefaultListModel<TemplateModel> getTemplateModels() {
     return templatesModel;
   }
   
-  public DefaultListModel<WikiModel> getWikis() {
+  public List<Template> getTemplates() throws IOException {
+    final List<Template> templates = new ArrayList<>(templatesModel.getSize());
+    for (int i = 0; i < templatesModel.getSize(); i++) {
+      final TemplateModel model = templatesModel.get(i);
+      templates.add(model.asTemplate());
+    }
+    return templates;
+  }
+  
+  public DefaultListModel<WikiModel> getWikiModels() {
     return wikisModel;
+  }
+  
+  public List<Wiki> getWikis() {
+    final List<Wiki> wikis = new ArrayList<>(wikisModel.getSize());
+    for (int i = 0; i < wikisModel.getSize(); i++) {
+      final WikiModel model = wikisModel.get(i);
+      wikis.add(model.asWiki());
+    }
+    return wikis;
   }
   
   public void update(final TemplateModel model, final int index) {

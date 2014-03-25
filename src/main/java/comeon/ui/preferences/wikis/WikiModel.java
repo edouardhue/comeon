@@ -4,6 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import com.google.common.base.Strings;
+import comeon.model.User;
 import comeon.model.Wiki;
 import comeon.ui.preferences.Model;
 
@@ -97,6 +98,10 @@ public final class WikiModel implements Model {
     pcs.firePropertyChange(Properties.DISPLAY_NAME.name(), oldDisplayName, displayName);
   }
 
+  public Wiki asWiki() {
+    return new Wiki(name, url, new User(login, password, displayName));
+  }
+  
   public static WikiModel getPrototype() {
     final WikiModel prototype = new WikiModel();
     prototype.name = Strings.repeat("x", 32);

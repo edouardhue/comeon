@@ -2,6 +2,7 @@ package comeon.ui.preferences.templates;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
@@ -35,7 +36,7 @@ public final class TemplateModel implements Model {
     this();
     this.name = template.getName();
     this.description = template.getDescription();
-    this.file = template.getFile().toPath();
+    this.file = template.getFile();
     this.charset = template.getCharset();
     this.kind = template.getKind();
   }
@@ -99,7 +100,12 @@ public final class TemplateModel implements Model {
     this.kind = kind;
     pcs.firePropertyChange(Properties.KIND.name(), oldKind, kind);
   }
-
+  
+  public Template asTemplate() throws IOException {
+    final String templateText = Template.read(file, charset);
+    return new Template(name, description, file, charset, templateText, kind);
+  }
+  
   public static TemplateModel getPrototype() {
     final TemplateModel prototype = new TemplateModel();
     prototype.name = Strings.repeat("x", 32);
