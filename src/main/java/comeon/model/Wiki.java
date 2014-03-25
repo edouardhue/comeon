@@ -24,4 +24,19 @@ public final class Wiki {
   public User getUser() {
     return user;
   }
+  
+  @Override
+  public boolean equals(final Object obj) {
+    final boolean isEqual;
+    
+    if (obj == null) {
+      isEqual = false;
+    } else if (obj instanceof Wiki) {
+      isEqual = this.name.equals(((Wiki) obj).name);
+    } else {
+      isEqual = false;
+    }
+    
+    return isEqual;
+  }
 }

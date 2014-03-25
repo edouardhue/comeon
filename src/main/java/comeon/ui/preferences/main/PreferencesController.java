@@ -54,6 +54,15 @@ public final class PreferencesController {
   
   public void removeWiki(final int index) {
     model.getWikiModels().removeElementAt(index);
+    if (index < model.getActiveWikiIndex()) {
+      model.setActiveWiki(model.getActiveWikiIndex() - 1);
+    } else if (index == model.getActiveWikiIndex()) {
+      model.setActiveWiki(0);
+    }
+  }
+  
+  public void setActiveWiki(final int index) {
+    
   }
   
   public ListModel<TemplateModel> getTemplates() {
@@ -78,9 +87,11 @@ public final class PreferencesController {
   }
 
   private void persistWikis(final List<Exception> exceptions) {
+    final int activeWikiIndex = model.getActiveWikiIndex();
     try {
       final List<Wiki> newWikis = model.getWikis();
       wikis.setWikis(newWikis);
+      wikis.setActiveWiki(newWikis.get(activeWikiIndex));
       wikis.save();
     } catch (final BackingStoreException e) {
       exceptions.add(e);

@@ -20,12 +20,14 @@ public final class PreferencesModel {
   private DefaultListModel<TemplateModel> templatesModel;
   
   private DefaultListModel<WikiModel> wikisModel;
+  
+  private int activeWikiIndex;
 
   @Inject
   public PreferencesModel(final Templates templates, final Wikis wikis) {
     this.templatesModel = new DefaultListModel<>();
     this.wikisModel = new DefaultListModel<>();
-    updateModels(buildTemplateModels(templates.getTemplates()), buildWikiModels(wikis.getWikis()));
+    updateModels(buildTemplateModels(templates), buildWikiModels(wikis));
   }
   
   private void updateModels(final List<TemplateModel> templates, final List<WikiModel> wikis) {
@@ -33,18 +35,25 @@ public final class PreferencesModel {
     updateModel(wikis, this.wikisModel);
   }
 
-  private List<TemplateModel> buildTemplateModels(final List<Template> templates) {
-    final List<TemplateModel> templateModels = new ArrayList<>(templates.size());
-    for (final Template template : templates) {
+  private List<TemplateModel> buildTemplateModels(final Templates templates) {
+    final List<Template> templatesList = templates.getTemplates();
+    final List<TemplateModel> templateModels = new ArrayList<>(templatesList.size());
+    for (final Template template : templatesList) {
       templateModels.add(new TemplateModel(template));
     }
     return templateModels;
   }
   
-  private List<WikiModel> buildWikiModels(final List<Wiki> wikis) {
-    final List<WikiModel> wikiModels = new ArrayList<>(wikis.size());
-    for (final Wiki wiki : wikis) {
-      wikiModels.add(new WikiModel(wiki));
+  private List<WikiModel> buildWikiModels(final Wikis wikis) {
+    final Wiki activeWiki = wikis.getActiveWiki();
+    final List<Wiki> wikisList = wikis.getWikis();
+    final List<WikiModel> wikiModels = new ArrayList<>(wikisList.size());
+    for (final Wiki wiki : wikisList) {
+      final boolean active = wiki.equals(activeWiki);
+      wikiModels.add(new WikiModel(wiki, active));
+      if (active) {
+        this.activeWikiIndex = wikiModels.size() - 1;
+      }
     }
     return wikiModels;
   }
@@ -73,6 +82,16 @@ public final class PreferencesModel {
   
   public DefaultListModel<WikiModel> getWikiModels() {
     return wikisModel;
+  }
+  
+  public int getActiveWikiIndex() {
+    return activeWikiIndex;
+  }
+  
+  public void setActiveWiki(final int index) {
+    wikisModel.get(activeWikiIndex).setActive(Boolean.FALSE);
+    wikisModel.get(index).setActive(Boolean.TRUE);
+    this.activeWikiIndex = index;
   }
   
   public List<Wiki> getWikis() {

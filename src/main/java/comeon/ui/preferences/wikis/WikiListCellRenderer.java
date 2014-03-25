@@ -1,5 +1,7 @@
 package comeon.ui.preferences.wikis;
 
+import javax.swing.UIManager;
+
 import comeon.ui.preferences.BaseListCellRenderer;
 
 public final class WikiListCellRenderer extends BaseListCellRenderer<WikiModel> {
@@ -11,6 +13,9 @@ public final class WikiListCellRenderer extends BaseListCellRenderer<WikiModel> 
   @Override
   protected void customizeComponent(final WikiModel wiki) {
     setText(String.format(TEMPLATE, wiki.getName(), wiki.getDisplayName()));
+    if (wiki.getActive()) {
+      setIcon(UIManager.getIcon("FileView.fileIcon"));
+    }
   }
 
 }

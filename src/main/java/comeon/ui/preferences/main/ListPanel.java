@@ -2,19 +2,25 @@ package comeon.ui.preferences.main;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,7 +34,7 @@ abstract class ListPanel<M extends Model> extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private final JList<M> list;
+  protected final JList<M> list;
   
   private final AddAction addAction;
   
@@ -38,9 +44,19 @@ abstract class ListPanel<M extends Model> extends JPanel {
   
   private final SubPanel<M> subPanel;
   
-  private final SubController<M, ? extends SubPanel<M>> subController;
-  
-  public ListPanel(final BaseListCellRenderer<M> renderer, final SubController<M, ? extends SubPanel<M>> subController, final SubPanel<M> subPanel,
+  protected final SubController<M, ? extends SubPanel<M>> subController;
+
+  private final ParallelGroup horizontalGroup;
+
+  private final SequentialGroup verticalGroup;
+
+  private final GroupLayout toolboxLayout;
+
+  private final JPanel toolboxPanel;
+
+  private final List<JButton> buttons;
+
+  protected ListPanel(final BaseListCellRenderer<M> renderer, final SubController<M, ? extends SubPanel<M>> subController, final SubPanel<M> subPanel,
       final ListModel<M> model, final String stringsKey, final M prototypeValue) {
     super();
     
@@ -61,16 +77,56 @@ abstract class ListPanel<M extends Model> extends JPanel {
           SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-              removeAction.setEnabled(isSomethingSelected);
+              removeAction.setEnabled(isSomethingSelected && model.getSize() > 1);
               changeAction.setEnabled(isSomethingSelected);
             }
           });
         }
       }
     });
+    model.addListDataListener(new ListDataListener() {
+      @Override
+      public void intervalRemoved(final ListDataEvent e) {
+        this.updateRemoveActionStatus();
+      }
+      
+      @Override
+      public void intervalAdded(final ListDataEvent e) {
+        this.updateRemoveActionStatus();
+      }
+      
+      @Override
+      public void contentsChanged(final ListDataEvent e) {
+        // Noop
+      }
+      
+      private void updateRemoveActionStatus() {
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            removeAction.setEnabled(model.getSize() > 1);
+          }
+        });
+      }
+    });
     this.list.addListSelectionListener(subController);
     final JScrollPane scrollPane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    final JPanel toolbox = buildToolbox();
+    this.toolboxPanel = new JPanel();
+    toolboxPanel.setBorder(BorderFactory.createEtchedBorder());
+    toolboxLayout = new GroupLayout(toolboxPanel);
+    toolboxPanel.setLayout(toolboxLayout);
+    this.buttons = this.buildButtons();
+    toolboxLayout.setAutoCreateContainerGaps(true);
+    toolboxLayout.setAutoCreateGaps(true);
+    this.horizontalGroup = toolboxLayout.createParallelGroup(Alignment.CENTER);
+    this.verticalGroup = toolboxLayout.createSequentialGroup();
+    for (final JButton button : buttons) {
+      horizontalGroup.addComponent(button);
+      verticalGroup.addComponent(button);
+    }
+    toolboxLayout.setHorizontalGroup(horizontalGroup);
+    toolboxLayout.setVerticalGroup(verticalGroup);
+    toolboxLayout.linkSize(buttons.toArray(new Component[buttons.size()]));
     
     final GroupLayout layout = new GroupLayout(this);
     this.setLayout(layout);
@@ -78,24 +134,21 @@ abstract class ListPanel<M extends Model> extends JPanel {
     layout.setAutoCreateGaps(true);
     layout.setHorizontalGroup(layout.createSequentialGroup()
         .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-        .addComponent(toolbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
-    layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(scrollPane).addComponent(toolbox));
+        .addComponent(toolboxPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
+    layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(scrollPane).addComponent(toolboxPanel));
   }
 
-  private JPanel buildToolbox() {
-    final JPanel toolbox = new JPanel();
-    toolbox.setBorder(BorderFactory.createEtchedBorder());
-    final GroupLayout toolboxLayout = new GroupLayout(toolbox);
-    toolbox.setLayout(toolboxLayout);
-    final JButton addButton = new JButton(addAction);
-    final JButton removeButton = new JButton(removeAction);
-    final JButton changeButton = new JButton(changeAction);
-    toolboxLayout.setAutoCreateContainerGaps(true);
-    toolboxLayout.setAutoCreateGaps(true);
-    toolboxLayout.setHorizontalGroup(toolboxLayout.createParallelGroup(Alignment.CENTER).addComponent(addButton).addComponent(removeButton).addComponent(changeButton));
-    toolboxLayout.setVerticalGroup(toolboxLayout.createSequentialGroup().addComponent(addButton).addComponent(removeButton).addComponent(changeButton));
-    toolboxLayout.linkSize(SwingConstants.HORIZONTAL, addButton, removeButton, changeButton);
-    return toolbox;
+  
+  private List<JButton> buildButtons() {
+    return new LinkedList<>(Arrays.asList(new JButton(addAction), new JButton(changeAction), new JButton(removeAction)));
+  }
+  
+  protected final void addCustomButton(final JButton button) {
+    this.buttons.add(button);
+    horizontalGroup.addComponent(button);
+    verticalGroup.addComponent(button);
+    toolboxLayout.linkSize(buttons.toArray(new Component[buttons.size()]));
+    toolboxLayout.invalidateLayout(toolboxPanel);
   }
   
   private class AddAction extends AbstractAction {

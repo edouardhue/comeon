@@ -20,22 +20,26 @@ public final class WikiModel implements Model {
   private String password;
 
   private String displayName;
+  
+  private Boolean active;
 
   public enum Properties {
-    NAME, URL, LOGIN, PASSWORD, DISPLAY_NAME
+    NAME, URL, LOGIN, PASSWORD, DISPLAY_NAME, ACTIVE
   }
 
   public WikiModel() {
     this.pcs = new PropertyChangeSupport(this);
+    this.active = Boolean.FALSE;
   }
   
-  public WikiModel(final Wiki wiki) {
+  public WikiModel(final Wiki wiki, final Boolean active) {
     this();
     this.name = wiki.getName();
     this.url = wiki.getUrl();
     this.login = wiki.getUser().getLogin();
     this.password = wiki.getUser().getPassword();
     this.displayName = wiki.getUser().getDisplayName();
+    this.active = active;
   }
 
   @Override
@@ -98,6 +102,16 @@ public final class WikiModel implements Model {
     pcs.firePropertyChange(Properties.DISPLAY_NAME.name(), oldDisplayName, displayName);
   }
 
+  public Boolean getActive() {
+    return active;
+  }
+  
+  public void setActive(final Boolean active) {
+    final Boolean oldActive = this.active;
+    this.active = active;
+    pcs.firePropertyChange(Properties.ACTIVE.name(), oldActive, active);
+  }
+  
   public Wiki asWiki() {
     return new Wiki(name, url, new User(login, password, displayName));
   }
@@ -106,6 +120,7 @@ public final class WikiModel implements Model {
     final WikiModel prototype = new WikiModel();
     prototype.name = Strings.repeat("x", 32);
     prototype.displayName = Strings.repeat("xxxxxx ", 3);
+    prototype.active = Boolean.TRUE;
     return prototype;
   }
   
