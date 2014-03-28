@@ -33,7 +33,9 @@ public final class OtherMetadataTable extends AbstractMetadataTable<Map<String, 
       final List<Entry> values = new ArrayList<>(content.size());
       for (final Map.Entry<String, Object> entry : content.entrySet()) {
         final String value;
-        if (entry.getValue().getClass().isArray()) {
+        if (entry.getValue() == null) {
+          value = "";
+        } else if (entry.getValue().getClass().isArray()) {
           value = Arrays.toString((Object[]) entry.getValue());
         } else {
           value = String.valueOf(entry.getValue());

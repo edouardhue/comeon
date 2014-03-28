@@ -60,6 +60,7 @@ public class Template {
       String line;
       while ((line = reader.readLine()) != null) {
         buffer.append(line);
+        buffer.append('\n');
       }
       return buffer.toString();
     }

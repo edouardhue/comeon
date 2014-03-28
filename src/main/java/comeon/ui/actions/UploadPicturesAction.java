@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
 import java.util.Locale;
 
 import javax.swing.AbstractAction;
@@ -28,6 +29,7 @@ import com.google.inject.Singleton;
 import comeon.core.Core;
 import comeon.core.UploadMonitor;
 import comeon.ui.UI;
+import comeon.wikis.Wikis;
 
 @Singleton
 public final class UploadPicturesAction extends BaseAction {
@@ -35,15 +37,27 @@ public final class UploadPicturesAction extends BaseAction {
 
   private final Core core;
 
+  private final Wikis wikis;
+  
   @Inject
-  public UploadPicturesAction(final Core core) {
+  public UploadPicturesAction(final Core core, final Wikis wikis) {
     super("upload");
     this.core = core;
+    this.wikis = wikis;
   }
 
   @Override
   public void actionPerformed(final ActionEvent e) {
-    core.uploadPictures(new Monitor());
+    final int choice = JOptionPane.showConfirmDialog(
+        JOptionPane.getRootFrame(),
+        MessageFormat.format(
+            UI.BUNDLE.getString("action.upload.confirm"),
+            core.getPictures().size(), wikis.getActiveWiki().getName()),
+        UIManager.getString("OptionPane.titleText"),
+        JOptionPane.OK_CANCEL_OPTION);
+    if (JOptionPane.OK_OPTION == choice) {
+      core.uploadPictures(new Monitor());
+    }
   }
 
   private final class Monitor extends JOptionPane implements UploadMonitor {
