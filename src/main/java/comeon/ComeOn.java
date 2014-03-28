@@ -13,6 +13,11 @@ import java.util.prefs.Preferences;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.params.CoreProtocolPNames;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
@@ -29,13 +34,14 @@ import comeon.core.CoreImpl;
 import comeon.core.PicturesBatchFactory;
 import comeon.core.RealPicturesBatchFactory;
 import comeon.core.WithPreferences;
+import comeon.mediawiki.MediaWikiFactory;
 import comeon.model.TemplateKind;
 import comeon.model.processors.DefaultPostProcessor;
-import comeon.model.processors.XmpPreProcessor;
 import comeon.model.processors.GpsPreProcessor;
 import comeon.model.processors.IptcPreProcessor;
 import comeon.model.processors.PostProcessor;
 import comeon.model.processors.PreProcessor;
+import comeon.model.processors.XmpPreProcessor;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesImpl;
 import comeon.templates.velocity.VelocityTemplate;
@@ -74,12 +80,22 @@ public final class ComeOn extends AbstractModule {
     this.preferences = Preferences.userNodeForPackage(ComeOn.class);
   }
   
+  private DefaultHttpClient configureHttpClient() {
+    final ClientConnectionManager connectionManager = new PoolingClientConnectionManager();
+    final DefaultHttpClient client = new DefaultHttpClient(connectionManager);
+    final String userAgentString = UI.BUNDLE.getString("useragent");
+    client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgentString);
+    LOGGER.info("ComeOn! uses \"{}\" as User-Agent", userAgentString);
+    return client;
+  }
+  
   @Override
   protected void configure() {
     bind(Core.class).to(CoreImpl.class);
     bind(Templates.class).to(TemplatesImpl.class);
     bind(Wikis.class).to(WikisImpl.class);
     bind(PicturesBatchFactory.class).to(RealPicturesBatchFactory.class);
+    bind(MediaWikiFactory.class);
     
     Multibinder<PreProcessor> preProcessorsBinder = Multibinder.newSetBinder(binder(), PreProcessor.class);
     preProcessorsBinder.addBinding().to(GpsPreProcessor.class);
@@ -93,6 +109,8 @@ public final class ComeOn extends AbstractModule {
     
     MapBinder<String, TemplateKind> templateKinds = MapBinder.newMapBinder(binder(), String.class, TemplateKind.class);
     templateKinds.addBinding(VelocityTemplate.class.getSimpleName()).to(VelocityTemplate.class);
+    
+    bind(AbstractHttpClient.class).toInstance(configureHttpClient());
     
     bind(UI.class);
     

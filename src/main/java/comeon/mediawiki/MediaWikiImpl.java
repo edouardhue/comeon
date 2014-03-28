@@ -5,37 +5,22 @@ import in.yuvi.http.fluent.ProgressListener;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
 import org.mediawiki.api.MWApi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 import comeon.model.Picture;
 import comeon.model.User;
 import comeon.model.Wiki;
-import comeon.ui.UI;
 
 public final class MediaWikiImpl implements MediaWiki {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MediaWikiImpl.class);
-  
-  private static final DefaultHttpClient HTTP_CLIENT = new DefaultHttpClient();
-  static {
-    final String userAgentString = UI.BUNDLE.getString("useragent");
-    LOGGER.info("ComeOn! uses \"{}\" as User-Agent", userAgentString);
-    HTTP_CLIENT.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgentString);
-  }
-  
   private final MWApi api;
 
   private final Wiki wiki;
   
-  public MediaWikiImpl(final Wiki wiki) {
+  MediaWikiImpl(final Wiki wiki, final MWApi api) {
     this.wiki = wiki;
-    // XXX MWApi requires AbstractHttpClient instead of HttpClient
-    this.api = new MWApi(wiki.getUrl(), HTTP_CLIENT);
+    this.api = api;
   }
 
   /*

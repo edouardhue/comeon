@@ -72,6 +72,8 @@ public final class UploadPicturesAction extends BaseAction {
     private final JScrollPane pictureBarsPane;
 
     private final CloseAction closeAction;
+    
+    private ProgressPanel[] panels;
 
     public Monitor() {
       super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, null);
@@ -91,6 +93,7 @@ public final class UploadPicturesAction extends BaseAction {
 
     @Override
     public void setBatchSize(final int size) {
+      this.panels = new ProgressPanel[size];
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
@@ -115,6 +118,7 @@ public final class UploadPicturesAction extends BaseAction {
     @Override
     public ProgressListener itemStarting(final int index, final long length, final String name) {
       final ProgressPanel panel = new ProgressPanel(length, name);
+      panels[index] = panel;
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
@@ -145,7 +149,21 @@ public final class UploadPicturesAction extends BaseAction {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          Monitor.this.batchBar.setValue(index + 1);
+          Monitor.this.batchBar.setValue(batchBar.getValue() + 1);
+        }
+      });
+    }
+    
+    @Override
+    public void itemFailed(final int index, final Exception cause) {
+      itemDone(index);
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          final JProgressBar pictureProgressBar = panels[index].getPictureBar();
+          pictureProgressBar.setValue(pictureProgressBar.getMaximum());
+          pictureProgressBar.setString(UI.BUNDLE.getString("error.generic.title"));
+          pictureProgressBar.setToolTipText(MessageFormat.format(UI.BUNDLE.getString("error.upload.failed"), cause.getLocalizedMessage()));
         }
       });
     }
@@ -184,6 +202,7 @@ public final class UploadPicturesAction extends BaseAction {
       super(BoxLayout.Y_AXIS);
       final JLabel label = new JLabel(name);
       label.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+      label.setToolTipText(name);
       this.setBackground(Color.WHITE);
       this.setOpaque(true);
       this.pictureBar = new JProgressBar(SwingConstants.HORIZONTAL);
@@ -193,9 +212,7 @@ public final class UploadPicturesAction extends BaseAction {
       this.pictureBar.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
       this.add(label);
       this.add(this.pictureBar);
-      this.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-      this.setPreferredSize(new Dimension(label.getPreferredSize().width + 4, label.getPreferredSize().height
-          + pictureBar.getPreferredSize().height + 4));
+      this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     }
 
     public JProgressBar getPictureBar() {

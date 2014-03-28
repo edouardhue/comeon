@@ -10,6 +10,8 @@ public interface UploadMonitor {
   ProgressListener itemStarting(int index, long length, String name);
 
   void itemDone(int index);
+  
+  void itemFailed(int index, Exception cause);
 
   void uploadDone();
 }
