@@ -23,9 +23,6 @@
     </developer>
   </developers>
 
-  <scm>
-    <url>scm:git:ssh://github.com/edouardhue/comeon</url>
-  </scm>
 
   <licenses>
     <license>
@@ -342,4 +339,9 @@
       </properties>
     </profile>
   </profiles>
+  <scm>
+    <developerConnection>scm:git:ssh://github.com/edouardhue/comeon</developerConnection>
+    <connection>scm:git:ssh://github.com/edouardhue/comeon</connection>
+    <url>https://github.com/edouardhue/comeon</url>
+  </scm>
 </project>
