@@ -1,9 +1,13 @@
 package comeon.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.Map;
 
 public final class Picture {
+  private final PropertyChangeSupport pcs;
+  
   private final File file;
 
   private final String fileName;
@@ -17,16 +21,20 @@ public final class Picture {
   private final Map<String, Object> metadata;
 
   private final byte[] thumbnail;
+  
+  private State state;
 
   public Picture(final File file, final String fileName, final Template template, final Map<String, Object> metadata,
       final byte[] thumbnail) {
     super();
+    this.pcs = new PropertyChangeSupport(this);
     this.file = file;
     this.fileName = fileName;
     this.template = template;
     this.templateText = template.getTemplateText();
     this.metadata = metadata;
     this.thumbnail = thumbnail;
+    this.state = State.ToBeUploaded;
   }
 
   public void renderTemplate(final User user) {
@@ -46,7 +54,9 @@ public final class Picture {
   }
 
   public void setTemplateText(final String templateText) {
+    final String oldTemplateText = this.templateText;
     this.templateText = templateText;
+    pcs.firePropertyChange("templateText", oldTemplateText, templateText);
   }
 
   public String getRenderedTemplate() {
@@ -54,7 +64,9 @@ public final class Picture {
   }
 
   public void setRenderedTemplate(final String renderedTemplate) {
+    final String oldRenderedTemplate = this.renderedTemplate;
     this.renderedTemplate = renderedTemplate;
+    pcs.firePropertyChange("renderedTemplate", oldRenderedTemplate, renderedTemplate);
   }
 
   public Map<String, Object> getMetadata() {
@@ -67,6 +79,24 @@ public final class Picture {
 
   public String getFileName() {
     return fileName;
+  }
+  
+  public State getState() {
+    return state;
+  }
+  
+  public void setState(final State state) {
+    final State oldState = this.state;
+    this.state = state;
+    pcs.firePropertyChange("state", oldState, state);
+  }
+  
+  public void addPropertyChangeListener(final PropertyChangeListener pcl) {
+    this.pcs.addPropertyChangeListener(pcl);
+  }
+  
+  public void removePropertyChangeLister(final PropertyChangeListener pcl) {
+    this.pcs.removePropertyChangeListener(pcl);
   }
   
   @Override
@@ -86,5 +116,11 @@ public final class Picture {
   @Override
   public int hashCode() {
     return this.file.hashCode();
+  }
+  
+  public enum State {
+    ToBeUploaded,
+    UploadedSuccessfully,
+    FailedUpload
   }
 }

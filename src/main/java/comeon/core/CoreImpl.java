@@ -26,6 +26,7 @@ import comeon.mediawiki.NotLoggedInException;
 import comeon.model.Picture;
 import comeon.model.Template;
 import comeon.model.Wiki;
+import comeon.model.Picture.State;
 import comeon.ui.actions.PictureRemovedEvent;
 import comeon.ui.actions.PicturesAddedEvent;
 import comeon.wikis.ActiveWikiChangeEvent;
@@ -82,7 +83,22 @@ public final class CoreImpl implements Core {
   public List<Picture> getPictures() {
     return pictures;
   }
+  
+  private boolean shouldUpload(final Picture picture) {
+    return !State.UploadedSuccessfully.equals(picture.getState());
+  }
 
+  @Override
+  public int countPicturesToBeUploaded() {
+    int picturesToBeUploaded = 0;
+    for (final Picture picture : pictures) {
+      if (shouldUpload(picture)) {
+        picturesToBeUploaded++;
+      }
+    }
+    return picturesToBeUploaded;
+  }
+  
   @Override
   public void uploadPictures(final UploadMonitor monitor) {
     final List<Picture> batch = new ArrayList<>(this.pictures);
@@ -94,23 +110,27 @@ public final class CoreImpl implements Core {
           monitor.uploadStarting();
           int index = 0;
           for (final Picture picture : batch) {
-            try {
-              final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length(),
-                  picture.getFileName());
-              activeMediaWiki.upload(picture, listener);
-            } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
-              // TODO i18n
-              LOGGER.warn("Picture upload failed", e);
-            } finally {
-              monitor.itemDone(index);
-              index++;
+            if (shouldUpload(picture)) {
+              try {
+                final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length(),
+                    picture.getFileName());
+                activeMediaWiki.upload(picture, listener);
+                picture.setState(State.UploadedSuccessfully);
+              } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
+                // TODO i18n
+                LOGGER.warn("Picture upload failed", e);
+                picture.setState(State.FailedUpload);
+              } finally {
+                monitor.itemDone(index);
+                index++;
+              }
             }
           }
           activeMediaWiki.logout();
           monitor.uploadDone();
         } catch (final FailedLogoutException e) {
           // TODO i18n
-          LOGGER.warn("Couldn't close Commons session properly", e);
+          LOGGER.warn("Couldn't close Mediawiki session properly", e);
         }
       }
     });

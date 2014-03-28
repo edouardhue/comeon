@@ -52,7 +52,7 @@ public final class UploadPicturesAction extends BaseAction {
         JOptionPane.getRootFrame(),
         MessageFormat.format(
             UI.BUNDLE.getString("action.upload.confirm"),
-            core.getPictures().size(), wikis.getActiveWiki().getName()),
+            core.countPicturesToBeUploaded(), wikis.getActiveWiki().getName()),
         UIManager.getString("OptionPane.titleText"),
         JOptionPane.OK_CANCEL_OPTION);
     if (JOptionPane.OK_OPTION == choice) {

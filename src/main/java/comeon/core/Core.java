@@ -17,6 +17,8 @@ public interface Core {
   
   List<Picture> getPictures();
 
+  int countPicturesToBeUploaded();
+  
   void uploadPictures(UploadMonitor monitor);
 
 }
