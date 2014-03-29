@@ -39,6 +39,7 @@ import javax.swing.text.MaskFormatter;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import comeon.ui.UI;
+import comeon.ui.actions.BaseAction;
 
 class FilesPanel extends JPanel {
   private static final int MEDIUM_PROTOTYPE_LENGTH = 20;
@@ -49,11 +50,11 @@ class FilesPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private final JFileChooser filesChooser;
+  private final JFileChooser picturesFilesChooser;
 
   private final JCheckBox metatadataCheckbox;
   
-  private final JFileChooser fileChooser;
+  private final JFileChooser metadataFileChooser;
   
   private final JLabel metadataFileLabel;
   
@@ -80,15 +81,15 @@ class FilesPanel extends JPanel {
     layout.setAutoCreateContainerGaps(true);
     this.setLayout(layout);
     
-    this.filesChooser = new JFileChooser();
-    filesChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    filesChooser.setMultiSelectionEnabled(true);
-    filesChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("action.addpictures.filter"), "jpg", "jpeg"));
-    this.fileChooser = new JFileChooser();
-    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    fileChooser.setMultiSelectionEnabled(false);
-    fileChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("addpictures.metadata.filter"), "csv"));
-    fileChooser.setAccessory(new CSVAccessoryPanel());
+    this.picturesFilesChooser = new JFileChooser();
+    picturesFilesChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    picturesFilesChooser.setMultiSelectionEnabled(true);
+    picturesFilesChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("action.addpictures.filter"), "jpg", "jpeg"));
+    this.metadataFileChooser = new JFileChooser();
+    metadataFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    metadataFileChooser.setMultiSelectionEnabled(false);
+    metadataFileChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("addpictures.metadata.filter"), "csv"));
+    metadataFileChooser.setAccessory(new CSVAccessoryPanel());
 
     final JLabel filesListLabel = new JLabel(UI.BUNDLE.getString("addpictures.pictures.label"));
 
@@ -245,21 +246,21 @@ class FilesPanel extends JPanel {
     });
   }
   
-  private class PickPicturesFilesAction extends AbstractAction {
+  private class PickPicturesFilesAction extends BaseAction {
     private static final long serialVersionUID = 1L;
     
     private final AddController controller;
 
     public PickPicturesFilesAction(final AddController controller) {
-      super(UI.BUNDLE.getString("addpictures.pictures.pick"));
+      super("pickpictures");
       this.controller = controller;
     }
     
     @Override
     public void actionPerformed(final ActionEvent e) {
-      final int returnVal = filesChooser.showOpenDialog(JOptionPane.getRootFrame());
-      if (returnVal == JFileChooser.APPROVE_OPTION && filesChooser.getSelectedFiles().length > 0) {
-        controller.setPicturesFiles(filesChooser.getSelectedFiles());
+      final int returnVal = picturesFilesChooser.showOpenDialog(JOptionPane.getRootFrame());
+      if (returnVal == JFileChooser.APPROVE_OPTION && picturesFilesChooser.getSelectedFiles().length > 0) {
+        controller.setPicturesFiles(picturesFilesChooser.getSelectedFiles());
       }
     }
   }
@@ -296,18 +297,18 @@ class FilesPanel extends JPanel {
     }
   }
   
-  private class PickMetadataFileAction extends AbstractAction {
+  private class PickMetadataFileAction extends BaseAction {
     private static final long serialVersionUID = 1L;
 
     public PickMetadataFileAction() {
-      super(UI.BUNDLE.getString("addpictures.metadata.pick"));
+      super("pickmetadata");
     }
     
     @Override
     public void actionPerformed(final ActionEvent e) {
-      final int returnVal = fileChooser.showOpenDialog(JOptionPane.getRootFrame());
+      final int returnVal = metadataFileChooser.showOpenDialog(JOptionPane.getRootFrame());
       if (returnVal == JFileChooser.APPROVE_OPTION) {
-        controller.setMetadataFile(Paths.get(fileChooser.getSelectedFile().toURI()));
+        controller.setMetadataFile(Paths.get(metadataFileChooser.getSelectedFile().toURI()));
       }
     }
   }

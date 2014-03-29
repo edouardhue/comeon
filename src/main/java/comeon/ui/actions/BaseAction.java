@@ -8,7 +8,7 @@ import javax.swing.KeyStroke;
 
 import comeon.ui.UI;
 
-abstract class BaseAction extends AbstractAction {
+public abstract class BaseAction extends AbstractAction {
 
   private static final long serialVersionUID = 1L;
 
