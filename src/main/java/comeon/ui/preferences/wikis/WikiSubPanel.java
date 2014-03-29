@@ -5,11 +5,14 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import org.netbeans.validation.api.builtin.stringvalidation.StringValidators;
+import org.netbeans.validation.api.ui.ValidationGroup;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import comeon.ui.UI;
 import comeon.ui.preferences.SubPanel;
-import comeon.ui.preferences.input.UrlInputVerifier;
 
 @Singleton
 public final class WikiSubPanel extends SubPanel<WikiModel> {
@@ -28,15 +31,16 @@ public final class WikiSubPanel extends SubPanel<WikiModel> {
   @Inject
   public WikiSubPanel(final WikiSubController subController) {
     this.nameField = new JTextField(COLUMNS);
-    this.nameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
+    this.nameField.setName(UI.BUNDLE.getString("prefs.wikis.name"));
+    this.nameField.requestFocusInWindow();
     this.urlField = new JTextField(COLUMNS);
-    this.urlField.setInputVerifier(new UrlInputVerifier());
+    this.urlField.setName(UI.BUNDLE.getString("prefs.wikis.url"));
     this.displayNameField = new JTextField(COLUMNS);
-    this.displayNameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
+    this.displayNameField.setName(UI.BUNDLE.getString("prefs.wikis.displayName"));
     this.loginField = new JTextField(COLUMNS);
-    this.loginField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
+    this.loginField.setName(UI.BUNDLE.getString("prefs.wikis.login"));
     this.passwordField = new JPasswordField(COLUMNS);
-    this.passwordField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
+    this.passwordField.setName(UI.BUNDLE.getString("prefs.wikis.password"));
     this.layoutComponents();
     subController.setView(this);
   }
@@ -62,7 +66,7 @@ public final class WikiSubPanel extends SubPanel<WikiModel> {
   }
 
   @Override
-  protected void doLayoutComponents(GroupLayout layout) {
+  protected void doLayoutComponents(final GroupLayout layout) {
     final JLabel[] labels = new JLabel[] {
         new AssociatedLabel("prefs.wikis.name", nameField),
         new AssociatedLabel("prefs.wikis.url", urlField),
@@ -83,5 +87,14 @@ public final class WikiSubPanel extends SubPanel<WikiModel> {
         .addGroup(layout.createParallelGroup().addComponent(labels[0]).addComponent(labels[1]).addComponent(labels[2]).addComponent(labels[3]).addComponent(labels[4]))
         .addGroup(layout.createParallelGroup().addComponent(nameField).addComponent(urlField).addComponent(displayNameField).addComponent(loginField).addComponent(passwordField))
     );
+  }
+  
+  @Override
+  protected void doAttach(final ValidationGroup validationGroup) {
+    validationGroup.add(nameField, StringValidators.REQUIRE_NON_EMPTY_STRING);
+    validationGroup.add(urlField, StringValidators.URL_MUST_BE_VALID);
+    validationGroup.add(displayNameField, StringValidators.REQUIRE_NON_EMPTY_STRING);
+    validationGroup.add(loginField, StringValidators.REQUIRE_NON_EMPTY_STRING);
+    validationGroup.add(passwordField, StringValidators.REQUIRE_NON_EMPTY_STRING);    
   }
 }

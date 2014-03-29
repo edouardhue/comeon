@@ -15,9 +15,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.netbeans.validation.api.builtin.stringvalidation.StringValidators;
+import org.netbeans.validation.api.ui.ValidationGroup;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import comeon.model.TemplateKind;
 import comeon.templates.Templates;
 import comeon.ui.UI;
@@ -49,15 +51,19 @@ public final class TemplateSubPanel extends SubPanel<TemplateModel> {
   @Inject
   public TemplateSubPanel(final TemplateSubController templateSubController, final Templates templates) {
     this.nameField = new JTextField(COLUMNS);
-    this.nameField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
+    this.nameField.setName(UI.BUNDLE.getString("prefs.templates.name"));
+    this.nameField.requestFocusInWindow();
     this.descriptionField = new JTextArea(3, 0);
+    this.descriptionField.setName(UI.BUNDLE.getString("prefs.templates.description"));
     this.descriptionPane = new JScrollPane(descriptionField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     this.fileField = new JTextField(COLUMNS);
+    this.fileField.setName(UI.BUNDLE.getString("prefs.templates.path"));
     this.fileField.setEditable(false);
-    this.fileField.setInputVerifier(NOT_BLANK_INPUT_VERIFIER);
     this.fileButton = new JButton(UI.BUNDLE.getString("prefs.templates.path.pick"));
     this.charsetField = new JComboBox<>(templates.getSupportedCharsets());
+    this.charsetField.setName(UI.BUNDLE.getString("prefs.templates.charset"));
     this.kindField = new JComboBox<>(templates.getTemplateKinds().toArray(new TemplateKind[0]));
+    this.kindField.setName(UI.BUNDLE.getString("prefs.templates.kind"));
     this.fileChooser = new JFileChooser();
     this.fileChooser.setMultiSelectionEnabled(false);
     this.fileButton.addActionListener(new ActionListener() {
@@ -134,6 +140,14 @@ public final class TemplateSubPanel extends SubPanel<TemplateModel> {
         .addGroup(layout.createParallelGroup().addComponent(nameField).addComponent(descriptionPane).addComponent(fileField).addComponent(charsetField).addComponent(kindField))
         .addGroup(layout.createParallelGroup().addComponent(fileButton))
     );
+  }
+  
+  protected void doAttach(ValidationGroup validationGroup) {
+    validationGroup.add(nameField, StringValidators.REQUIRE_NON_EMPTY_STRING);
+    validationGroup.add(descriptionField, StringValidators.REQUIRE_NON_EMPTY_STRING);
+    validationGroup.add(fileField, StringValidators.FILE_MUST_BE_FILE);
+    validationGroup.add(charsetField, StringValidators.REQUIRE_NON_EMPTY_STRING);
+    validationGroup.add(kindField, StringValidators.REQUIRE_NON_EMPTY_STRING);
   }
 
 }

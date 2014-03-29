@@ -23,13 +23,18 @@
     </developer>
   </developers>
 
-
   <licenses>
     <license>
       <name>Apache License 2.0</name>
       <url>http://www.spdx.org/licenses/Apache-2.0</url>
     </license>
   </licenses>
+  
+  <scm>
+    <developerConnection>scm:git:ssh://github.com/edouardhue/comeon</developerConnection>
+    <connection>scm:git:https://github.com/edouardhue/comeon.git</connection>
+    <url>https://github.com/edouardhue/comeon</url>
+  </scm>
 
   <properties>
     <version.mwapi>1.4-SNAPSHOT</version.mwapi>
@@ -191,6 +196,11 @@
       <artifactId>cglib</artifactId>
       <version>3.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.kenai</groupId>
+      <artifactId>simplevalidation-standalone</artifactId>
+      <version>1.6</version>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -339,9 +349,27 @@
       </properties>
     </profile>
   </profiles>
-  <scm>
-    <developerConnection>scm:git:ssh://github.com/edouardhue/comeon</developerConnection>
-    <connection>scm:git:ssh://github.com/edouardhue/comeon</connection>
-    <url>https://github.com/edouardhue/comeon</url>
-  </scm>
+  
+  <repositories>
+    <repository>
+        <id>central</id>
+        <url>http://central.maven.org/maven2</url>
+        <releases>
+           <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>        
+     </repository>
+     <repository>
+        <id>timboudreau</id>
+        <url>http://timboudreau.com/builds/plugin/repository/everything</url>
+        <releases>
+           <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>        
+     </repository>
+  </repositories>
 </project>

@@ -5,8 +5,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.netbeans.validation.api.ui.ValidationGroup;
+
 import comeon.ui.UI;
-import comeon.ui.preferences.input.NotBlankInputVerifier;
 
 public abstract class SubPanel<M> extends JPanel {
 
@@ -14,12 +15,10 @@ public abstract class SubPanel<M> extends JPanel {
 
   protected static final int COLUMNS = 40;
   
-  protected static final NotBlankInputVerifier NOT_BLANK_INPUT_VERIFIER = new NotBlankInputVerifier();
-  
   private final GroupLayout layout;
   
   protected SubPanel() {
-    this.layout = new GroupLayout(this);
+    layout = new GroupLayout(this);
     layout.setAutoCreateContainerGaps(true);
     layout.setAutoCreateGaps(true);
     this.setLayout(layout);
@@ -30,6 +29,12 @@ public abstract class SubPanel<M> extends JPanel {
   }
   
   protected abstract void doLayoutComponents(final GroupLayout layout);
+  
+  public final void attach(final ValidationGroup validationGroup) {
+    this.doAttach(validationGroup);
+  }
+  
+  protected abstract void doAttach(final ValidationGroup validationGroup);
   
   protected static final class AssociatedLabel extends JLabel {
     private static final long serialVersionUID = 1L;

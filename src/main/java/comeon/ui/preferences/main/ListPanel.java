@@ -24,6 +24,8 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.netbeans.validation.api.ui.swing.ValidationPanel;
+
 import comeon.ui.UI;
 import comeon.ui.preferences.BaseListCellRenderer;
 import comeon.ui.preferences.Model;
@@ -43,8 +45,6 @@ abstract class ListPanel<M extends Model> extends JPanel {
   private final ChangeAction changeAction;
   
   private final SubPanel<M> subPanel;
-  
-  protected final SubController<M, ? extends SubPanel<M>> subController;
 
   private final ParallelGroup horizontalGroup;
 
@@ -55,6 +55,10 @@ abstract class ListPanel<M extends Model> extends JPanel {
   private final JPanel toolboxPanel;
 
   private final List<JButton> buttons;
+  
+  private final ValidationPanel validationPanel;
+  
+  protected final SubController<M, ? extends SubPanel<M>> subController;
 
   protected ListPanel(final BaseListCellRenderer<M> renderer, final SubController<M, ? extends SubPanel<M>> subController, final SubPanel<M> subPanel,
       final ListModel<M> model, final String stringsKey, final M prototypeValue) {
@@ -136,6 +140,10 @@ abstract class ListPanel<M extends Model> extends JPanel {
         .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
         .addComponent(toolboxPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
     layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(scrollPane).addComponent(toolboxPanel));
+    
+    this.validationPanel = new ValidationPanel();
+    this.validationPanel.setInnerComponent(subPanel);
+    this.subPanel.attach(validationPanel.getValidationGroup());
   }
 
   
@@ -167,8 +175,8 @@ abstract class ListPanel<M extends Model> extends JPanel {
         @Override
         public void run() {
           subController.switchToBlankModel();
-          final int result = JOptionPane.showOptionDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), subPanel, UI.BUNDLE.getString(titleKey), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-          if (JOptionPane.OK_OPTION == result) {
+          final boolean result = validationPanel.showOkCancelDialog(UI.BUNDLE.getString(titleKey));
+          if (result) {
             subController.addCurrentModel();
           } else {
             subController.rollback();
@@ -219,8 +227,8 @@ abstract class ListPanel<M extends Model> extends JPanel {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          final int result = JOptionPane.showOptionDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), subPanel, UI.BUNDLE.getString(titleKey), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-          if (result == JOptionPane.OK_OPTION) {
+          final boolean result = validationPanel.showOkCancelDialog(UI.BUNDLE.getString(titleKey));
+          if (result) {
             subController.commit(list.getSelectedIndex());
           } else {
             subController.rollback();
