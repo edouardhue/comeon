@@ -2,7 +2,6 @@ package comeon.ui.preferences.main;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
@@ -12,7 +11,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import comeon.ui.UI;
+import comeon.ui.actions.BaseAction;
 import comeon.ui.preferences.wikis.WikiListCellRenderer;
 import comeon.ui.preferences.wikis.WikiModel;
 import comeon.ui.preferences.wikis.WikiSubController;
@@ -74,11 +73,11 @@ public final class WikisListPanel extends ListPanel<WikiModel> {
     super.addCustomButton(new JButton(activateAction));
   }
   
-  private class ActivateAction extends AbstractAction {
+  private class ActivateAction extends BaseAction {
     private static final long serialVersionUID = 1L;
 
     public ActivateAction() {
-      super(UI.BUNDLE.getString("prefs.wikis.activate"));
+      super("prefs.wikis.activate");
       this.setEnabled(false);
     }
     

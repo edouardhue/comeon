@@ -5,10 +5,13 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.core.Core;
@@ -19,13 +22,15 @@ import comeon.model.Template;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesChangedEvent;
 import comeon.ui.UI;
-import comeon.ui.add.AddPicturesDialog;
 import comeon.ui.add.AddModel;
+import comeon.ui.add.AddPicturesDialog;
 
 @Singleton
 public final class AddPicturesAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
+  
+  private static final Icon TEMPLATE_ICON = new ImageIcon(Resources.getResource("comeon/ui/template_huge.png"));
 
   private final Templates templates;
 
@@ -69,7 +74,7 @@ public final class AddPicturesAction extends BaseAction {
                 UI.BUNDLE.getString("action.addpictures.choosetemplate.message"),
                 UI.BUNDLE.getString("action.addpictures.choosetemplate.title"),
                 JOptionPane.QUESTION_MESSAGE,
-                null,
+                TEMPLATE_ICON,
                 templates, templates.length > 0 ? templates[0] : null);
             final ExternalMetadataSource<?> externalMetadataSource;
             if (model.getUseMetadata()) {

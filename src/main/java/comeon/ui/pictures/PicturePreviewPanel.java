@@ -16,6 +16,7 @@ import javax.swing.border.Border;
 
 import comeon.model.Picture;
 import comeon.model.Picture.State;
+import comeon.ui.UI;
 
 final class PicturePreviewPanel extends JComponent implements PropertyChangeListener {
 
@@ -36,6 +37,7 @@ final class PicturePreviewPanel extends JComponent implements PropertyChangeList
     super.setMinimumSize(componentSize);
     super.setPreferredSize(componentSize);
     super.setMaximumSize(componentSize);
+    this.setToolTipText(UI.BUNDLE.getString("pictures.preview.tooltip"));
     this.picturePanels = picturePanels;
     this.horizontalBordersWidth = horizontalBordersWidth;
     this.verticalBordersWidth = verticalBordersWidth;

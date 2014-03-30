@@ -59,7 +59,8 @@ public final class TemplateSubPanel extends SubPanel<TemplateModel> {
     this.fileField = new JTextField(COLUMNS);
     this.fileField.setName(UI.BUNDLE.getString("prefs.templates.path"));
     this.fileField.setEditable(false);
-    this.fileButton = new JButton(UI.BUNDLE.getString("prefs.templates.path.pick"));
+    this.fileButton = new JButton(UI.BUNDLE.getString("prefs.templates.path.pick.title"));
+    this.fileButton.setMnemonic(UI.BUNDLE.getString("prefs.templates.path.pick.mnemo").charAt(0));
     this.charsetField = new JComboBox<>(templates.getSupportedCharsets());
     this.charsetField.setName(UI.BUNDLE.getString("prefs.templates.charset"));
     this.kindField = new JComboBox<>(templates.getTemplateKinds().toArray(new TemplateKind[0]));

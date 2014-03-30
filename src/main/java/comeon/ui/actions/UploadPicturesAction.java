@@ -3,6 +3,7 @@ package comeon.ui.actions;
 import in.yuvi.http.fluent.ProgressListener;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -24,6 +26,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.core.Core;
@@ -34,6 +37,8 @@ import comeon.wikis.Wikis;
 @Singleton
 public final class UploadPicturesAction extends BaseAction {
   private static final long serialVersionUID = 1L;
+
+  private static final ImageIcon ICON = new ImageIcon(Resources.getResource("comeon/ui/upload_huge.png"));
 
   private final Core core;
 
@@ -49,12 +54,14 @@ public final class UploadPicturesAction extends BaseAction {
   @Override
   public void actionPerformed(final ActionEvent e) {
     final int choice = JOptionPane.showConfirmDialog(
-        JOptionPane.getRootFrame(),
+        SwingUtilities.getWindowAncestor((Component) e.getSource()),
         MessageFormat.format(
             UI.BUNDLE.getString("action.upload.confirm"),
             core.countPicturesToBeUploaded(), wikis.getActiveWiki().getName()),
         UIManager.getString("OptionPane.titleText"),
-        JOptionPane.OK_CANCEL_OPTION);
+        JOptionPane.OK_CANCEL_OPTION,
+        JOptionPane.QUESTION_MESSAGE,
+        ICON);
     if (JOptionPane.OK_OPTION == choice) {
       core.uploadPictures(new Monitor());
     }
@@ -76,7 +83,7 @@ public final class UploadPicturesAction extends BaseAction {
     private ProgressPanel[] panels;
 
     public Monitor() {
-      super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, null);
+      super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, ICON, null);
       this.batchBar = new JProgressBar(SwingConstants.HORIZONTAL);
       this.batchBar.setStringPainted(true);
       this.pictureBarsBox = Box.createVerticalBox();

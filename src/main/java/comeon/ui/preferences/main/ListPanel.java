@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -27,6 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import org.netbeans.validation.api.ui.swing.ValidationPanel;
 
 import comeon.ui.UI;
+import comeon.ui.actions.BaseAction;
 import comeon.ui.preferences.BaseListCellRenderer;
 import comeon.ui.preferences.Model;
 import comeon.ui.preferences.SubController;
@@ -159,13 +159,13 @@ abstract class ListPanel<M extends Model> extends JPanel {
     toolboxLayout.invalidateLayout(toolboxPanel);
   }
   
-  private class AddAction extends AbstractAction {
+  private class AddAction extends BaseAction {
     private static final long serialVersionUID = 1L;
 
     private final String titleKey;
     
     public AddAction(final String stringsKey) {
-      super(UI.BUNDLE.getString("prefs.add"));
+      super("prefs.add");
       this.titleKey = "prefs." + stringsKey + ".new.title";
     }
     
@@ -186,13 +186,13 @@ abstract class ListPanel<M extends Model> extends JPanel {
     }
   }
   
-  private class RemoveAction extends AbstractAction {
+  private class RemoveAction extends BaseAction {
     private static final long serialVersionUID = 1L;
 
     private final String confirmKey;
     
     public RemoveAction(final String stringsKey) {
-      super(UI.BUNDLE.getString("prefs.remove"));
+      super("prefs.remove");
       this.setEnabled(false);
       this.confirmKey = "prefs." + stringsKey + ".remove.confirm";
     }
@@ -211,13 +211,13 @@ abstract class ListPanel<M extends Model> extends JPanel {
     }
   }
   
-  private class ChangeAction extends AbstractAction {
+  private class ChangeAction extends BaseAction {
     private static final long serialVersionUID = 1L;
 
     private final String titleKey;
 
     public ChangeAction(final String stringsKey) {
-      super(UI.BUNDLE.getString("prefs.change"));
+      super("prefs.change");
       this.titleKey = "prefs." + stringsKey + ".change.title";
       this.setEnabled(false);
     }

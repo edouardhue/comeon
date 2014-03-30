@@ -1,14 +1,19 @@
 package comeon.ui.add;
 
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+
+import com.google.common.io.Resources;
 
 import comeon.ui.UI;
 
 public final class AddPicturesDialog extends JOptionPane {
 
   private static final long serialVersionUID = 1L;
+
+  private static final ImageIcon ICON = new ImageIcon(Resources.getResource("comeon/ui/addpictures_huge.png"));
 
   private final AddModel model;
   
@@ -19,7 +24,7 @@ public final class AddPicturesDialog extends JOptionPane {
   private final FilesPanel filesPanel;
   
   public AddPicturesDialog() {
-    super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+    super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, ICON);
     this.controller = new AddController();
     this.model = new AddModel();
     this.controller.registerModel(model);

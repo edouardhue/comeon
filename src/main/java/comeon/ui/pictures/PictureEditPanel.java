@@ -2,6 +2,7 @@ package comeon.ui.pictures;
 
 import java.awt.BorderLayout;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -13,6 +14,8 @@ import javax.swing.text.BadLocationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Resources;
 
 import comeon.model.Picture;
 import comeon.ui.UI;
@@ -37,8 +40,8 @@ final class PictureEditPanel extends JPanel {
     final JScrollPane renderedTemplatePanel = wrap(renderedTemplate);
 
     final JTabbedPane templatesPanel = new JTabbedPane(SwingConstants.TOP);
-    templatesPanel.add(templatePanel, UI.BUNDLE.getString("picture.tab.template"));
-    templatesPanel.add(renderedTemplatePanel, UI.BUNDLE.getString("picture.tab.page"));
+    templatesPanel.addTab(UI.BUNDLE.getString("picture.tab.template"), new ImageIcon(Resources.getResource("comeon/ui/template_small.png")), templatePanel);
+    templatesPanel.addTab(UI.BUNDLE.getString("picture.tab.page"), new ImageIcon(Resources.getResource("comeon/ui/rendered_small.png")), renderedTemplatePanel);
     templatesPanel.setSelectedComponent(renderedTemplatePanel);
 
     this.add(templatesPanel, BorderLayout.CENTER);
