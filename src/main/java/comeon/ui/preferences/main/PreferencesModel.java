@@ -89,8 +89,14 @@ public final class PreferencesModel {
   }
   
   public void setActiveWiki(final int index) {
-    wikisModel.get(activeWikiIndex).setActive(Boolean.FALSE);
-    wikisModel.get(index).setActive(Boolean.TRUE);
+    final WikiModel previousActiveWiki = wikisModel.get(activeWikiIndex);
+    previousActiveWiki.setActive(Boolean.FALSE);
+    // Need to replace item by itself to trigger model change events...
+    wikisModel.set(activeWikiIndex, previousActiveWiki);
+    final WikiModel newActiveWiki = wikisModel.get(index);
+    newActiveWiki.setActive(Boolean.TRUE);
+    // Here again
+    wikisModel.set(index, newActiveWiki);
     this.activeWikiIndex = index;
   }
   

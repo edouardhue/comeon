@@ -62,7 +62,7 @@ public final class PreferencesController {
   }
   
   public void setActiveWiki(final int index) {
-    
+    model.setActiveWiki(index);
   }
   
   public ListModel<TemplateModel> getTemplates() {
