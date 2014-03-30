@@ -36,6 +36,7 @@ import comeon.ui.actions.PictureRemovedEvent;
 import comeon.ui.actions.PicturesAddedEvent;
 import comeon.ui.menu.MenuBar;
 import comeon.ui.pictures.PicturePanels;
+import comeon.ui.toolbar.Toolbar;
 
 @Singleton
 public final class UI extends JFrame {
@@ -60,7 +61,7 @@ public final class UI extends JFrame {
   private final Core core;
 
   @Inject
-  public UI(final Core core, final Templates templates, final MenuBar menuBar) {
+  public UI(final Core core, final Templates templates, final MenuBar menuBar, final Toolbar toolbar) {
     super(BUNDLE.getString("comeon"));
 
     this.core = core;
@@ -84,6 +85,8 @@ public final class UI extends JFrame {
 
     this.editContainer = new JPanel(new CardLayout());
     this.add(editContainer, BorderLayout.CENTER);
+    
+    this.add(toolbar, BorderLayout.NORTH);
   }
 
   private static List<? extends Image> loadIcons() {

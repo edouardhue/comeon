@@ -28,6 +28,10 @@ public abstract class BaseAction extends AbstractAction {
     super(UI.BUNDLE.getString("action." + key + ".title"));
     this.setKeys(key, accelerator);
     this.setIcon(key);
+    final String tooltipKey = "action." + key + ".tooltip";
+    if (UI.BUNDLE.containsKey(tooltipKey)) {
+      this.putValue(Action.SHORT_DESCRIPTION, UI.BUNDLE.getString(tooltipKey));
+    }
   }
   
   private void setIcon(final String key) {

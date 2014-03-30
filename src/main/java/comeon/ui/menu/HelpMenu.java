@@ -13,10 +13,10 @@ public final class HelpMenu extends BaseMenu {
   private static final long serialVersionUID = 1L;
 
   @Inject
-  public HelpMenu() {
+  public HelpMenu(final HelpManualAction helpManualAction, final AboutAction aboutAction) {
     super("help");
-    this.add(new JMenuItem(new HelpManualAction()));
+    this.add(new JMenuItem(helpManualAction));
     this.add(new JSeparator());
-    this.add(new JMenuItem(new AboutAction()));
+    this.add(new JMenuItem(aboutAction));
   }
 }

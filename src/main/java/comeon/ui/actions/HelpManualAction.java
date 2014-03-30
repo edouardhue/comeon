@@ -11,6 +11,7 @@ public final class HelpManualAction extends BaseAction {
 
   public HelpManualAction() {
     super("manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+    this.setEnabled(false);
   }
 
   @Override

@@ -47,7 +47,9 @@ import comeon.templates.Templates;
 import comeon.templates.TemplatesImpl;
 import comeon.templates.velocity.VelocityTemplate;
 import comeon.ui.UI;
+import comeon.ui.actions.AboutAction;
 import comeon.ui.actions.AddPicturesAction;
+import comeon.ui.actions.HelpManualAction;
 import comeon.ui.actions.PreferencesAction;
 import comeon.ui.actions.QuitAction;
 import comeon.ui.actions.UploadPicturesAction;
@@ -65,6 +67,7 @@ import comeon.ui.preferences.templates.TemplateSubController;
 import comeon.ui.preferences.templates.TemplateSubPanel;
 import comeon.ui.preferences.wikis.WikiSubController;
 import comeon.ui.preferences.wikis.WikiSubPanel;
+import comeon.ui.toolbar.Toolbar;
 import comeon.wikis.Wikis;
 import comeon.wikis.WikisImpl;
 
@@ -132,10 +135,16 @@ public final class ComeOn extends AbstractModule {
     bind(FileMenu.class);
     bind(EditMenu.class);
     bind(HelpMenu.class);
+    
+    bind(Toolbar.class);
+    
     bind(AddPicturesAction.class);
     bind(UploadPicturesAction.class);
     bind(PreferencesAction.class);
     bind(QuitAction.class);
+    bind(HelpManualAction.class);
+    bind(AboutAction.class);
+    
     bind(EventBus.class).toInstance(bus);
   }
   
