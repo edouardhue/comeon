@@ -11,12 +11,15 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -61,7 +64,7 @@ abstract class ListPanel<M extends Model> extends JPanel {
   protected final SubController<M, ? extends SubPanel<M>> subController;
 
   protected ListPanel(final BaseListCellRenderer<M> renderer, final SubController<M, ? extends SubPanel<M>> subController, final SubPanel<M> subPanel,
-      final ListModel<M> model, final String stringsKey, final M prototypeValue) {
+      final ListModel<M> model, final String stringsKey, final Icon icon, final M prototypeValue) {
     super();
     
     this.subPanel = subPanel;
@@ -132,14 +135,26 @@ abstract class ListPanel<M extends Model> extends JPanel {
     toolboxLayout.setVerticalGroup(verticalGroup);
     toolboxLayout.linkSize(buttons.toArray(new Component[buttons.size()]));
     
+    final JLabel panelLabel = new JLabel(UI.BUNDLE.getString("prefs." + stringsKey + ".label"), icon, SwingConstants.LEADING);
+    
     final GroupLayout layout = new GroupLayout(this);
     this.setLayout(layout);
     layout.setAutoCreateContainerGaps(true);
     layout.setAutoCreateGaps(true);
-    layout.setHorizontalGroup(layout.createSequentialGroup()
-        .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-        .addComponent(toolboxPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
-    layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(scrollPane).addComponent(toolboxPanel));
+    layout.setHorizontalGroup(
+        layout.createParallelGroup()
+        .addComponent(panelLabel)
+        .addGroup(layout.createSequentialGroup()
+          .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+          .addComponent(toolboxPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+    );
+    layout.setVerticalGroup(
+        layout.createSequentialGroup()
+        .addComponent(panelLabel)
+        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+          .addComponent(scrollPane)
+          .addComponent(toolboxPanel))
+    );
     
     this.validationPanel = new ValidationPanel();
     this.validationPanel.setInnerComponent(subPanel);

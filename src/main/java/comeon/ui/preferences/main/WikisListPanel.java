@@ -2,6 +2,7 @@ package comeon.ui.preferences.main;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
@@ -9,6 +10,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.ui.actions.BaseAction;
@@ -26,7 +28,8 @@ public final class WikisListPanel extends ListPanel<WikiModel> {
   @Inject
   public WikisListPanel(final WikiSubController subController,
       final WikiSubPanel subPanel) {
-    super(new WikiListCellRenderer(), subController, subPanel, subController.getMainController().getWikis(), "wikis", WikiModel.getPrototype());
+    super(new WikiListCellRenderer(), subController, subPanel, subController.getMainController().getWikis(),
+        "wikis", new ImageIcon(Resources.getResource("comeon/ui/wiki_large.png")), WikiModel.getPrototype());
     this.activateAction = new ActivateAction();
     list.addListSelectionListener(new ListSelectionListener() {
       @Override
