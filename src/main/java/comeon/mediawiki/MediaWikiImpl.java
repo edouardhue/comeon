@@ -56,7 +56,7 @@ public final class MediaWikiImpl implements MediaWiki {
   public void upload(final Picture picture, final ProgressListener listener) throws NotLoggedInException,
       FailedLoginException, FailedUploadException, IOException {
     if (this.api.isLoggedIn) {
-      final InputStream stream = Files.newInputStreamSupplier(picture.getFile()).getInput();
+      final InputStream stream = Files.asByteSource(picture.getFile()).openBufferedStream();
       try {
         this.api.upload(picture.getFile().getName(), stream, picture.getFile().length(), picture.getRenderedTemplate(),
             "Uploaded with ComeOn!", true, listener);
