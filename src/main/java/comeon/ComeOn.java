@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.google.common.base.Charsets;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -168,6 +169,7 @@ public final class ComeOn extends AbstractModule {
   }
   
   public static void main(final String... args) throws Exception {
+    System.setProperty("file.encoding", Charsets.UTF_8.name());
     SLF4JBridgeHandler.removeHandlersForRootLogger();
     SLF4JBridgeHandler.install();
     final Arguments arguments = new Arguments();

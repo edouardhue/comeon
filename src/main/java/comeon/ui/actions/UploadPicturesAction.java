@@ -23,6 +23,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
@@ -65,7 +66,13 @@ public final class UploadPicturesAction extends BaseAction {
         JOptionPane.QUESTION_MESSAGE,
         ICON);
     if (JOptionPane.OK_OPTION == choice) {
-      core.uploadPictures(new Monitor());
+      new SwingWorker<Void, Void>() {
+        @Override
+        protected Void doInBackground() throws Exception {
+          core.uploadPictures(new Monitor());
+          return null;
+        }
+      }.execute();
     }
   }
 
