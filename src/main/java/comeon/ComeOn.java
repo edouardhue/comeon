@@ -22,6 +22,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
@@ -158,6 +159,8 @@ public final class ComeOn extends AbstractModule {
   }
   
   public static void main(final String... args) throws Exception {
+    SLF4JBridgeHandler.removeHandlersForRootLogger();
+    SLF4JBridgeHandler.install();
     final Arguments arguments = new Arguments();
     final CmdLineParser parser = new CmdLineParser(arguments);
     try {
@@ -204,6 +207,7 @@ public final class ComeOn extends AbstractModule {
     comeOn.bus.register(ui);
     comeOn.bus.register(injector.getInstance(Core.class));
     comeOn.bus.register(injector.getInstance(AddPicturesAction.class));
+    comeOn.bus.register(injector.getInstance(UploadPicturesAction.class));
     return ui;
   }
 

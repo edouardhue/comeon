@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -49,6 +50,7 @@ public final class UploadPicturesAction extends BaseAction {
     super("upload");
     this.core = core;
     this.wikis = wikis;
+    this.setEnabled(false);
   }
 
   @Override
@@ -67,6 +69,25 @@ public final class UploadPicturesAction extends BaseAction {
     }
   }
 
+  @Subscribe
+  public void handlePicturesAddedEvent(final PicturesAddedEvent event) {
+    this.enableIfPicturesAreAvailable();
+  }
+
+  @Subscribe
+  public void handlePictureRemovedEvent(final PictureRemovedEvent event) {
+    this.enableIfPicturesAreAvailable();
+  }
+  
+  private void enableIfPicturesAreAvailable() {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        UploadPicturesAction.this.setEnabled(core.countPicturesToBeUploaded() > 0);
+      }
+    });
+  }
+  
   private final class Monitor extends JOptionPane implements UploadMonitor {
     private static final long serialVersionUID = 1L;
 
