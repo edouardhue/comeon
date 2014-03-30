@@ -307,12 +307,19 @@
 <td><a class="externalLink" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a></td></tr>
 <tr class="a">
 <td>org.slf4j</td>
+<td><a class="externalLink" href="http://www.slf4j.org">jul-to-slf4j</a></td>
+<td>1.7.5</td>
+<td>-</td>
+<td>jar</td>
+<td><a class="externalLink" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a></td></tr>
+<tr class="b">
+<td>org.slf4j</td>
 <td><a class="externalLink" href="http://www.slf4j.org">log4j-over-slf4j</a></td>
 <td>1.7.5</td>
 <td>-</td>
 <td>jar</td>
 <td><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache Software Licenses</a></td></tr>
-<tr class="b">
+<tr class="a">
 <td>org.slf4j</td>
 <td><a class="externalLink" href="http://www.slf4j.org">slf4j-api</a></td>
 <td>1.7.5</td>
@@ -821,7 +828,16 @@
 <td>
 <p><b>Description: </b>Stub versions of NbStubs for use as standalone JAR</p>
 <p><b>URL: </b><a class="externalLink" href="http://simplevalidation.kenai.com/nbstubs/">http://simplevalidation.kenai.com/nbstubs/</a></p>
-<p><b>Project License: </b><a class="externalLink" href="http://www.sun.com/cddl/cddl.html">CDDL</a><a class="externalLink" href="http://www.gnu.org/software/classpath/license.html">GPL-CP</a></p></td></tr></table></div></li></ul></li></ul></li></ul></div></div><a name="Licenses"></a>
+<p><b>Project License: </b><a class="externalLink" href="http://www.sun.com/cddl/cddl.html">CDDL</a><a class="externalLink" href="http://www.gnu.org/software/classpath/license.html">GPL-CP</a></p></td></tr></table></div></li></ul></li>
+<li>org.slf4j:jul-to-slf4j:jar:1.7.5 (compile) <img id="_img69" src="./images/icon_info_sml.gif" alt="Information" onclick="toggleDependencyDetail( '_dep68', '_img69' );" style="cursor: pointer;vertical-align:text-bottom;"></img><div id="_dep68" style="display:none">
+<table border="0" class="table table-striped">
+<tr class="a">
+<th>JUL to SLF4J bridge</th></tr>
+<tr class="b">
+<td>
+<p><b>Description: </b>JUL to SLF4J bridge</p>
+<p><b>URL: </b><a class="externalLink" href="http://www.slf4j.org">http://www.slf4j.org</a></p>
+<p><b>Project License: </b><a class="externalLink" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a></p></td></tr></table></div></li></ul></li></ul></div></div><a name="Licenses"></a>
 <div class="section">
 <h2>Licenses<a name="Licenses"></a></h2>
 <p><b>ASF 2.0: </b>Code Generation Library</p>
@@ -837,7 +853,7 @@
 <p><b>Apache License: </b>HttpClient, HttpCore, HttpMime</p>
 <p><b>Apache License 2.0: </b>ComeOn!</p>
 <p><b>Common Public License Version 1.0: </b>JUnit</p>
-<p><b>MIT License: </b>JCL 1.1.1 implemented over SLF4J, Objenesis, SLF4J API Module, args4j</p>
+<p><b>MIT License: </b>JCL 1.1.1 implemented over SLF4J, JUL to SLF4J bridge, Objenesis, SLF4J API Module, args4j</p>
 <p><b>GPL-CP: </b>NbStubs, Simple Validation, Simplevalidation Standalone</p>
 <p><b>The MIT License: </b>Mockito</p>
 <p><b>Apache Software Licenses: </b>Log4j Implemented Over SLF4J</p></div><a name="Dependency_File_Details"></a>
@@ -1101,6 +1117,14 @@
 <td>1.5</td>
 <td>debug</td></tr>
 <tr class="a">
+<td>jul-to-slf4j-1.7.5.jar</td>
+<td>4.84 kB</td>
+<td>11</td>
+<td>1</td>
+<td>1</td>
+<td>1.4</td>
+<td>debug</td></tr>
+<tr class="b">
 <td>log4j-over-slf4j-1.7.5.jar</td>
 <td>21.25 kB</td>
 <td>38</td>
@@ -1108,7 +1132,7 @@
 <td>4</td>
 <td>1.5</td>
 <td>debug</td></tr>
-<tr class="b">
+<tr class="a">
 <td>slf4j-api-1.7.5.jar</td>
 <td>25.47 kB</td>
 <td>34</td>
@@ -1116,7 +1140,7 @@
 <td>3</td>
 <td>1.5</td>
 <td>debug</td></tr>
-<tr class="a">
+<tr class="b">
 <th>Total</th>
 <th>Size</th>
 <th>Entries</th>
@@ -1124,23 +1148,23 @@
 <th>Packages</th>
 <th>JDK Rev</th>
 <th>Debug</th></tr>
-<tr class="b">
-<td>33</td>
-<td>8.79 MB</td>
-<td>7,493</td>
-<td>6,000</td>
-<td>343</td>
-<td>1.6</td>
-<td>31</td></tr>
 <tr class="a">
-<td>compile: 29</td>
-<td>compile: 7.06 MB</td>
-<td>compile: 5,872</td>
-<td>compile: 5,045</td>
-<td>compile: 241</td>
-<td>-</td>
-<td>compile: 27</td></tr>
+<td>34</td>
+<td>8.80 MB</td>
+<td>7,504</td>
+<td>6,001</td>
+<td>344</td>
+<td>1.6</td>
+<td>32</td></tr>
 <tr class="b">
+<td>compile: 30</td>
+<td>compile: 7.06 MB</td>
+<td>compile: 5,883</td>
+<td>compile: 5,046</td>
+<td>compile: 242</td>
+<td>-</td>
+<td>compile: 28</td></tr>
+<tr class="a">
 <td>test: 4</td>
 <td>test: 1.73 MB</td>
 <td>test: 1,621</td>
@@ -1496,6 +1520,15 @@
 <td>-</td>
 <td><a class="externalLink" href="http://repo.maven.apache.org/maven2/org/slf4j/jcl-over-slf4j/1.7.5/jcl-over-slf4j-1.7.5.jar"><img alt="Found at http://repo.maven.apache.org/maven2" src="images/icon_success_sml.gif" /></a></td></tr>
 <tr class="a">
+<td>org.slf4j:jul-to-slf4j:jar:1.7.5</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td><a class="externalLink" href="http://repo.maven.apache.org/maven2/org/slf4j/jul-to-slf4j/1.7.5/jul-to-slf4j-1.7.5.jar"><img alt="Found at http://repo.maven.apache.org/maven2" src="images/icon_success_sml.gif" /></a></td></tr>
+<tr class="b">
 <td>org.slf4j:log4j-over-slf4j:jar:1.7.5</td>
 <td>-</td>
 <td>-</td>
@@ -1504,7 +1537,7 @@
 <td>-</td>
 <td>-</td>
 <td><a class="externalLink" href="http://repo.maven.apache.org/maven2/org/slf4j/log4j-over-slf4j/1.7.5/log4j-over-slf4j-1.7.5.jar"><img alt="Found at http://repo.maven.apache.org/maven2" src="images/icon_success_sml.gif" /></a></td></tr>
-<tr class="b">
+<tr class="a">
 <td>org.slf4j:slf4j-api:jar:1.7.5</td>
 <td>-</td>
 <td>-</td>
@@ -1513,7 +1546,7 @@
 <td>-</td>
 <td>-</td>
 <td><a class="externalLink" href="http://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5.jar"><img alt="Found at http://repo.maven.apache.org/maven2" src="images/icon_success_sml.gif" /></a></td></tr>
-<tr class="a">
+<tr class="b">
 <th>Total</th>
 <th>ow2-snapshot</th>
 <th>apache.snapshots</th>
@@ -1522,15 +1555,15 @@
 <th>timboudreau-builds</th>
 <th>netbeans</th>
 <th>central</th></tr>
-<tr class="b">
-<td>33 (compile: 29, test: 4)</td>
+<tr class="a">
+<td>34 (compile: 30, test: 4)</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
-<td>29</td></tr></table></div>
+<td>30</td></tr></table></div>
                   </div>
             </div>
           </div>
