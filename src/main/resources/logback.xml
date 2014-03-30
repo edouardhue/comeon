@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%-5level [%thread]: %message%n</pattern>
     </encoder>
   </appender>
 
-  <logger name="comeon" level="info"/>
+  <logger name="comeon" level="info" />
 
   <root level="warn">
     <appender-ref ref="console" />
