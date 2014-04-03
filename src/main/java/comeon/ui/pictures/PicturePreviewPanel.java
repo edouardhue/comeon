@@ -38,6 +38,7 @@ final class PicturePreviewPanel extends JComponent implements PropertyChangeList
     super.setPreferredSize(componentSize);
     super.setMaximumSize(componentSize);
     this.setToolTipText(UI.BUNDLE.getString("pictures.preview.tooltip"));
+    this.setBackground(Color.LIGHT_GRAY);
     this.picturePanels = picturePanels;
     this.horizontalBordersWidth = horizontalBordersWidth;
     this.verticalBordersWidth = verticalBordersWidth;
@@ -52,21 +53,6 @@ final class PicturePreviewPanel extends JComponent implements PropertyChangeList
 
   @Override
   protected void paintComponent(final Graphics g) {
-    switch (this.picturePanels.getPicture().getState()) {
-    case ToBeUploaded:
-      this.setOpaque(false);
-      this.setBackground(Color.BLUE);
-      break;
-    case UploadedSuccessfully:
-      this.setOpaque(true);
-      this.setBackground(Color.GREEN);
-      break;
-    case FailedUpload:
-      this.setOpaque(true);
-      this.setBackground(Color.RED);
-      break;
-    }
-    
     final Dimension size = this.getSize();
     final Graphics2D g2 = (Graphics2D) g;
     final int componentWidth = (int) size.getWidth();

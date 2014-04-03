@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Resources;
+
 import comeon.model.Picture;
 import comeon.ui.UI;
 
@@ -28,7 +30,12 @@ public final class PicturePanels {
     final ByteArrayInputStream input = new ByteArrayInputStream(picture.getThumbnail());
     try {
       try {
-        this.image = ImageIO.read(input);
+        final BufferedImage pictureThumbnail = ImageIO.read(input);
+        if (pictureThumbnail == null) {
+          this.image = ImageIO.read(Resources.getResource("comeon/ui/default_thumbnail.png"));
+        } else {
+          this.image = pictureThumbnail;
+        }
       } finally {
         input.close();
       }

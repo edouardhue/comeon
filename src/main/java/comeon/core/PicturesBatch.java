@@ -37,7 +37,7 @@ import comeon.model.processors.PreProcessor;
 
 public final class PicturesBatch {
   private static final Logger LOGGER = LoggerFactory.getLogger(PicturesBatch.class);
-
+  
   private final File[] files;
 
   private final Template defaultTemplate;
@@ -113,7 +113,7 @@ public final class PicturesBatch {
       final Metadata rawMetadata = ImageMetadataReader.readMetadata(file);
       final ExifThumbnailDirectory thumbnailDirectory = rawMetadata.getDirectory(ExifThumbnailDirectory.class);
       final byte[] thumbnail;
-      if (thumbnailDirectory.hasThumbnailData()) {
+      if (thumbnailDirectory != null && thumbnailDirectory.hasThumbnailData()) {
         thumbnail = thumbnailDirectory.getThumbnailData();
       } else {
         thumbnail = new byte[0];
