@@ -10,11 +10,18 @@ import au.com.bytecode.opencsv.CSVParser;
 
 import com.google.common.base.Charsets;
 
+import comeon.core.extmetadata.CsvMetadataSource;
+import comeon.core.extmetadata.ExternalMetadataSource;
+import comeon.core.extmetadata.NullMetadataSource;
+import comeon.model.Template;
+
 public class AddModel {
   private final PropertyChangeSupport pcs;
 
   private File[] picturesFiles;
 
+  private Template template;
+  
   private Boolean useMetadata;
 
   private Path metadataFile;
@@ -26,13 +33,14 @@ public class AddModel {
   private final CSVSettings csvSettings;
 
   public enum Properties {
-    PICTURES_FILES, USE_METADATA, METADATA_FILE, PICTURE_EXPRESSION, METADATA_EXPRESSION,
+    PICTURES_FILES, TEMPLATE, USE_METADATA, METADATA_FILE, PICTURE_EXPRESSION, METADATA_EXPRESSION,
     CSV_SEPARATOR, CSV_QUOTE, CSV_ESCAPE, CSV_SKIP_LINES, CSV_STRICT_QUOTES, CSV_IGNORE_LEADING_WHITESPACE, CSV_CHARSET
   }
 
   public AddModel() {
     this.pcs = new PropertyChangeSupport(this);
     this.picturesFiles = new File[0];
+    this.template = null;
     this.useMetadata = Boolean.FALSE;
     this.metadataFile = null;
     this.pictureExpression = null;
@@ -43,6 +51,17 @@ public class AddModel {
   public void addPropertyChangeListener(final PropertyChangeListener pcl) {
     this.pcs.addPropertyChangeListener(pcl);
   }
+  
+  public  ExternalMetadataSource<?> getExternalMetadataSource() {
+    final ExternalMetadataSource<?> externalMetadataSource;
+    if (useMetadata) {
+      externalMetadataSource = new CsvMetadataSource(pictureExpression, metadataExpression, metadataFile, csvSettings.separator,
+          csvSettings.quote, csvSettings.escape, csvSettings.skipLines, csvSettings.strictQuotes, csvSettings.ignoreLeadingWhiteSpace, csvSettings.charset);
+    } else {
+      externalMetadataSource = new NullMetadataSource();
+    }
+    return externalMetadataSource;
+  }
 
   public File[] getPicturesFiles() {
     return picturesFiles;
@@ -52,6 +71,16 @@ public class AddModel {
     final File[] oldPicturesFile = this.picturesFiles;
     this.picturesFiles = picturesFiles;
     pcs.firePropertyChange(Properties.PICTURES_FILES.name(), oldPicturesFile, picturesFiles);
+  }
+  
+  public Template getTemplate() {
+    return template;
+  }
+  
+  public void setTemplate(final Template template) {
+    final Template oldTemplate = this.template;
+    this.template = template;
+    pcs.firePropertyChange(Properties.TEMPLATE.name(), oldTemplate, template);
   }
 
   public Boolean getUseMetadata() {

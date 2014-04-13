@@ -14,6 +14,9 @@ import javax.swing.SwingUtilities;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+import comeon.model.Template;
+import comeon.templates.Templates;
+
 
 class AddController implements PropertyChangeListener {
   
@@ -21,13 +24,19 @@ class AddController implements PropertyChangeListener {
   
   private final DefaultComboBoxModel<String> metadataExpressionModel;
   
+  private final DefaultComboBoxModel<Template> templateModel;
+  
   private AddModel model;
   
-  private FilesPanel view;
+  private AddPicturesPanel view;
 
-  public AddController() {
+  public AddController(final Templates templates) {
     this.picturesListModel = new DefaultListModel<>();
     this.metadataExpressionModel = new DefaultComboBoxModel<>();
+    this.templateModel = new DefaultComboBoxModel<>();
+    for (final Template template : templates.getTemplates()) {
+      this.templateModel.addElement(template);
+    }
   }
   
   public void registerModel(final AddModel model) {
@@ -35,7 +44,7 @@ class AddController implements PropertyChangeListener {
     this.model.addPropertyChangeListener(this);
   }
   
-  public void registerView(final FilesPanel view) {
+  public void registerView(final AddPicturesPanel view) {
     this.view = view;
   }
   
@@ -45,6 +54,10 @@ class AddController implements PropertyChangeListener {
   
   public DefaultComboBoxModel<String> getMetadataExpressionModel() {
     return metadataExpressionModel;
+  }
+ 
+  public DefaultComboBoxModel<Template> getTemplateModel() {
+    return templateModel;
   }
   
   public void setUseMetadata(final Boolean useMetadata) {

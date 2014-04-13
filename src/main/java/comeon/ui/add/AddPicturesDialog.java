@@ -6,7 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import com.google.common.io.Resources;
-
+import comeon.templates.Templates;
 import comeon.ui.UI;
 
 public final class AddPicturesDialog extends JOptionPane {
@@ -21,14 +21,14 @@ public final class AddPicturesDialog extends JOptionPane {
   
   private final JDialog dialog;
   
-  private final FilesPanel filesPanel;
+  private final AddPicturesPanel filesPanel;
   
-  public AddPicturesDialog() {
+  public AddPicturesDialog(final Templates templates) {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, ICON);
-    this.controller = new AddController();
+    this.controller = new AddController(templates);
     this.model = new AddModel();
     this.controller.registerModel(model);
-    this.filesPanel = new FilesPanel(controller);
+    this.filesPanel = new AddPicturesPanel(controller);
     this.controller.registerView(filesPanel);
     this.setMessage(this.filesPanel);
     this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("action.addpictures.title"));

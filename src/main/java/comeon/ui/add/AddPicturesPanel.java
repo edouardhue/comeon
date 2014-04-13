@@ -1,5 +1,6 @@
 package comeon.ui.add;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -11,6 +12,7 @@ import java.text.ParseException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -38,10 +40,11 @@ import javax.swing.text.MaskFormatter;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import comeon.model.Template;
 import comeon.ui.UI;
 import comeon.ui.actions.BaseAction;
 
-class FilesPanel extends JPanel {
+class AddPicturesPanel extends JPanel {
   private static final int MEDIUM_PROTOTYPE_LENGTH = 20;
 
   private static final String PROTOTYPE_CHAR = "x";
@@ -51,6 +54,8 @@ class FilesPanel extends JPanel {
   private static final long serialVersionUID = 1L;
 
   private final JFileChooser picturesFilesChooser;
+  
+  private final JComboBox<Template> templates;
 
   private final JCheckBox metatadataCheckbox;
   
@@ -72,7 +77,7 @@ class FilesPanel extends JPanel {
   
   private final AddController controller;
   
-  public FilesPanel(final AddController controller) {
+  public AddPicturesPanel(final AddController controller) {
     super();
     this.controller = controller;
     
@@ -99,6 +104,21 @@ class FilesPanel extends JPanel {
     
     final JButton pickPicturesFilesButton = new JButton(new PickPicturesFilesAction(controller));
 
+    final JLabel templatesLabel = new JLabel(UI.BUNDLE.getString("addpictures.template.label"));
+    this.templates = new JComboBox<Template>(controller.getTemplateModel());
+    this.templates.setRenderer(new DefaultListCellRenderer() {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
+          final boolean cellHasFocus) {
+        final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        final Template template = (Template) value;
+        label.setText(template.getName());
+        return label;
+      }
+    });
+    
     final UseExternalMetadataCheckboxHandler checkboxHandler = new UseExternalMetadataCheckboxHandler(controller);
     this.metatadataCheckbox = new JCheckBox(checkboxHandler);
     metatadataCheckbox.addItemListener(checkboxHandler);
@@ -150,6 +170,11 @@ class FilesPanel extends JPanel {
             .addComponent(filesListPanel)
             .addComponent(pickPicturesFilesButton)
         )
+        .addGroup(
+            layout.createParallelGroup(Alignment.BASELINE)
+            .addComponent(templatesLabel)
+            .addComponent(templates)
+        )
         .addComponent(metatadataCheckbox)
         .addGroup(
             layout.createParallelGroup(Alignment.BASELINE)
@@ -176,12 +201,14 @@ class FilesPanel extends JPanel {
                 layout.createSequentialGroup()
                 .addGroup(
                     layout.createParallelGroup()
+                    .addComponent(templatesLabel)
                     .addComponent(metadataFileLabel)
                     .addComponent(metadataMatchLabel)
                 )
                 .addGroup(
                     layout.createParallelGroup()
                     .addComponent(metadataFileLocation)
+                    .addComponent(templates)
                     .addGroup(
                         layout.createSequentialGroup()
                         .addComponent(metadataExpression)
