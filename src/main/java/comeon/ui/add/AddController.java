@@ -42,6 +42,9 @@ class AddController implements PropertyChangeListener {
   public void registerModel(final AddModel model) {
     this.model = model;
     this.model.addPropertyChangeListener(this);
+    if (this.templateModel.getSelectedItem() != null) {
+      this.model.setTemplate((Template) this.templateModel.getSelectedItem());
+    }
   }
   
   public void registerView(final AddPicturesPanel view) {
@@ -80,6 +83,10 @@ class AddController implements PropertyChangeListener {
     model.setMetadataExpression(metadataExpression);
   }
 
+  public void setTemplate(final Template template) {
+    model.setTemplate(template);
+  }
+  
   public char getSeparator() {
     return model.getSeparator();
   }

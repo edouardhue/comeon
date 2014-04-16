@@ -118,6 +118,12 @@ class AddPicturesPanel extends JPanel {
         return label;
       }
     });
+    this.templates.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(final ActionEvent e) {
+        templateChanged(e);
+      }
+    });
     
     final UseExternalMetadataCheckboxHandler checkboxHandler = new UseExternalMetadataCheckboxHandler(controller);
     this.metatadataCheckbox = new JCheckBox(checkboxHandler);
@@ -226,6 +232,11 @@ class AddPicturesPanel extends JPanel {
     );
     
     this.deactivateMetadataZone();
+  }
+  
+  private void templateChanged(final ActionEvent e) {
+    final Template selectedTemplate = (Template) this.templates.getModel().getSelectedItem();
+    controller.setTemplate(selectedTemplate);
   }
   
   private void pictureExpressionChanged(final DocumentEvent e) {
