@@ -54,7 +54,7 @@ public class AddModel {
   
   public  ExternalMetadataSource<?> getExternalMetadataSource() {
     final ExternalMetadataSource<?> externalMetadataSource;
-    if (useMetadata) {
+    if (useMetadata && metadataFile != null) {
       externalMetadataSource = new CsvMetadataSource(pictureExpression, metadataExpression, metadataFile, csvSettings.separator,
           csvSettings.quote, csvSettings.escape, csvSettings.skipLines, csvSettings.strictQuotes, csvSettings.ignoreLeadingWhiteSpace, csvSettings.charset);
     } else {
