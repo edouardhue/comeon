@@ -16,6 +16,8 @@
 #if($project.Description)
     <description>$project.Description</description>
 #end
+	<icon href="$jnlpCodebase/../comeon_32_32.png" kind="shortcut" width="32" height="32"/>
+	<icon href="$jnlpCodebase/../comeon_64_64.png" kind="splash" width="64" height="64"/>
 #if($offlineAllowed)
     <offline-allowed/>
 #end
