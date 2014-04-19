@@ -8,6 +8,8 @@
     <vendor>Édouard Hue</vendor>
     <homepage href="https://github.com/edouardhue/comeon"/>
     <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
+	<icon href="http://edouardhue.github.io/comeon/jnlp/../comeon_32_32.png" kind="shortcut" width="32" height="32"/>
+	<icon href="http://edouardhue.github.io/comeon/jnlp/../comeon_64_64.png" kind="splash" width="64" height="64"/>
     <offline-allowed/>
   </information>
   <security>
