@@ -26,7 +26,7 @@ public final class IptcPreProcessor implements PreProcessor {
     metadata.put(KEYWORDS, keywords);
     final String iptcDate = directory.getString(IptcDirectory.TAG_DIGITAL_DATE_CREATED);
     final String iptcTime = directory.getString(IptcDirectory.TAG_DIGITAL_TIME_CREATED);
-    final SimpleDateFormat inFormat = new SimpleDateFormat("HHmmss:yyyyMMdd", Locale.ENGLISH);
+    final SimpleDateFormat inFormat = new SimpleDateFormat("HHmmssZ:yyyyMMdd", Locale.ENGLISH);
     final SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     try {
       final Date pictureDate = inFormat.parse(iptcTime + ":" + iptcDate);
