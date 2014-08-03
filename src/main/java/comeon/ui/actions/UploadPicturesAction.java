@@ -56,23 +56,30 @@ public final class UploadPicturesAction extends BaseAction {
 
   @Override
   public void actionPerformed(final ActionEvent e) {
-    final int choice = JOptionPane.showConfirmDialog(
-        SwingUtilities.getWindowAncestor((Component) e.getSource()),
-        MessageFormat.format(
-            UI.BUNDLE.getString("action.upload.confirm"),
-            core.countPicturesToBeUploaded(), wikis.getActiveWiki().getName()),
-        UIManager.getString("OptionPane.titleText"),
-        JOptionPane.OK_CANCEL_OPTION,
-        JOptionPane.QUESTION_MESSAGE,
-        ICON);
-    if (JOptionPane.OK_OPTION == choice) {
-      new SwingWorker<Void, Void>() {
-        @Override
-        protected Void doInBackground() throws Exception {
-          core.uploadPictures(new Monitor());
-          return null;
-        }
-      }.execute();
+    final int picturesToUpload = core.countPicturesToBeUploaded();
+    if (picturesToUpload == 0) {
+      JOptionPane.showMessageDialog(
+          SwingUtilities.getWindowAncestor((Component) e.getSource()),
+          UI.BUNDLE.getString("action.upload.none"));
+    } else {
+      final int choice = JOptionPane.showConfirmDialog(
+          SwingUtilities.getWindowAncestor((Component) e.getSource()),
+          MessageFormat.format(
+              UI.BUNDLE.getString("action.upload.confirm"),
+              picturesToUpload, wikis.getActiveWiki().getName()),
+              UIManager.getString("OptionPane.titleText"),
+              JOptionPane.OK_CANCEL_OPTION,
+              JOptionPane.QUESTION_MESSAGE,
+              ICON);
+      if (JOptionPane.OK_OPTION == choice) {
+        new SwingWorker<Void, Void>() {
+          @Override
+          protected Void doInBackground() throws Exception {
+            core.uploadPictures(new Monitor());
+            return null;
+          }
+        }.execute();
+      }
     }
   }
 

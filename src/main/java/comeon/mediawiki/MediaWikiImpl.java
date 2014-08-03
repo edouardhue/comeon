@@ -76,11 +76,13 @@ public final class MediaWikiImpl implements MediaWiki {
    */
   @Override
   public void logout() throws FailedLogoutException {
-    if (this.api.isLoggedIn) {
-      try {
-        this.api.logout();
-      } catch (final IOException e) {
-        throw new FailedLogoutException(e);
+    synchronized (this) {
+      if (this.api.isLoggedIn) {
+        try {
+          this.api.logout();
+        } catch (final IOException e) {
+          throw new FailedLogoutException(e);
+        }
       }
     }
   }

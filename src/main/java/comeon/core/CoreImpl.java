@@ -139,7 +139,6 @@ public final class CoreImpl implements Core {
   public void uploadPictures(final UploadMonitor monitor) {
     final int picturesToBeUploaded = this.countPicturesToBeUploaded();
     monitor.setBatchSize(picturesToBeUploaded);
-    monitor.uploadStarting();
     final List<UploadTask> tasks = new ArrayList<>(picturesToBeUploaded);
     int counter = 0;
     for (final Picture picture : pictures) {
@@ -148,6 +147,7 @@ public final class CoreImpl implements Core {
         counter++;
       }
     }
+    monitor.uploadStarting();
     try {
       final List<Future<Void>> results = pool.invokeAll(tasks);
       for (final Future<Void> result : results) {
