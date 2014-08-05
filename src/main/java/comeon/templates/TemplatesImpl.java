@@ -66,7 +66,7 @@ public final class TemplatesImpl implements Templates {
 
   @Override
   public List<TemplateKind> getTemplateKinds() {
-    // TODO use a predictive sort
+    // TODO use a predictable sort
     return new ArrayList<>(templateKinds.values());
   }
   

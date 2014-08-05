@@ -60,7 +60,6 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   public void loadMetadata() {
     final CGLibMappingStrategy strategy = new CGLibMappingStrategy();
     final CsvToBean<Object> csvToBean = new CsvToBean<>();
-    //TODO Support setting an encoding
     try (final CSVReader reader = new CSVReader(Files.newBufferedReader(metadataFile, charset), separator, quote, escape, skipLines, strictQuotes, ignoreLeadingWhiteSpace)) {
       final List<Object> beans = csvToBean.parse(strategy, reader);
       this.metadata = new HashMap<>(beans.size());

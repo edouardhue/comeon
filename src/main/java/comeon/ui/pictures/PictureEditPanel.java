@@ -76,7 +76,6 @@ final class PictureEditPanel extends JPanel {
       try {
         this.doUpdate(picture, getText(e));
       } catch (final BadLocationException e1) {
-        // TODO i18n
         LOGGER.warn("Can't update template text", e1);
       }
     }

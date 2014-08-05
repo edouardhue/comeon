@@ -164,7 +164,6 @@ public final class CoreImpl implements Core {
       try {
         activeMediaWiki.logout();
       } catch (final FailedLogoutException e) {
-        // TODO i18n
         LOGGER.warn("Couldn't close Mediawiki session properly", e);
       }
       monitor.uploadDone();
@@ -178,7 +177,6 @@ public final class CoreImpl implements Core {
       try {
         this.activeMediaWiki.logout();
       } catch (final FailedLogoutException e) {
-        // TODO i18n
         LOGGER.warn("Failed implicit logout", e);
       }
     }
