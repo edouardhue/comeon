@@ -16,5 +16,7 @@ public interface MediaWiki {
       FailedLoginException, FailedUploadException, IOException;
 
   void logout() throws FailedLogoutException;
+  
+  String getName();
 
 }

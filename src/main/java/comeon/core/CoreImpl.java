@@ -147,6 +147,7 @@ public final class CoreImpl implements Core {
         counter++;
       }
     }
+    LOGGER.info("Uploading {} pictures to {}.", picturesToBeUploaded, activeMediaWiki.getName());
     monitor.uploadStarting();
     try {
       final List<Future<Void>> results = pool.invokeAll(tasks);
@@ -167,6 +168,7 @@ public final class CoreImpl implements Core {
         LOGGER.warn("Couldn't close Mediawiki session properly", e);
       }
       monitor.uploadDone();
+      LOGGER.info("Upload done.");
     }
   }
   

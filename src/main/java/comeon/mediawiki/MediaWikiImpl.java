@@ -4,6 +4,7 @@ import in.yuvi.http.fluent.ProgressListener;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 
 import org.mediawiki.api.MWApi;
 
@@ -11,6 +12,7 @@ import com.google.common.io.Files;
 import comeon.model.Picture;
 import comeon.model.User;
 import comeon.model.Wiki;
+import comeon.ui.UI;
 
 public final class MediaWikiImpl implements MediaWiki {
 
@@ -63,7 +65,7 @@ public final class MediaWikiImpl implements MediaWiki {
     final InputStream stream = Files.asByteSource(picture.getFile()).openBufferedStream();
     try {
       this.api.upload(picture.getFile().getName(), stream, picture.getFile().length(), picture.getRenderedTemplate(),
-          "Uploaded with ComeOn!", true, listener);
+          MessageFormat.format(UI.BUNDLE.getString("upload.comment"), UI.BUNDLE.getString("comeon")), true, listener);
     } catch (final IOException e) {
       throw new FailedUploadException(e);
     }
@@ -86,4 +88,10 @@ public final class MediaWikiImpl implements MediaWiki {
       }
     }
   }
+  
+  @Override
+  public String getName() {
+    return wiki.getName();
+  }
+  
 }
