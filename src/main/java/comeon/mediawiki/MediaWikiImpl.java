@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 
+import org.mediawiki.api.ApiResult;
 import org.mediawiki.api.MWApi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 import comeon.model.Picture;
@@ -15,6 +18,8 @@ import comeon.model.Wiki;
 import comeon.ui.UI;
 
 public final class MediaWikiImpl implements MediaWiki {
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaWikiImpl.class);
 
   private final MWApi api;
 
@@ -33,6 +38,7 @@ public final class MediaWikiImpl implements MediaWiki {
   @Override
   public void login() throws NotLoggedInException, FailedLoginException {
     try {
+      LOGGER.debug("Logging in");
       final User user = wiki.getUser();
       final String result = this.api.login(user.getLogin(), user.getPassword());
       if (!this.api.isLoggedIn) {
@@ -59,13 +65,22 @@ public final class MediaWikiImpl implements MediaWiki {
       FailedLoginException, FailedUploadException, IOException {
     synchronized (this) {
       if (!this.api.isLoggedIn) {
+        LOGGER.debug("Not logged in");
         this.login();
       }
     }
     final InputStream stream = Files.asByteSource(picture.getFile()).openBufferedStream();
     try {
-      this.api.upload(picture.getFile().getName(), stream, picture.getFile().length(), picture.getRenderedTemplate(),
+      LOGGER.debug("Uploading");
+      final ApiResult result = this.api.upload(picture.getFile().getName(), stream, picture.getFile().length(), picture.getRenderedTemplate(),
           MessageFormat.format(UI.BUNDLE.getString("upload.comment"), UI.BUNDLE.getString("comeon")), true, listener);
+      final ApiResult error = result.getNode("/api/error");
+      if (error != null) {
+        final String code = error.getString("@code");
+        final String info = error.getString("@info");
+        LOGGER.error("Upload failed. MediaWiki says: {}: {}", code, info);
+        throw new FailedUploadException(code, info);
+      }
     } catch (final IOException e) {
       throw new FailedUploadException(e);
     }
@@ -80,6 +95,7 @@ public final class MediaWikiImpl implements MediaWiki {
   public void logout() throws FailedLogoutException {
     synchronized (this) {
       if (this.api.isLoggedIn) {
+        LOGGER.debug("Logging out");
         try {
           this.api.logout();
         } catch (final IOException e) {

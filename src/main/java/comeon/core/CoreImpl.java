@@ -107,6 +107,8 @@ public final class CoreImpl implements Core {
   }
 
   private class UploadTask implements Callable<Void> {
+    private final Logger taskLogger = LoggerFactory.getLogger(UploadTask.class);
+    
     private final int index;
     
     private final Picture picture;
@@ -122,12 +124,14 @@ public final class CoreImpl implements Core {
     @Override
     public Void call() throws Exception {
       try {
+        taskLogger.debug("Starting upload of {}", picture.getFileName());
         final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length(), picture.getFileName());
         activeMediaWiki.upload(picture, listener);
         picture.setState(State.UploadedSuccessfully);
         monitor.itemDone(index);
+        taskLogger.debug("Finished upload of {}", picture.getFileName());
       } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
-        LOGGER.warn("Picture upload failed", e);
+        taskLogger.warn("Failed upload of {}", picture.getFileName(), e);
         picture.setState(State.FailedUpload);
         monitor.itemFailed(index, e);
       }
