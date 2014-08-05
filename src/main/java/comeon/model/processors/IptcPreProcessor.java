@@ -26,13 +26,19 @@ public final class IptcPreProcessor implements PreProcessor {
     metadata.put(KEYWORDS, keywords);
     final String iptcDate = directory.getString(IptcDirectory.TAG_DIGITAL_DATE_CREATED);
     final String iptcTime = directory.getString(IptcDirectory.TAG_DIGITAL_TIME_CREATED);
-    final SimpleDateFormat inFormat = new SimpleDateFormat("HHmmssZ:yyyyMMdd", Locale.ENGLISH);
+    final SimpleDateFormat inFormatWithoutTimezone = new SimpleDateFormat("HHmmss:yyyyMMdd", Locale.ENGLISH);
+    final SimpleDateFormat inFormatWithTimezone = new SimpleDateFormat("HHmmssZ:yyyyMMdd", Locale.ENGLISH);
     final SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     try {
-      final Date pictureDate = inFormat.parse(iptcTime + ":" + iptcDate);
-      metadata.put(DATE, outFormat.format(pictureDate));
+      final Date pictureDateWithoutTimezone = inFormatWithoutTimezone.parse(iptcTime + ":" + iptcDate);
+      metadata.put(DATE, outFormat.format(pictureDateWithoutTimezone));
     } catch (final ParseException e) {
-      LOGGER.warn("Can't handle date", e);
+      try {
+        final Date pictureDateWithTimezone = inFormatWithTimezone.parse(iptcTime + ":" + iptcDate);
+        metadata.put(DATE, outFormat.format(pictureDateWithTimezone));
+      } catch (final ParseException e2) {
+        LOGGER.warn("Can't handle date", e2);
+      }
     }
   }
 
