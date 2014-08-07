@@ -5,6 +5,7 @@ import in.yuvi.http.fluent.ProgressListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.mediawiki.api.ApiResult;
 import org.mediawiki.api.MWApi;
@@ -75,11 +76,18 @@ public final class MediaWikiImpl implements MediaWiki {
       final ApiResult result = this.api.upload(picture.getFile().getName(), stream, picture.getFile().length(), picture.getRenderedTemplate(),
           MessageFormat.format(UI.BUNDLE.getString("upload.comment"), UI.BUNDLE.getString("comeon")), true, listener);
       final ApiResult error = result.getNode("/api/error");
-      if (error != null) {
+      if (error.getDocument() != null) {
         final String code = error.getString("@code");
         final String info = error.getString("@info");
-        LOGGER.error("Upload failed. MediaWiki says: {}: {}", code, info);
         throw new FailedUploadException(code, info);
+      }
+      final List<ApiResult> warnings = result.getNodes("/api/warning");
+      if (warnings != null && !warnings.isEmpty()) {
+        for (final ApiResult warning : warnings) {
+          final String code = warning.getString("@code");
+          final String info = warning.getString("@info");
+          LOGGER.warn("Upload warning. MediaWiki says: {}: {}", code, info);
+        }
       }
     } catch (final IOException e) {
       throw new FailedUploadException(e);
