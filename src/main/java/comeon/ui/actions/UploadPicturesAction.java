@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -115,10 +116,13 @@ public final class UploadPicturesAction extends BaseAction {
 
     private final CloseAction closeAction;
     
+    private final AbortAction abortAction;
+
     private ProgressPanel[] panels;
 
     public Monitor() {
       super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, ICON, null);
+      this.getInputMap(JOptionPane.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed ESCAPE"), "none");
       this.batchBar = new JProgressBar(SwingConstants.HORIZONTAL);
       this.batchBar.setStringPainted(true);
       this.pictureBarsBox = Box.createVerticalBox();
@@ -130,7 +134,8 @@ public final class UploadPicturesAction extends BaseAction {
       this.dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       this.dialog.setIconImages(UI.ICON_IMAGES);
       this.closeAction = new CloseAction();
-      this.setOptions(new Object[] { new JButton(closeAction) });
+      this.abortAction = new AbortAction();
+      this.setOptions(new Object[] { new JButton(closeAction), new JButton(abortAction) });
     }
 
     @Override
@@ -217,6 +222,7 @@ public final class UploadPicturesAction extends BaseAction {
         public void run() {
           Monitor.this.dialog.setCursor(Cursor.getDefaultCursor());
           Monitor.this.closeAction.setEnabled(true);
+          Monitor.this.abortAction.setEnabled(false);
         }
       });
     }
@@ -231,6 +237,31 @@ public final class UploadPicturesAction extends BaseAction {
       @Override
       public void actionPerformed(final ActionEvent e) {
         dialog.setVisible(false);
+      }
+    }
+    
+    private final class AbortAction extends AbstractAction {
+      private static final long serialVersionUID = 1L;
+      
+      public AbortAction() {
+        super(UI.BUNDLE.getString("upload.abort"));
+      }
+      
+      @Override
+      public void actionPerformed(final ActionEvent e) {
+        new SwingWorker<Void, Void>() {
+          @Override
+          protected Void doInBackground() throws Exception {
+            core.abort();
+            return null;
+          }
+        }.execute();
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            AbortAction.this.setEnabled(false);
+          }
+        });
       }
     }
   }

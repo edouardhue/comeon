@@ -21,4 +21,5 @@ public interface Core {
   
   void uploadPictures(UploadMonitor monitor);
 
+  void abort();
 }

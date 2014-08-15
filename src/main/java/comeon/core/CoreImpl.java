@@ -6,7 +6,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -49,6 +52,8 @@ public final class CoreImpl implements Core {
   private final PicturesBatchFactory picturesBatchFactory;
   
   private final MediaWikiFactory mediaWikiFactory;
+  
+  private final Queue<Future<Void>> currentTasks;
 
   private MediaWiki activeMediaWiki;
 
@@ -56,6 +61,7 @@ public final class CoreImpl implements Core {
   private CoreImpl(final Wikis wikis, final ExecutorService pool, final EventBus bus,
       final PicturesBatchFactory picturesBatchFactory, final MediaWikiFactory mediaWikiFactory) {
     this.pictures = new ArrayList<>();
+    this.currentTasks = new ConcurrentLinkedQueue<>();
     this.pool = pool;
     this.bus = bus;
     this.wikis = wikis;
@@ -137,33 +143,54 @@ public final class CoreImpl implements Core {
       }
       return null;
     }
+    
+    @Override
+    public boolean equals(final Object obj) {
+      final boolean isEqual;
+      if (obj == null) {
+        isEqual = false;
+      } else if (obj instanceof UploadTask) {
+        final UploadTask task = (UploadTask) obj;
+        isEqual = task.index == this.index && task.picture.equals(this.picture);
+      } else {
+        isEqual = super.equals(obj);
+      }
+      return isEqual;
+    }
   }
   
   @Override
   public void uploadPictures(final UploadMonitor monitor) {
     final int picturesToBeUploaded = this.countPicturesToBeUploaded();
     monitor.setBatchSize(picturesToBeUploaded);
-    final List<UploadTask> tasks = new ArrayList<>(picturesToBeUploaded);
+    final List<Future<Void>> tasks = new ArrayList<>(picturesToBeUploaded);
     int counter = 0;
     for (final Picture picture : pictures) {
       if (shouldUpload(picture)) {
-        tasks.add(new UploadTask(counter, picture, monitor));
+        final UploadTask task = new UploadTask(counter, picture, monitor);
+        final Future<Void> taskResult = pool.submit(task);
+        tasks.add(taskResult);
         counter++;
       }
     }
+    currentTasks.addAll(tasks);
     LOGGER.info("Uploading {} pictures to {}.", picturesToBeUploaded, activeMediaWiki.getName());
     monitor.uploadStarting();
     try {
-      final List<Future<Void>> results = pool.invokeAll(tasks);
-      for (final Future<Void> result : results) {
+      for (final Future<Void> task : tasks) {
         try {
-          result.get();
+          task.get();
+        } catch (final CancellationException e) {
+          LOGGER.debug("Task was cancelled", e);
         } catch (final ExecutionException e) {
           LOGGER.warn("Task execution failed", e);
+        } finally {
+          currentTasks.remove(task);
         }
       }
     } catch (final InterruptedException e) {
       Thread.interrupted();
+      LOGGER.warn("We were interrupted while waiting for uploads to complete", e);
     } finally {
       try {
         activeMediaWiki.logout();
@@ -172,6 +199,15 @@ public final class CoreImpl implements Core {
       }
       monitor.uploadDone();
       LOGGER.info("Upload done.");
+    }
+  }
+  
+  @Override
+  public void abort() {
+    for (final Future<Void> task : currentTasks) {
+      if (task.cancel(true)) {
+        currentTasks.remove(task);
+      }
     }
   }
   
