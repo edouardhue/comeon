@@ -124,7 +124,7 @@ public final class PicturesBatch {
         preProcess(directory, metadata);
       }
       final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
-      metadata.put(Core.EXTERNAL_METADATA_KEY, externalMetadataSource.getPictureMetadata(picture));
+      metadata.put(Core.EXTERNAL_METADATA_KEY, externalMetadataSource.getPictureMetadata(picture, metadata));
       return picture;
     }
 
@@ -143,7 +143,7 @@ public final class PicturesBatch {
         directoryMetadata.set(tag.getTagName().replaceAll(NON_WORD_CHARS, ""),
             descriptor.getDescription(tag.getTagType()));
       }
-      metadata.put(directory.getName(), directoryMetadata);
+      metadata.put(directory.getName().replaceAll(NON_WORD_CHARS, ""), directoryMetadata);
     }
 
     private void preProcess(final Directory directory, final Map<String, Object> metadata) {

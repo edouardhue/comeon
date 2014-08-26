@@ -7,7 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.beanutils.LazyDynaMap;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,13 +75,19 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   }
   
   @Override
-  public Object getPictureMetadata(final Picture picture) {
+  public Object getPictureMetadata(final Picture picture, final Map<String, Object> pictureMetadata) {
     try {
-      final String key = String.valueOf(PropertyUtils.getProperty(picture, pictureExpression));
+      final LazyDynaMap bean = new LazyDynaMap(pictureMetadata);
+      final String key = String.valueOf(PropertyUtils.getNestedProperty(bean, pictureExpression));
       return metadata.get(key);
     } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      LOGGER.warn("Can't get property {} from picture", pictureExpression, e);
-      return null;
+      try {
+        final String key = String.valueOf(PropertyUtils.getNestedProperty(picture, pictureExpression));
+        return metadata.get(key);
+      } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e2) {
+        LOGGER.warn("Can't get property {} from picture", pictureExpression, e2);
+        return null;
+      }
     }
   }
 }
