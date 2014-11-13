@@ -1,13 +1,13 @@
 ComeOn !
 ========
 
-A tool to upload pictures to Wikimedia Commons with extended support for JPEG metadata and its use in page templates. It is written in Java and the template engine is the old-but-reliable [https://velocity.apache.org/engine/releases/velocity-1.7/user-guide.html](Apache Velocity).
+A tool to upload pictures to Wikimedia Commons with extended support for JPEG metadata and its use in page templates. It is written in Java and the template engine is the old-but-reliable [Apache Velocity](https://velocity.apache.org/engine/releases/velocity-1.7/user-guide.html).
 
 ## Building
 
 Building ComeOn! and its dependencies requires Oracle JDK 7 and Maven 3. Running ComeOn! requires Oracle Java 7 and, for the braves, a working WebStart plugin.
 
-For the moment, ComeOn! uses a custom fork of [https://github.com/wikimedia/java-mwapi](the Java MediaWiki client API) and depends on the barely-maintained [Simple Validation library from Project Kenai](https://kenai.com/projects/simplevalidation/). You will need to clone and Maven-install both these repositories :
+For the moment, ComeOn! uses a custom fork of [the Java MediaWiki client API](https://github.com/wikimedia/java-mwapi) and depends on the barely-maintained [Simple Validation library from Project Kenai](https://kenai.com/projects/simplevalidation/). You will need to clone and Maven-install both these repositories :
 * https://github.com/edouardhue/java-mwapi
 * https://github.com/edouardhue/simplevalidation
 
@@ -31,6 +31,6 @@ Once you have set these preferences, get back to the main window. Pick some file
 
 ComeOn! has the ability to load external metadata from a CSV file (this file should have a header line with column titles). When picking files, tick the *Use external metadata* checkbox, pick the CSV file and indicate how data from the file should be matched against metadata from the pictures. The droplist on the left lists the columns found in the CSV file. In the right field, indicate the metadata key whose value will match the CSV column's value (*Iptc.ObjectName* for example). Data from the file may then be used in the templates like this: *$external.columnName*.
 
-Report issues in [https://github.com/edouardhue/comeon/issues](here on Github). Please attach faulty pictures to ease reproducig and fixing bugs.
+Report issues in [here on Github](https://github.com/edouardhue/comeon/issues). Please attach faulty pictures to ease reproducig and fixing bugs.
 
 Good luck !
