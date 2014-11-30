@@ -217,7 +217,7 @@ abstract class ListPanel<M extends Model> extends JPanel {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          final int result = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), UI.BUNDLE.getString(confirmKey), UI.BUNDLE.getString("prefs.remove"), JOptionPane.YES_NO_OPTION);
+          final int result = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), UI.BUNDLE.getString(confirmKey), UI.BUNDLE.getString("action.prefs.remove.title"), JOptionPane.YES_NO_OPTION);
           if (result == JOptionPane.YES_OPTION) {
             subController.remove(list.getSelectedIndex());
           }
