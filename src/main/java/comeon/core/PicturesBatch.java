@@ -1,5 +1,7 @@
 package comeon.core;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -98,6 +100,19 @@ public final class PicturesBatch {
       try {
         final Picture picture = buildPicture();
         picture.renderTemplate(user);
+        picture.addPropertyChangeListener(new PropertyChangeListener() {
+          @Override
+          public void propertyChange(final PropertyChangeEvent evt) {
+            if ("templateText".equals(evt.getPropertyName())) {
+              pool.submit(new Runnable() {
+                @Override
+                public void run() {
+                  picture.renderTemplate(user);
+                }
+              });
+            }
+          }
+        });
         pictures.add(picture);
       } catch (final ImageProcessingException e) {
         LOGGER.warn("Can't read metadata from {}", fileName, e);
