@@ -31,6 +31,10 @@ public final class PreferencesController {
     this.wikis = wikis;
     this.model = model;
   }
+  
+  public void reload() {
+    this.model.reload(templates, wikis);
+  }
 
   public void add(final TemplateModel model) {
     this.model.getTemplateModels().addElement(model);

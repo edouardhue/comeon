@@ -27,6 +27,10 @@ public final class PreferencesModel {
   public PreferencesModel(final Templates templates, final Wikis wikis) {
     this.templatesModel = new DefaultListModel<>();
     this.wikisModel = new DefaultListModel<>();
+    this.reload(templates, wikis);
+  }
+  
+  public void reload(final Templates templates, final Wikis wikis) {
     updateModels(buildTemplateModels(templates), buildWikiModels(wikis));
   }
   

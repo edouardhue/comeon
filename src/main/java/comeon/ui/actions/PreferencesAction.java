@@ -53,6 +53,8 @@ public final class PreferencesAction extends BaseAction {
             }
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), causeMessage.toString(), UI.BUNDLE.getString("error.generic.title"), JOptionPane.ERROR_MESSAGE);
           }
+        } else {
+          controller.reload();
         }
       }
     });
