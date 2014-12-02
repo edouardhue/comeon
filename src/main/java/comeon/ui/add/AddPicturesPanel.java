@@ -78,7 +78,6 @@ class AddPicturesPanel extends JPanel {
   private final AddController controller;
   
   public AddPicturesPanel(final AddController controller) {
-    super();
     this.controller = controller;
     
     final GroupLayout layout = new GroupLayout(this);

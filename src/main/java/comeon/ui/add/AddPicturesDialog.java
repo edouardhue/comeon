@@ -1,6 +1,8 @@
 package comeon.ui.add;
 
 
+import java.io.File;
+
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -24,6 +26,10 @@ public final class AddPicturesDialog extends JOptionPane {
   private final AddPicturesPanel filesPanel;
   
   public AddPicturesDialog(final Templates templates) {
+    this(templates, new File[0]);
+  }
+  
+  public AddPicturesDialog(final Templates templates, final File[] preselectedFiles) {
     super(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, ICON);
     this.controller = new AddController(templates);
     this.model = new AddModel();
@@ -33,6 +39,7 @@ public final class AddPicturesDialog extends JOptionPane {
     this.setMessage(this.filesPanel);
     this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("action.addpictures.title"));
     this.dialog.setIconImages(UI.ICON_IMAGES);
+    this.model.setPicturesFiles(preselectedFiles);
   }
 
   public int showDialog() {

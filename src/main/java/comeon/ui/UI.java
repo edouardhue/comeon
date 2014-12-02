@@ -7,9 +7,13 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -19,10 +23,15 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.Subscribe;
@@ -34,6 +43,8 @@ import comeon.model.Picture;
 import comeon.templates.Templates;
 import comeon.ui.actions.PictureRemovedEvent;
 import comeon.ui.actions.PicturesAddedEvent;
+import comeon.ui.add.AddModel;
+import comeon.ui.add.AddPicturesDialog;
 import comeon.ui.menu.MenuBar;
 import comeon.ui.pictures.PicturePanels;
 import comeon.ui.toolbar.Toolbar;
@@ -41,6 +52,8 @@ import comeon.ui.toolbar.Toolbar;
 @Singleton
 public final class UI extends JFrame {
   private static final long serialVersionUID = 1L;
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(UI.class);
 
   public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("comeon.ui.comeon");
 
@@ -87,6 +100,9 @@ public final class UI extends JFrame {
     this.add(editContainer, BorderLayout.CENTER);
     
     this.add(toolbar, BorderLayout.NORTH);
+    
+    final PictureTransferHandler transferHandler = new PictureTransferHandler(templates);
+    this.setTransferHandler(transferHandler);
   }
 
   private static List<? extends Image> loadIcons() {
@@ -157,6 +173,56 @@ public final class UI extends JFrame {
             }
           }
         });
+      }
+    }
+  }
+  
+  private final class PictureTransferHandler extends TransferHandler {
+    private static final long serialVersionUID = 1L;
+    
+    private final Templates templates;
+
+    public PictureTransferHandler(final Templates templates) {
+      this.templates = templates;
+    }
+
+    @Override
+    public boolean canImport(final TransferSupport support) {
+      return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+    }
+    
+    @Override
+    public boolean importData(TransferSupport support) {
+
+      try {
+        @SuppressWarnings("unchecked")
+        final List<File> files = (List<File>) support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+        final List<File> filteredFiles = new ArrayList<File>(files.size());
+        for (final File file : files) {
+          if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg")) {
+            filteredFiles.add(file);
+          }
+        }
+        final File[] preselectedFiles = filteredFiles.toArray(new File[filteredFiles.size()]);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            final AddPicturesDialog dialog = new AddPicturesDialog(templates, preselectedFiles);
+            final int value = dialog.showDialog();
+            if (value == JOptionPane.OK_OPTION) {
+              final AddModel model = dialog.getModel();
+              final File[] files = model.getPicturesFiles();
+              if (files.length > 0) {
+                core.addPictures(files, model.getTemplate(), model.getExternalMetadataSource());
+              }
+            }
+          }
+        });
+        return true;
+      } catch (final UnsupportedFlavorException | IOException e) {
+        LOGGER.warn("Failed drag & drop transfer", e);
+        return false;
       }
     }
   }
