@@ -221,5 +221,8 @@ public final class CoreImpl implements Core {
       }
     }
     this.activeMediaWiki = mediaWikiFactory.build(wikis.getActiveWiki());
+    for (final Picture picture : pictures) {
+      picture.renderTemplate(wikis.getActiveWiki().getUser());
+    }
   }
 }
