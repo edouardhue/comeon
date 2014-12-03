@@ -3,8 +3,10 @@ package comeon.ui.actions;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -27,12 +29,14 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import comeon.core.ProgressListenerAdapter;
 import comeon.core.events.PictureTransferDoneEvent;
 import comeon.core.events.PictureTransferFailedEvent;
@@ -61,7 +65,7 @@ public final class TransferMonitor extends JOptionPane {
   private final AtomicInteger transferCounter;
   
   @Inject
-  public TransferMonitor(final AbortAction abortAction) {
+  public TransferMonitor(final AbortAction abortAction, final UI ui) {
     super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, UploadPicturesAction.ICON, null);
     this.getInputMap(JOptionPane.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed ESCAPE"), "none");
     this.batchBar = new JProgressBar(SwingConstants.HORIZONTAL);
@@ -70,14 +74,19 @@ public final class TransferMonitor extends JOptionPane {
     this.pictureBarsPane = new JScrollPane(pictureBarsBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     this.setMessage(new Object[] { batchBar, pictureBarsPane });
+    final Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
     this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("upload.title"));
     this.dialog.setResizable(true);
     this.dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     this.dialog.setIconImages(UI.ICON_IMAGES);
+    this.dialog.setSize(new Dimension(screenSize.width / 2, screenSize.height / 2));
+    this.dialog.setLocationRelativeTo(ui);
     this.closeAction = new CloseAction();
     this.setOptions(new Object[] { new JButton(closeAction), new JButton(abortAction) });
     this.panels = new HashMap<>();
     this.transferCounter = new AtomicInteger(0);
+    this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "abort");
+    this.getActionMap().put("abort", abortAction);
   }
 
   @Subscribe
@@ -100,8 +109,6 @@ public final class TransferMonitor extends JOptionPane {
         batchBar.setValue(transferCounter.get());
         dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         closeAction.setEnabled(false);
-        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        dialog.setSize(new Dimension(screenSize.width / 2, screenSize.height / 2));
         dialog.setVisible(true);
       }
     });
@@ -142,10 +149,10 @@ public final class TransferMonitor extends JOptionPane {
 
   @Subscribe
   public void transferFailed(final PictureTransferFailedEvent event) {
+    final JProgressBar pictureProgressBar = panels.get(event.getPicture().getFile()).getPictureBar();
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        final JProgressBar pictureProgressBar = panels.get(event.getPicture().getFileName()).getPictureBar();
         pictureProgressBar.setValue(pictureProgressBar.getMaximum());
         pictureProgressBar.setString(UI.BUNDLE.getString("error.generic.title"));
         pictureProgressBar.setToolTipText(MessageFormat.format(UI.BUNDLE.getString("error.upload.failed"), event.getCause().getLocalizedMessage()));
@@ -173,14 +180,20 @@ public final class TransferMonitor extends JOptionPane {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-      panels.clear();
-      SwingUtilities.invokeLater(new Runnable() {
+      new SwingWorker<Void, Void>() {
         @Override
-        public void run() {
-          dialog.setVisible(false);
-          pictureBarsBox.removeAll();
+        protected Void doInBackground() throws Exception {
+          panels.clear();
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              dialog.setVisible(false);
+              pictureBarsBox.removeAll();
+            }
+          });
+          return null;
         }
-      });
+      }.execute();
     }
   }
   
