@@ -19,7 +19,7 @@ public interface Core {
 
   int countPicturesToBeUploaded();
   
-  void uploadPictures(UploadMonitor monitor);
+  void uploadPictures();
 
   void abort();
 }

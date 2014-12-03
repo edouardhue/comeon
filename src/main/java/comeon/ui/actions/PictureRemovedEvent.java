@@ -1,5 +1,15 @@
 package comeon.ui.actions;
 
-public final class PictureRemovedEvent {
+import comeon.model.Picture;
 
+public final class PictureRemovedEvent {
+  private final Picture picture;
+
+  public PictureRemovedEvent(final Picture picture) {
+    this.picture = picture;
+  }
+  
+  public Picture getPicture() {
+    return picture;
+  }
 }

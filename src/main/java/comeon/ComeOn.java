@@ -48,11 +48,13 @@ import comeon.templates.Templates;
 import comeon.templates.TemplatesImpl;
 import comeon.templates.velocity.VelocityTemplate;
 import comeon.ui.UI;
+import comeon.ui.actions.AbortAction;
 import comeon.ui.actions.AboutAction;
 import comeon.ui.actions.AddPicturesAction;
 import comeon.ui.actions.HelpManualAction;
 import comeon.ui.actions.PreferencesAction;
 import comeon.ui.actions.QuitAction;
+import comeon.ui.actions.TransferMonitor;
 import comeon.ui.actions.UploadPicturesAction;
 import comeon.ui.menu.EditMenu;
 import comeon.ui.menu.FileMenu;
@@ -139,12 +141,15 @@ public final class ComeOn extends AbstractModule {
     
     bind(Toolbar.class);
     
+    bind(TransferMonitor.class);
+    
     bind(AddPicturesAction.class);
     bind(UploadPicturesAction.class);
+    bind(AboutAction.class);
     bind(PreferencesAction.class);
     bind(QuitAction.class);
     bind(HelpManualAction.class);
-    bind(AboutAction.class);
+    bind(AbortAction.class);
     
     bind(EventBus.class).toInstance(bus);
   }
@@ -219,6 +224,8 @@ public final class ComeOn extends AbstractModule {
     comeOn.bus.register(injector.getInstance(Core.class));
     comeOn.bus.register(injector.getInstance(AddPicturesAction.class));
     comeOn.bus.register(injector.getInstance(UploadPicturesAction.class));
+    comeOn.bus.register(injector.getInstance(AbortAction.class));
+    comeOn.bus.register(injector.getInstance(TransferMonitor.class));
     return ui;
   }
 

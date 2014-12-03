@@ -1,10 +1,9 @@
 package comeon.core;
 
-import in.yuvi.http.fluent.ProgressListener;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -21,6 +20,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import comeon.core.events.PictureTransferDoneEvent;
+import comeon.core.events.PictureTransferFailedEvent;
+import comeon.core.events.PictureTransferStartingEvent;
+import comeon.core.events.UploadDoneEvent;
+import comeon.core.events.UploadStartingEvent;
 import comeon.core.extmetadata.ExternalMetadataSource;
 import comeon.mediawiki.FailedLoginException;
 import comeon.mediawiki.FailedLogoutException;
@@ -83,13 +87,13 @@ public final class CoreImpl implements Core {
         externalMetadataSource);
     final List<Picture> newPictures = picturesReader.readFiles(wikis.getActiveWiki().getUser()).getPictures();
     this.pictures.addAll(newPictures);
-    bus.post(new PicturesAddedEvent());
+    bus.post(new PicturesAddedEvent(Collections.unmodifiableList(newPictures)));
   }
 
   @Override
   public void removePicture(final Picture picture) {
     pictures.remove(picture);
-    bus.post(new PictureRemovedEvent());
+    bus.post(new PictureRemovedEvent(picture));
   }
 
   @Override
@@ -119,27 +123,25 @@ public final class CoreImpl implements Core {
     
     private final Picture picture;
     
-    private final UploadMonitor monitor;
-    
-    public UploadTask(final int index, final Picture picture, final UploadMonitor monitor) {
+    public UploadTask(final int index, final Picture picture) {
       this.index = index;
       this.picture = picture;
-      this.monitor = monitor;
     }
     
     @Override
     public Void call() throws Exception {
       try {
         taskLogger.debug("Starting upload of {}", picture.getFileName());
-        final ProgressListener listener = monitor.itemStarting(index, picture.getFile().length(), picture.getFileName());
-        activeMediaWiki.upload(picture, listener);
+        final ProgressListenerAdapter progressListener = new ProgressListenerAdapter();
+        bus.post(new PictureTransferStartingEvent(picture, progressListener));
+        activeMediaWiki.upload(picture, progressListener);
         picture.setState(State.UploadedSuccessfully);
-        monitor.itemDone(index);
+        bus.post(new PictureTransferDoneEvent(picture));
         taskLogger.debug("Finished upload of {}", picture.getFileName());
       } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
         taskLogger.warn("Failed upload of {}", picture.getFileName(), e);
         picture.setState(State.FailedUpload);
-        monitor.itemFailed(index, e);
+        bus.post(new PictureTransferFailedEvent(picture, e));
       }
       return null;
     }
@@ -160,14 +162,13 @@ public final class CoreImpl implements Core {
   }
   
   @Override
-  public void uploadPictures(final UploadMonitor monitor) {
+  public void uploadPictures() {
     final int picturesToBeUploaded = this.countPicturesToBeUploaded();
-    monitor.setBatchSize(picturesToBeUploaded);
     final List<Future<Void>> tasks = new ArrayList<>(picturesToBeUploaded);
     int counter = 0;
     for (final Picture picture : pictures) {
       if (shouldUpload(picture)) {
-        final UploadTask task = new UploadTask(counter, picture, monitor);
+        final UploadTask task = new UploadTask(counter, picture);
         final Future<Void> taskResult = pool.submit(task);
         tasks.add(taskResult);
         counter++;
@@ -175,7 +176,7 @@ public final class CoreImpl implements Core {
     }
     currentTasks.addAll(tasks);
     LOGGER.info("Uploading {} pictures to {}.", picturesToBeUploaded, activeMediaWiki.getName());
-    monitor.uploadStarting();
+    bus.post(new UploadStartingEvent());
     try {
       for (final Future<Void> task : tasks) {
         try {
@@ -197,7 +198,7 @@ public final class CoreImpl implements Core {
       } catch (final FailedLogoutException e) {
         LOGGER.warn("Couldn't close Mediawiki session properly", e);
       }
-      monitor.uploadDone();
+      bus.post(new UploadDoneEvent());
       LOGGER.info("Upload done.");
     }
   }

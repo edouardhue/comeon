@@ -2,6 +2,7 @@ package comeon.core;
 
 import in.yuvi.http.fluent.ProgressListener;
 
+@Deprecated
 public interface UploadMonitor {
   void setBatchSize(int size);
 
