@@ -1,9 +1,18 @@
 package comeon.core.events;
 
+import java.util.List;
+
+import comeon.model.Picture;
+
 public final class UploadStartingEvent {
 
-  public UploadStartingEvent() {
-    // TODO Auto-generated constructor stub
+  private final List<Picture> pictures;
+
+  public UploadStartingEvent(List<Picture> pictures) {
+    this.pictures = pictures;
   }
 
+  public List<Picture> getPictures() {
+    return pictures;
+  }
 }

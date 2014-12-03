@@ -107,10 +107,14 @@ public final class CoreImpl implements Core {
 
   @Override
   public int countPicturesToBeUploaded() {
-    int picturesToBeUploaded = 0;
+    return filterPicturesToBeUploaded().size();
+  }
+  
+  private List<Picture> filterPicturesToBeUploaded() {
+    final List<Picture> picturesToBeUploaded = new ArrayList<>(pictures.size());
     for (final Picture picture : pictures) {
       if (shouldUpload(picture)) {
-        picturesToBeUploaded++;
+        picturesToBeUploaded.add(picture);
       }
     }
     return picturesToBeUploaded;
@@ -119,12 +123,9 @@ public final class CoreImpl implements Core {
   private class UploadTask implements Callable<Void> {
     private final Logger taskLogger = LoggerFactory.getLogger(UploadTask.class);
     
-    private final int index;
-    
     private final Picture picture;
     
-    public UploadTask(final int index, final Picture picture) {
-      this.index = index;
+    public UploadTask(final Picture picture) {
       this.picture = picture;
     }
     
@@ -153,7 +154,7 @@ public final class CoreImpl implements Core {
         isEqual = false;
       } else if (obj instanceof UploadTask) {
         final UploadTask task = (UploadTask) obj;
-        isEqual = task.index == this.index && task.picture.equals(this.picture);
+        isEqual = task.picture.equals(this.picture);
       } else {
         isEqual = super.equals(obj);
       }
@@ -163,20 +164,16 @@ public final class CoreImpl implements Core {
   
   @Override
   public void uploadPictures() {
-    final int picturesToBeUploaded = this.countPicturesToBeUploaded();
-    final List<Future<Void>> tasks = new ArrayList<>(picturesToBeUploaded);
-    int counter = 0;
-    for (final Picture picture : pictures) {
-      if (shouldUpload(picture)) {
-        final UploadTask task = new UploadTask(counter, picture);
-        final Future<Void> taskResult = pool.submit(task);
-        tasks.add(taskResult);
-        counter++;
-      }
+    final List<Picture> picturesToBeUploaded = this.filterPicturesToBeUploaded();
+    LOGGER.info("Uploading {} pictures to {}.", picturesToBeUploaded.size(), activeMediaWiki.getName());
+    bus.post(new UploadStartingEvent(picturesToBeUploaded));
+    final List<Future<Void>> tasks = new ArrayList<>(picturesToBeUploaded.size());
+    for (final Picture picture : picturesToBeUploaded) {
+      final UploadTask task = new UploadTask(picture);
+      final Future<Void> taskResult = pool.submit(task);
+      tasks.add(taskResult);
     }
     currentTasks.addAll(tasks);
-    LOGGER.info("Uploading {} pictures to {}.", picturesToBeUploaded, activeMediaWiki.getName());
-    bus.post(new UploadStartingEvent());
     try {
       for (final Future<Void> task : tasks) {
         try {

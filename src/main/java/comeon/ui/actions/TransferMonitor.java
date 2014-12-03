@@ -3,13 +3,16 @@ package comeon.ui.actions;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -53,7 +56,9 @@ public final class TransferMonitor extends JOptionPane {
 
   private final CloseAction closeAction;
   
-  private final Map<String, ProgressPanel> panels;
+  private final Map<File, ProgressPanel> panels;
+  
+  private final AtomicInteger transferCounter;
   
   @Inject
   public TransferMonitor(final AbortAction abortAction) {
@@ -71,61 +76,40 @@ public final class TransferMonitor extends JOptionPane {
     this.dialog.setIconImages(UI.ICON_IMAGES);
     this.closeAction = new CloseAction();
     this.setOptions(new Object[] { new JButton(closeAction), new JButton(abortAction) });
-    this.panels = new HashMap<String, TransferMonitor.ProgressPanel>();
+    this.panels = new HashMap<>();
+    this.transferCounter = new AtomicInteger(0);
   }
 
   @Subscribe
-  public void picturesAdded(final PicturesAddedEvent event) {
+  public void uploadStarting(final UploadStartingEvent event) {
     for (final Picture picture : event.getPictures()) {
       final ProgressPanel panel = new ProgressPanel(picture.getFile().length(), picture.getFileName());
-      panels.put(picture.getFileName(), panel);
+      panels.put(picture.getFile(), panel);
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
           pictureBarsBox.add(panel);
-          final int preferredWidth = (panel.getPreferredSize().width > pictureBarsPane.getViewport().getPreferredSize().width ? panel
-              .getPreferredSize().width : pictureBarsPane.getViewport().getPreferredSize().width);
-          pictureBarsPane.getViewport().setPreferredSize(
-              new Dimension(preferredWidth, panel.getPreferredSize().height * 3));
-          TransferMonitor.this.dialog.pack();
-          pictureBarsPane.getViewport().scrollRectToVisible(panel.getBounds());
         }
       });
     }
-    updateBatchBarLength();
-  }
-
-  @Subscribe
-  public void pictureRemoved(final PictureRemovedEvent event) {
-    panels.remove(event.getPicture().getFileName());
-    updateBatchBarLength();
-  }
-  
-  private void updateBatchBarLength() {
+    transferCounter.set(0);
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        TransferMonitor.this.batchBar.setMaximum(panels.size());
-      }
-    });
-  }
-  
-  @Subscribe
-  public void uploadStarting(final UploadStartingEvent event) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        TransferMonitor.this.dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        TransferMonitor.this.closeAction.setEnabled(false);
-        TransferMonitor.this.batchBar.setValue(0);
-        TransferMonitor.this.dialog.setVisible(true);
+        batchBar.setMaximum(event.getPictures().size());
+        batchBar.setValue(transferCounter.get());
+        dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        closeAction.setEnabled(false);
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        dialog.setSize(new Dimension(screenSize.width / 2, screenSize.height / 2));
+        dialog.setVisible(true);
       }
     });
   }
 
   @Subscribe
   public void transferStarting(final PictureTransferStartingEvent event) {
-    final ProgressPanel panel = panels.get(event.getPicture().getFileName());
+    final ProgressPanel panel = panels.get(event.getPicture().getFile());
     event.getProgressListener().addPropertyChangeListener(ProgressListenerAdapter.TRANSFERRED, new PropertyChangeListener() {
       @Override
       public void propertyChange(final PropertyChangeEvent evt) {
@@ -138,16 +122,26 @@ public final class TransferMonitor extends JOptionPane {
         });
       }
     });
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        pictureBarsPane.getViewport().scrollRectToVisible(panel.getBounds());        
+      }
+    });
   }
   
   @Subscribe
   public void transferDone(final PictureTransferDoneEvent event) {
-    incrementBatchBar();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        batchBar.setValue(transferCounter.incrementAndGet());
+      }
+    });
   }
 
   @Subscribe
   public void transferFailed(final PictureTransferFailedEvent event) {
-    incrementBatchBar();
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -155,15 +149,6 @@ public final class TransferMonitor extends JOptionPane {
         pictureProgressBar.setValue(pictureProgressBar.getMaximum());
         pictureProgressBar.setString(UI.BUNDLE.getString("error.generic.title"));
         pictureProgressBar.setToolTipText(MessageFormat.format(UI.BUNDLE.getString("error.upload.failed"), event.getCause().getLocalizedMessage()));
-      }
-    });
-  }
-  
-  private void incrementBatchBar() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        TransferMonitor.this.batchBar.setValue(batchBar.getValue() + 1);
       }
     });
   }
@@ -188,7 +173,14 @@ public final class TransferMonitor extends JOptionPane {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-      dialog.setVisible(false);
+      panels.clear();
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          dialog.setVisible(false);
+          pictureBarsBox.removeAll();
+        }
+      });
     }
   }
   
