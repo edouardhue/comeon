@@ -25,9 +25,9 @@
     <jar href="lib/guice-multibindings-3.0.jar"/>
     <jar href="lib/metadata-extractor-2.6.2.jar"/>
     <jar href="lib/xmpcore-5.1.2.jar"/>
-    <jar href="lib/slf4j-api-1.7.5.jar"/>
-    <jar href="lib/jcl-over-slf4j-1.7.5.jar"/>
-    <jar href="lib/log4j-over-slf4j-1.7.5.jar"/>
+    <jar href="lib/slf4j-api-1.7.7.jar"/>
+    <jar href="lib/jcl-over-slf4j-1.7.7.jar"/>
+    <jar href="lib/log4j-over-slf4j-1.7.7.jar"/>
     <jar href="lib/logback-classic-1.0.13.jar"/>
     <jar href="lib/logback-core-1.0.13.jar"/>
     <jar href="lib/guava-16.0.1.jar"/>
@@ -48,7 +48,7 @@
     <jar href="lib/simplevalidation-standalone-1.6.jar"/>
     <jar href="lib/simplevalidation-1.6.jar"/>
     <jar href="lib/nbstubs-1.6.jar"/>
-    <jar href="lib/jul-to-slf4j-1.7.5.jar"/>
+    <jar href="lib/jul-to-slf4j-1.7.7.jar"/>
 
   </resources>
   <application-desc main-class="comeon.ComeOn"/>
