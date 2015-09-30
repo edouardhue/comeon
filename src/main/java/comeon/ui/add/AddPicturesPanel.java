@@ -40,6 +40,7 @@ import javax.swing.text.MaskFormatter;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+
 import comeon.model.Template;
 import comeon.ui.UI;
 import comeon.ui.actions.BaseAction;
@@ -74,6 +75,14 @@ class AddPicturesPanel extends JPanel {
   private final JLabel metadataMatchSymbol;
   
   private final JComboBox<String> metadataExpression;
+  
+  private final JLabel pictureRegexpLabel;
+  
+  private final JTextField pictureRegexp;
+  
+  private final JLabel pictureSubstitutionLabel;
+  
+  private final JTextField pictureSubstitution;
   
   private final AddController controller;
   
@@ -167,6 +176,44 @@ class AddPicturesPanel extends JPanel {
     
     this.metadataMatchSymbol = new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.symbol"));
 
+    this.pictureRegexpLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.regexp.label"));
+    this.pictureRegexp = new JTextField(controller.getPictureRegexp(), MEDIUM_PROTOTYPE_LENGTH);
+    this.pictureRegexp.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        pictureRegexpChanged(e);
+      }
+      
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        pictureRegexpChanged(e);
+      }
+      
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        pictureRegexpChanged(e);
+      }
+    });
+    
+    this.pictureSubstitutionLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.substitution.label"));
+    this.pictureSubstitution= new JTextField(controller.getPictureSubstitution(), MEDIUM_PROTOTYPE_LENGTH);
+    this.pictureSubstitution.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        pictureSubstitutionChanged(e);
+      }
+      
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        pictureSubstitutionChanged(e);
+      }
+      
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        pictureSubstitutionChanged(e);
+      }
+    });
+    
     layout.setVerticalGroup(
         layout.createSequentialGroup()
         .addComponent(filesListLabel)
@@ -194,6 +241,16 @@ class AddPicturesPanel extends JPanel {
             .addComponent(metadataMatchSymbol)
             .addComponent(metadataExpression)
         )
+        .addGroup(
+            layout.createParallelGroup(Alignment.BASELINE)
+            .addComponent(pictureRegexpLabel)
+            .addComponent(pictureRegexp)
+        )
+        .addGroup(
+            layout.createParallelGroup(Alignment.BASELINE)
+            .addComponent(pictureSubstitutionLabel)
+            .addComponent(pictureSubstitution)
+        )
     );
     layout.setHorizontalGroup(
         layout.createSequentialGroup()
@@ -209,6 +266,8 @@ class AddPicturesPanel extends JPanel {
                     .addComponent(templatesLabel)
                     .addComponent(metadataFileLabel)
                     .addComponent(metadataMatchLabel)
+                    .addComponent(pictureRegexpLabel)
+                    .addComponent(pictureSubstitutionLabel)
                 )
                 .addGroup(
                     layout.createParallelGroup()
@@ -219,6 +278,14 @@ class AddPicturesPanel extends JPanel {
                         .addComponent(metadataExpression)
                         .addComponent(metadataMatchSymbol)
                         .addComponent(pictureExpression)
+                    )
+                    .addGroup(
+                        layout.createSequentialGroup()
+                        .addComponent(pictureRegexp)
+                    )
+                    .addGroup(
+                        layout.createSequentialGroup()
+                        .addComponent(pictureSubstitution)
                     )
                 )
             )
@@ -246,6 +313,22 @@ class AddPicturesPanel extends JPanel {
     }
   }
   
+  private void pictureRegexpChanged(final DocumentEvent e) {
+    final Document document = e.getDocument();
+    try {
+      controller.setPictureRegexp(document.getText(0, document.getLength()));
+    } catch (final BadLocationException e1) {
+    }
+  }
+  
+  private void pictureSubstitutionChanged(final DocumentEvent e) {
+    final Document document = e.getDocument();
+    try {
+      controller.setPictureSubstitution(document.getText(0, document.getLength()));
+    } catch (final BadLocationException e1) {
+    }
+  }
+  
   private void metadataExpressionChanged(final ActionEvent e) {
     final String selectedValue = (String) this.metadataExpression.getModel().getSelectedItem();
     controller.setMetadataExpression(selectedValue);
@@ -262,6 +345,10 @@ class AddPicturesPanel extends JPanel {
         metadataExpression.setEnabled(state);
         metadataMatchSymbol.setEnabled(state);
         pictureExpression.setEnabled(state);
+        pictureRegexp.setEnabled(state);
+        pictureRegexpLabel.setEnabled(state);
+        pictureSubstitution.setEnabled(state);
+        pictureSubstitutionLabel.setEnabled(state);
       }
     });
   }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.LazyDynaMap;
+import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +45,10 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   
   private final Charset charset;
   
+  private final KeyTransformer keyTransformer;
+  
   public CsvMetadataSource(final String pictureExpression, final String metadataExpression, final Path metadataFile, final char separator, final char quote, final char escape,
-      final int skipLines, final boolean strictQuotes, final boolean ignoreLeadingWhiteSpace, final Charset charset) {
+      final int skipLines, final boolean strictQuotes, final boolean ignoreLeadingWhiteSpace, final Charset charset, final KeyTransformer keyTransformer) {
     this.pictureExpression = pictureExpression;
     this.metadataExpression = metadataExpression;
     this.metadataFile = metadataFile;
@@ -56,6 +59,7 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
     this.strictQuotes = strictQuotes;
     this.ignoreLeadingWhiteSpace = ignoreLeadingWhiteSpace;
     this.charset = charset;
+    this.keyTransformer = keyTransformer;
   }
   
   @Override
@@ -79,11 +83,11 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
     try {
       final LazyDynaMap bean = new LazyDynaMap(pictureMetadata);
       final String key = String.valueOf(PropertyUtils.getNestedProperty(bean, pictureExpression));
-      return metadata.get(key);
-    } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      return metadata.get(keyTransformer.transform(key));
+    } catch (final IllegalAccessException | InvocationTargetException | NestedNullException | NoSuchMethodException e) {
       try {
         final String key = String.valueOf(PropertyUtils.getNestedProperty(picture, pictureExpression));
-        return metadata.get(key);
+        return metadata.get(keyTransformer.transform(key));
       } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e2) {
         LOGGER.warn("Can't get property {} from picture", pictureExpression, e2);
         return null;

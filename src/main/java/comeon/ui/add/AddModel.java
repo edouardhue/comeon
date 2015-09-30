@@ -12,6 +12,7 @@ import com.google.common.base.Charsets;
 
 import comeon.core.extmetadata.CsvMetadataSource;
 import comeon.core.extmetadata.ExternalMetadataSource;
+import comeon.core.extmetadata.KeyTransformer;
 import comeon.core.extmetadata.NullMetadataSource;
 import comeon.model.Template;
 
@@ -30,10 +31,14 @@ public class AddModel {
 
   private String metadataExpression;
   
+  private String pictureRegexp;
+  
+  private String pictureSubstitution;
+  
   private final CSVSettings csvSettings;
 
   public enum Properties {
-    PICTURES_FILES, TEMPLATE, USE_METADATA, METADATA_FILE, PICTURE_EXPRESSION, METADATA_EXPRESSION,
+    PICTURES_FILES, TEMPLATE, USE_METADATA, METADATA_FILE, PICTURE_EXPRESSION, METADATA_EXPRESSION, PICTURE_REGEXP, PICTURE_SUBSTITUTION,
     CSV_SEPARATOR, CSV_QUOTE, CSV_ESCAPE, CSV_SKIP_LINES, CSV_STRICT_QUOTES, CSV_IGNORE_LEADING_WHITESPACE, CSV_CHARSET
   }
 
@@ -45,6 +50,8 @@ public class AddModel {
     this.metadataFile = null;
     this.pictureExpression = null;
     this.metadataExpression = null;
+    this.pictureRegexp = ".*";
+    this.pictureSubstitution = "${0}";
     this.csvSettings = new CSVSettings();
   }
 
@@ -55,8 +62,9 @@ public class AddModel {
   public  ExternalMetadataSource<?> getExternalMetadataSource() {
     final ExternalMetadataSource<?> externalMetadataSource;
     if (useMetadata && metadataFile != null) {
+      final KeyTransformer keyTransformer = new KeyTransformer(pictureRegexp, pictureSubstitution);
       externalMetadataSource = new CsvMetadataSource(pictureExpression, metadataExpression, metadataFile, csvSettings.separator,
-          csvSettings.quote, csvSettings.escape, csvSettings.skipLines, csvSettings.strictQuotes, csvSettings.ignoreLeadingWhiteSpace, csvSettings.charset);
+          csvSettings.quote, csvSettings.escape, csvSettings.skipLines, csvSettings.strictQuotes, csvSettings.ignoreLeadingWhiteSpace, csvSettings.charset, keyTransformer);
     } else {
       externalMetadataSource = new NullMetadataSource();
     }
@@ -121,6 +129,26 @@ public class AddModel {
     final String oldMetadataExpression = this.metadataExpression;
     this.metadataExpression = metadataExpression;
     pcs.firePropertyChange(Properties.METADATA_EXPRESSION.name(), oldMetadataExpression, metadataExpression);
+  }
+  
+  public String getPictureRegexp() {
+    return pictureRegexp;
+  }
+  
+  public void setPictureRegexp(final String pictureRegexp) {
+    final String oldPictureRegexp = this.pictureRegexp;
+    this.pictureRegexp = pictureRegexp;
+    pcs.firePropertyChange(Properties.PICTURE_REGEXP.name(), oldPictureRegexp, pictureRegexp);
+  }
+  
+  public String getPictureSubstitution() {
+    return pictureSubstitution;
+  }
+  
+  public void setPictureSubstitution(final String pictureSubstitution) {
+    final String oldPictureSubstitution = this.pictureSubstitution;
+    this.pictureSubstitution = pictureSubstitution;
+    pcs.firePropertyChange(Properties.PICTURE_SUBSTITUTION.name(), oldPictureSubstitution, pictureSubstitution);
   }
 
   public char getSeparator() {

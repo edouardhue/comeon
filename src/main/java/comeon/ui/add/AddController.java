@@ -82,6 +82,22 @@ class AddController implements PropertyChangeListener {
   public void setMetadataExpression(final String metadataExpression) {
     model.setMetadataExpression(metadataExpression);
   }
+  
+  public String getPictureRegexp() {
+    return model.getPictureRegexp();
+  }
+  
+  public void setPictureRegexp(final String pictureRegexp) {
+    model.setPictureRegexp(pictureRegexp);
+  }
+  
+  public void setPictureSubstitution(final String pictureSubstitution) {
+    model.setPictureSubstitution(pictureSubstitution);
+  }
+  
+  public String getPictureSubstitution() {
+    return model.getPictureSubstitution();
+  }
 
   public void setTemplate(final Template template) {
     model.setTemplate(template);
