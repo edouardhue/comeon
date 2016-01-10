@@ -552,6 +552,7 @@ class AddPicturesPanel extends JPanel {
           controller.setIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpaceBox.isSelected());
         }
       });
+      ignoreLeadingWhiteSpaceBox.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.ignoreLeadingWhiteSpace.tooltip"));
       
       final JLabel charsetLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.charset"));
       final JComboBox<Charset> charsetField = new JComboBox<>(new Charset[] {
