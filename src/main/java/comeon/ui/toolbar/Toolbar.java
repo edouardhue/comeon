@@ -4,10 +4,10 @@ import javax.swing.JToolBar;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import comeon.ui.actions.AddPicturesAction;
+import comeon.ui.actions.AddMediaAction;
 import comeon.ui.actions.HelpManualAction;
 import comeon.ui.actions.PreferencesAction;
-import comeon.ui.actions.UploadPicturesAction;
+import comeon.ui.actions.UploadMediaAction;
 
 @Singleton
 public final class Toolbar extends JToolBar {
@@ -15,12 +15,12 @@ public final class Toolbar extends JToolBar {
   private static final long serialVersionUID = 1L;
 
   @Inject
-  public Toolbar(final AddPicturesAction addPicturesAction, final UploadPicturesAction uploadPicturesAction, final PreferencesAction preferencesAction, final HelpManualAction helpManualAction) {
+  public Toolbar(final AddMediaAction addMediaAction, final UploadMediaAction uploadMediaAction, final PreferencesAction preferencesAction, final HelpManualAction helpManualAction) {
     super(JToolBar.HORIZONTAL);
     this.setFloatable(false);
     
-    this.add(addPicturesAction);
-    this.add(uploadPicturesAction);
+    this.add(addMediaAction);
+    this.add(uploadMediaAction);
     
     this.addSeparator();
     

@@ -45,7 +45,7 @@ import comeon.model.Template;
 import comeon.ui.UI;
 import comeon.ui.actions.BaseAction;
 
-class AddPicturesPanel extends JPanel {
+class AddMediaPanel extends JPanel {
   private static final int MEDIUM_PROTOTYPE_LENGTH = 20;
 
   private static final String PROTOTYPE_CHAR = "x";
@@ -54,7 +54,7 @@ class AddPicturesPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private final JFileChooser picturesFilesChooser;
+  private final JFileChooser mediaFilesChooser;
   
   private final JComboBox<Template> templates;
 
@@ -70,23 +70,23 @@ class AddPicturesPanel extends JPanel {
   
   private final JLabel metadataMatchLabel;
   
-  private final JTextField pictureExpression;
+  private final JTextField mediaExpression;
   
   private final JLabel metadataMatchSymbol;
   
   private final JComboBox<String> metadataExpression;
   
-  private final JLabel pictureRegexpLabel;
+  private final JLabel mediaRegexpLabel;
   
-  private final JTextField pictureRegexp;
+  private final JTextField mediaRegexp;
   
-  private final JLabel pictureSubstitutionLabel;
+  private final JLabel mediaSubstitutionLabel;
   
-  private final JTextField pictureSubstitution;
+  private final JTextField mediaSubstitution;
   
   private final AddController controller;
   
-  public AddPicturesPanel(final AddController controller) {
+  public AddMediaPanel(final AddController controller) {
     this.controller = controller;
     
     final GroupLayout layout = new GroupLayout(this);
@@ -94,25 +94,25 @@ class AddPicturesPanel extends JPanel {
     layout.setAutoCreateContainerGaps(true);
     this.setLayout(layout);
     
-    this.picturesFilesChooser = new JFileChooser();
-    picturesFilesChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    picturesFilesChooser.setMultiSelectionEnabled(true);
-    picturesFilesChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("action.addpictures.filter"), "jpg", "jpeg"));
+    this.mediaFilesChooser = new JFileChooser();
+    mediaFilesChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    mediaFilesChooser.setMultiSelectionEnabled(true);
+    mediaFilesChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("action.addmedia.filter"), "jpg", "jpeg"));
     this.metadataFileChooser = new JFileChooser();
     metadataFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     metadataFileChooser.setMultiSelectionEnabled(false);
-    metadataFileChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("addpictures.metadata.filter"), "csv"));
+    metadataFileChooser.setFileFilter(new FileNameExtensionFilter(UI.BUNDLE.getString("addmedia.metadata.filter"), "csv"));
     metadataFileChooser.setAccessory(new CSVAccessoryPanel());
 
-    final JLabel filesListLabel = new JLabel(UI.BUNDLE.getString("addpictures.pictures.label"));
+    final JLabel filesListLabel = new JLabel(UI.BUNDLE.getString("addmedia.media.label"));
 
-    final JList<File> filesList = new JList<>(controller.getPicturesListModel());
+    final JList<File> filesList = new JList<>(controller.getMediaListModel());
     filesList.setPrototypeCellValue(new File(Strings.repeat(PROTOTYPE_CHAR, LONG_PROTOTYPE_LENGTH)));
     final JScrollPane filesListPanel = new JScrollPane(filesList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    final JButton pickPicturesFilesButton = new JButton(new PickPicturesFilesAction(controller));
+    final JButton pickMediaFilesButton = new JButton(new PickMediaFilesAction(controller));
 
-    final JLabel templatesLabel = new JLabel(UI.BUNDLE.getString("addpictures.template.label"));
+    final JLabel templatesLabel = new JLabel(UI.BUNDLE.getString("addmedia.template.label"));
     this.templates = new JComboBox<Template>(controller.getTemplateModel());
     this.templates.setRenderer(new DefaultListCellRenderer() {
       private static final long serialVersionUID = 1L;
@@ -137,17 +137,17 @@ class AddPicturesPanel extends JPanel {
     this.metatadataCheckbox = new JCheckBox(checkboxHandler);
     metatadataCheckbox.addItemListener(checkboxHandler);
 
-    this.metadataFileLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.label"));
+    this.metadataFileLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.label"));
     this.metadataFileLocation = new JTextField(LONG_PROTOTYPE_LENGTH);
     this.metadataFileLocation.setEditable(false);
     
     this.pickMetadataFileButton = new JButton(new PickMetadataFileAction());
     
-    this.metadataMatchLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.label"));
+    this.metadataMatchLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.match.label"));
     
     this.metadataExpression = new JComboBox<>(controller.getMetadataExpressionModel());
     this.metadataExpression.setPrototypeDisplayValue(Strings.repeat(PROTOTYPE_CHAR, MEDIUM_PROTOTYPE_LENGTH));
-    this.metadataExpression.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.match.metadata"));
+    this.metadataExpression.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.match.metadata"));
     this.metadataExpression.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
@@ -155,62 +155,62 @@ class AddPicturesPanel extends JPanel {
       }
     });
     
-    this.pictureExpression = new JTextField(MEDIUM_PROTOTYPE_LENGTH);
-    this.pictureExpression.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.match.picture"));
-    this.pictureExpression.getDocument().addDocumentListener(new DocumentListener() {
+    this.mediaExpression = new JTextField(MEDIUM_PROTOTYPE_LENGTH);
+    this.mediaExpression.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.match.media"));
+    this.mediaExpression.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void removeUpdate(final DocumentEvent e) {
-        pictureExpressionChanged(e);
+        mediaExpressionChanged(e);
       }
       
       @Override
       public void insertUpdate(final DocumentEvent e) {
-        pictureExpressionChanged(e);
+        mediaExpressionChanged(e);
       }
       
       @Override
       public void changedUpdate(final DocumentEvent e) {
-        pictureExpressionChanged(e);
+        mediaExpressionChanged(e);
       }
     });
     
-    this.metadataMatchSymbol = new JLabel(UI.BUNDLE.getString("addpictures.metadata.match.symbol"));
+    this.metadataMatchSymbol = new JLabel(UI.BUNDLE.getString("addmedia.metadata.match.symbol"));
 
-    this.pictureRegexpLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.regexp.label"));
-    this.pictureRegexp = new JTextField(controller.getPictureRegexp(), MEDIUM_PROTOTYPE_LENGTH);
-    this.pictureRegexp.getDocument().addDocumentListener(new DocumentListener() {
+    this.mediaRegexpLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.regexp.label"));
+    this.mediaRegexp = new JTextField(controller.getMediaRegexp(), MEDIUM_PROTOTYPE_LENGTH);
+    this.mediaRegexp.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent e) {
-        pictureRegexpChanged(e);
+        mediaRegexpChanged(e);
       }
       
       @Override
       public void insertUpdate(DocumentEvent e) {
-        pictureRegexpChanged(e);
+        mediaRegexpChanged(e);
       }
       
       @Override
       public void changedUpdate(DocumentEvent e) {
-        pictureRegexpChanged(e);
+        mediaRegexpChanged(e);
       }
     });
     
-    this.pictureSubstitutionLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.substitution.label"));
-    this.pictureSubstitution= new JTextField(controller.getPictureSubstitution(), MEDIUM_PROTOTYPE_LENGTH);
-    this.pictureSubstitution.getDocument().addDocumentListener(new DocumentListener() {
+    this.mediaSubstitutionLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.substitution.label"));
+    this.mediaSubstitution= new JTextField(controller.getMediaSubstitution(), MEDIUM_PROTOTYPE_LENGTH);
+    this.mediaSubstitution.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent e) {
-        pictureSubstitutionChanged(e);
+        mediaSubstitutionChanged(e);
       }
       
       @Override
       public void insertUpdate(DocumentEvent e) {
-        pictureSubstitutionChanged(e);
+        mediaSubstitutionChanged(e);
       }
       
       @Override
       public void changedUpdate(DocumentEvent e) {
-        pictureSubstitutionChanged(e);
+        mediaSubstitutionChanged(e);
       }
     });
     
@@ -220,7 +220,7 @@ class AddPicturesPanel extends JPanel {
         .addGroup(
             layout.createParallelGroup(Alignment.BASELINE)
             .addComponent(filesListPanel)
-            .addComponent(pickPicturesFilesButton)
+            .addComponent(pickMediaFilesButton)
         )
         .addGroup(
             layout.createParallelGroup(Alignment.BASELINE)
@@ -237,19 +237,19 @@ class AddPicturesPanel extends JPanel {
         .addGroup(
             layout.createParallelGroup(Alignment.BASELINE)
             .addComponent(metadataMatchLabel)
-            .addComponent(pictureExpression)
+            .addComponent(mediaExpression)
             .addComponent(metadataMatchSymbol)
             .addComponent(metadataExpression)
         )
         .addGroup(
             layout.createParallelGroup(Alignment.BASELINE)
-            .addComponent(pictureRegexpLabel)
-            .addComponent(pictureRegexp)
+            .addComponent(mediaRegexpLabel)
+            .addComponent(mediaRegexp)
         )
         .addGroup(
             layout.createParallelGroup(Alignment.BASELINE)
-            .addComponent(pictureSubstitutionLabel)
-            .addComponent(pictureSubstitution)
+            .addComponent(mediaSubstitutionLabel)
+            .addComponent(mediaSubstitution)
         )
     );
     layout.setHorizontalGroup(
@@ -266,8 +266,8 @@ class AddPicturesPanel extends JPanel {
                     .addComponent(templatesLabel)
                     .addComponent(metadataFileLabel)
                     .addComponent(metadataMatchLabel)
-                    .addComponent(pictureRegexpLabel)
-                    .addComponent(pictureSubstitutionLabel)
+                    .addComponent(mediaRegexpLabel)
+                    .addComponent(mediaSubstitutionLabel)
                 )
                 .addGroup(
                     layout.createParallelGroup()
@@ -277,22 +277,22 @@ class AddPicturesPanel extends JPanel {
                         layout.createSequentialGroup()
                         .addComponent(metadataExpression)
                         .addComponent(metadataMatchSymbol)
-                        .addComponent(pictureExpression)
+                        .addComponent(mediaExpression)
                     )
                     .addGroup(
                         layout.createSequentialGroup()
-                        .addComponent(pictureRegexp)
+                        .addComponent(mediaRegexp)
                     )
                     .addGroup(
                         layout.createSequentialGroup()
-                        .addComponent(pictureSubstitution)
+                        .addComponent(mediaSubstitution)
                     )
                 )
             )
         )
         .addGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(pickPicturesFilesButton)
+            .addComponent(pickMediaFilesButton)
             .addComponent(pickMetadataFileButton)
         )
     );
@@ -305,26 +305,26 @@ class AddPicturesPanel extends JPanel {
     controller.setTemplate(selectedTemplate);
   }
   
-  private void pictureExpressionChanged(final DocumentEvent e) {
+  private void mediaExpressionChanged(final DocumentEvent e) {
     final Document document = e.getDocument();
     try {
-      controller.setPictureExpression(document.getText(0, document.getLength()));
+      controller.setMediaExpression(document.getText(0, document.getLength()));
     } catch (final BadLocationException e1) {
     }
   }
   
-  private void pictureRegexpChanged(final DocumentEvent e) {
+  private void mediaRegexpChanged(final DocumentEvent e) {
     final Document document = e.getDocument();
     try {
-      controller.setPictureRegexp(document.getText(0, document.getLength()));
+      controller.setMediaRegexp(document.getText(0, document.getLength()));
     } catch (final BadLocationException e1) {
     }
   }
   
-  private void pictureSubstitutionChanged(final DocumentEvent e) {
+  private void mediaSubstitutionChanged(final DocumentEvent e) {
     final Document document = e.getDocument();
     try {
-      controller.setPictureSubstitution(document.getText(0, document.getLength()));
+      controller.setMediaSubstitution(document.getText(0, document.getLength()));
     } catch (final BadLocationException e1) {
     }
   }
@@ -344,11 +344,11 @@ class AddPicturesPanel extends JPanel {
         metadataMatchLabel.setEnabled(state);
         metadataExpression.setEnabled(state);
         metadataMatchSymbol.setEnabled(state);
-        pictureExpression.setEnabled(state);
-        pictureRegexp.setEnabled(state);
-        pictureRegexpLabel.setEnabled(state);
-        pictureSubstitution.setEnabled(state);
-        pictureSubstitutionLabel.setEnabled(state);
+        mediaExpression.setEnabled(state);
+        mediaRegexp.setEnabled(state);
+        mediaRegexpLabel.setEnabled(state);
+        mediaSubstitution.setEnabled(state);
+        mediaSubstitutionLabel.setEnabled(state);
       }
     });
   }
@@ -370,21 +370,21 @@ class AddPicturesPanel extends JPanel {
     });
   }
   
-  private class PickPicturesFilesAction extends BaseAction {
+  private class PickMediaFilesAction extends BaseAction {
     private static final long serialVersionUID = 1L;
     
     private final AddController controller;
 
-    public PickPicturesFilesAction(final AddController controller) {
-      super("pickpictures");
+    public PickMediaFilesAction(final AddController controller) {
+      super("pickmedia");
       this.controller = controller;
     }
     
     @Override
     public void actionPerformed(final ActionEvent e) {
-      final int returnVal = picturesFilesChooser.showOpenDialog(JOptionPane.getRootFrame());
-      if (returnVal == JFileChooser.APPROVE_OPTION && picturesFilesChooser.getSelectedFiles().length > 0) {
-        controller.setPicturesFiles(picturesFilesChooser.getSelectedFiles());
+      final int returnVal = mediaFilesChooser.showOpenDialog(JOptionPane.getRootFrame());
+      if (returnVal == JFileChooser.APPROVE_OPTION && mediaFilesChooser.getSelectedFiles().length > 0) {
+        controller.setMediaFiles(mediaFilesChooser.getSelectedFiles());
       }
     }
   }
@@ -395,7 +395,7 @@ class AddPicturesPanel extends JPanel {
     private final AddController controller;
 
     public UseExternalMetadataCheckboxHandler(final AddController controller) {
-      super(UI.BUNDLE.getString("addpictures.metadata.use"));
+      super(UI.BUNDLE.getString("addmedia.metadata.use"));
       this.controller = controller;
     }
     
@@ -447,7 +447,7 @@ class AddPicturesPanel extends JPanel {
       layout.setAutoCreateGaps(true);
       this.setLayout(layout);
       
-      this.setBorder(BorderFactory.createTitledBorder(UI.BUNDLE.getString("addpictures.metadata.csv.title")));
+      this.setBorder(BorderFactory.createTitledBorder(UI.BUNDLE.getString("addmedia.metadata.csv.title")));
       
       final MaskFormatter singleCharFormatter = new MaskFormatter();
       try {
@@ -458,10 +458,10 @@ class AddPicturesPanel extends JPanel {
         throw new Error("Bad formatter", e);
       }
       
-      final JLabel separatorLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.separator"));
+      final JLabel separatorLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.csv.separator"));
       final JFormattedTextField separatorField = new JFormattedTextField(singleCharFormatter);
       separatorLabel.setLabelFor(separatorField);
-      separatorField.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.separator.tooltip"));
+      separatorField.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.separator.tooltip"));
       separatorField.setText(String.valueOf(controller.getSeparator()));
       separatorField.getDocument().addDocumentListener(new DocumentListener() {
         @Override
@@ -480,10 +480,10 @@ class AddPicturesPanel extends JPanel {
         }
       });
       
-      final JLabel quoteLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.quote"));
+      final JLabel quoteLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.csv.quote"));
       final JFormattedTextField quoteField = new JFormattedTextField(singleCharFormatter);
       quoteLabel.setLabelFor(quoteField);
-      quoteField.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.quote.tooltip"));
+      quoteField.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.quote.tooltip"));
       quoteField.setText(String.valueOf(controller.getQuote()));
       quoteField.getDocument().addDocumentListener(new DocumentListener() {
         @Override
@@ -502,10 +502,10 @@ class AddPicturesPanel extends JPanel {
         }
       });
       
-      final JLabel escapeLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.escape"));
+      final JLabel escapeLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.csv.escape"));
       final JFormattedTextField escapeField = new JFormattedTextField(singleCharFormatter);
       escapeLabel.setLabelFor(escapeField);
-      escapeField.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.escape.tooltip"));
+      escapeField.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.escape.tooltip"));
       escapeField.setText(String.valueOf(controller.getEscape()));
       escapeField.getDocument().addDocumentListener(new DocumentListener() {
         @Override
@@ -524,7 +524,7 @@ class AddPicturesPanel extends JPanel {
         }
       });
       
-      final JLabel skipLinesLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.skipLines"));
+      final JLabel skipLinesLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.csv.skipLines"));
       final JSpinner skipLinesField = new JSpinner(new SpinnerNumberModel(controller.getSkipLines(), 0, Integer.MAX_VALUE, 1) {
         private static final long serialVersionUID = 1L;
         @Override
@@ -534,27 +534,27 @@ class AddPicturesPanel extends JPanel {
         }
       });
       skipLinesLabel.setLabelFor(skipLinesField);
-      skipLinesField.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.skipLines.tooltip"));
+      skipLinesField.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.skipLines.tooltip"));
       
-      final JCheckBox strictQuotesBox = new JCheckBox(UI.BUNDLE.getString("addpictures.metadata.csv.strictQuotes"), controller.isStrictQuotes());
+      final JCheckBox strictQuotesBox = new JCheckBox(UI.BUNDLE.getString("addmedia.metadata.csv.strictQuotes"), controller.isStrictQuotes());
       strictQuotesBox.addChangeListener(new ChangeListener() {
         @Override
         public void stateChanged(final ChangeEvent e) {
           controller.setStrictQuotes(strictQuotesBox.isSelected());
         }
       });
-      strictQuotesBox.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.strictQuotes.tooltip"));
+      strictQuotesBox.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.strictQuotes.tooltip"));
       
-      final JCheckBox ignoreLeadingWhiteSpaceBox = new JCheckBox(UI.BUNDLE.getString("addpictures.metadata.csv.ignoreLeadingWhiteSpace"), controller.isIgnoreLeadingWhiteSpace());
+      final JCheckBox ignoreLeadingWhiteSpaceBox = new JCheckBox(UI.BUNDLE.getString("addmedia.metadata.csv.ignoreLeadingWhiteSpace"), controller.isIgnoreLeadingWhiteSpace());
       ignoreLeadingWhiteSpaceBox.addChangeListener(new ChangeListener() {
         @Override
         public void stateChanged(final ChangeEvent e) {
           controller.setIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpaceBox.isSelected());
         }
       });
-      ignoreLeadingWhiteSpaceBox.setToolTipText(UI.BUNDLE.getString("addpictures.metadata.csv.ignoreLeadingWhiteSpace.tooltip"));
+      ignoreLeadingWhiteSpaceBox.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.ignoreLeadingWhiteSpace.tooltip"));
       
-      final JLabel charsetLabel = new JLabel(UI.BUNDLE.getString("addpictures.metadata.csv.charset"));
+      final JLabel charsetLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.csv.charset"));
       final JComboBox<Charset> charsetField = new JComboBox<>(new Charset[] {
           Charsets.ISO_8859_1,
           Charsets.UTF_8,

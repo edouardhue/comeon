@@ -33,8 +33,8 @@ import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 import comeon.core.Core;
 import comeon.core.CoreImpl;
-import comeon.core.PicturesBatchFactory;
-import comeon.core.RealPicturesBatchFactory;
+import comeon.core.MediaUploadBatchFactory;
+import comeon.core.DefaultMediaUploadBatchFactory;
 import comeon.core.WithPreferences;
 import comeon.mediawiki.MediaWikiFactory;
 import comeon.model.TemplateKind;
@@ -50,12 +50,12 @@ import comeon.templates.velocity.VelocityTemplate;
 import comeon.ui.UI;
 import comeon.ui.actions.AbortAction;
 import comeon.ui.actions.AboutAction;
-import comeon.ui.actions.AddPicturesAction;
+import comeon.ui.actions.AddMediaAction;
 import comeon.ui.actions.HelpManualAction;
 import comeon.ui.actions.PreferencesAction;
 import comeon.ui.actions.QuitAction;
 import comeon.ui.actions.TransferMonitor;
-import comeon.ui.actions.UploadPicturesAction;
+import comeon.ui.actions.UploadMediaAction;
 import comeon.ui.menu.EditMenu;
 import comeon.ui.menu.FileMenu;
 import comeon.ui.menu.HelpMenu;
@@ -101,7 +101,7 @@ public final class ComeOn extends AbstractModule {
     bind(Core.class).to(CoreImpl.class);
     bind(Templates.class).to(TemplatesImpl.class);
     bind(Wikis.class).to(WikisImpl.class);
-    bind(PicturesBatchFactory.class).to(RealPicturesBatchFactory.class);
+    bind(MediaUploadBatchFactory.class).to(DefaultMediaUploadBatchFactory.class);
     bind(MediaWikiFactory.class);
     
     Multibinder<PreProcessor> preProcessorsBinder = Multibinder.newSetBinder(binder(), PreProcessor.class);
@@ -143,8 +143,8 @@ public final class ComeOn extends AbstractModule {
     
     bind(TransferMonitor.class);
     
-    bind(AddPicturesAction.class);
-    bind(UploadPicturesAction.class);
+    bind(AddMediaAction.class);
+    bind(UploadMediaAction.class);
     bind(AboutAction.class);
     bind(PreferencesAction.class);
     bind(QuitAction.class);
@@ -222,8 +222,8 @@ public final class ComeOn extends AbstractModule {
     final UI ui = injector.getInstance(UI.class);
     comeOn.bus.register(ui);
     comeOn.bus.register(injector.getInstance(Core.class));
-    comeOn.bus.register(injector.getInstance(AddPicturesAction.class));
-    comeOn.bus.register(injector.getInstance(UploadPicturesAction.class));
+    comeOn.bus.register(injector.getInstance(AddMediaAction.class));
+    comeOn.bus.register(injector.getInstance(UploadMediaAction.class));
     comeOn.bus.register(injector.getInstance(AbortAction.class));
     comeOn.bus.register(injector.getInstance(TransferMonitor.class));
     return ui;

@@ -10,21 +10,21 @@ import comeon.core.extmetadata.ExternalMetadataSource;
 import comeon.model.Template;
 import comeon.model.processors.PreProcessor;
 
-public final class RealPicturesBatchFactory implements PicturesBatchFactory {
+public final class DefaultMediaUploadBatchFactory implements MediaUploadBatchFactory {
 
   private final ExecutorService pool;
   
   private final Set<PreProcessor> preProcessors;
   
   @Inject
-  public RealPicturesBatchFactory(final ExecutorService pool, final Set<PreProcessor> preProcessors) {
+  public DefaultMediaUploadBatchFactory(final ExecutorService pool, final Set<PreProcessor> preProcessors) {
     this.pool = pool;
     this.preProcessors = preProcessors;
   }
   
   @Override
-  public PicturesBatch makePicturesBatch(final File[] files, final Template defautTemplate, final ExternalMetadataSource<?> externalMetadataSource) {
-    return new PicturesBatch(files, defautTemplate, pool, preProcessors, externalMetadataSource);
+  public MediaUploadBatch makeMediaUploadBatch(final File[] files, final Template defautTemplate, final ExternalMetadataSource<?> externalMetadataSource) {
+    return new MediaUploadBatch(files, defautTemplate, pool, preProcessors, externalMetadataSource);
   }
 
 }

@@ -38,12 +38,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import comeon.core.ProgressListenerAdapter;
-import comeon.core.events.PictureTransferDoneEvent;
-import comeon.core.events.PictureTransferFailedEvent;
-import comeon.core.events.PictureTransferStartingEvent;
+import comeon.core.events.MediaTransferDoneEvent;
+import comeon.core.events.MediaTransferFailedEvent;
+import comeon.core.events.MediaTransferStartingEvent;
 import comeon.core.events.UploadDoneEvent;
 import comeon.core.events.UploadStartingEvent;
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.ui.UI;
 
 @Singleton
@@ -54,9 +54,9 @@ public final class TransferMonitor extends JOptionPane {
 
   private final JProgressBar batchBar;
 
-  private final Box pictureBarsBox;
+  private final Box mediaBarsBox;
 
-  private final JScrollPane pictureBarsPane;
+  private final JScrollPane mediaBarsPane;
 
   private final CloseAction closeAction;
   
@@ -66,14 +66,14 @@ public final class TransferMonitor extends JOptionPane {
   
   @Inject
   public TransferMonitor(final AbortAction abortAction, final UI ui) {
-    super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, UploadPicturesAction.ICON, null);
+    super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, UploadMediaAction.ICON, null);
     this.getInputMap(JOptionPane.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed ESCAPE"), "none");
     this.batchBar = new JProgressBar(SwingConstants.HORIZONTAL);
     this.batchBar.setStringPainted(true);
-    this.pictureBarsBox = Box.createVerticalBox();
-    this.pictureBarsPane = new JScrollPane(pictureBarsBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+    this.mediaBarsBox = Box.createVerticalBox();
+    this.mediaBarsPane = new JScrollPane(mediaBarsBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    this.setMessage(new Object[] { batchBar, pictureBarsPane });
+    this.setMessage(new Object[] { batchBar, mediaBarsPane });
     final Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
     this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("upload.title"));
     this.dialog.setResizable(true);
@@ -91,13 +91,13 @@ public final class TransferMonitor extends JOptionPane {
 
   @Subscribe
   public void uploadStarting(final UploadStartingEvent event) {
-    for (final Picture picture : event.getPictures()) {
-      final ProgressPanel panel = new ProgressPanel(picture.getFile().length(), picture.getFileName());
-      panels.put(picture.getFile(), panel);
+    for (final Media media : event.getMedia()) {
+      final ProgressPanel panel = new ProgressPanel(media.getFile().length(), media.getFileName());
+      panels.put(media.getFile(), panel);
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          pictureBarsBox.add(panel);
+          mediaBarsBox.add(panel);
         }
       });
     }
@@ -105,7 +105,7 @@ public final class TransferMonitor extends JOptionPane {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        batchBar.setMaximum(event.getPictures().size());
+        batchBar.setMaximum(event.getMedia().size());
         batchBar.setValue(transferCounter.get());
         dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         closeAction.setEnabled(false);
@@ -115,8 +115,8 @@ public final class TransferMonitor extends JOptionPane {
   }
 
   @Subscribe
-  public void transferStarting(final PictureTransferStartingEvent event) {
-    final ProgressPanel panel = panels.get(event.getPicture().getFile());
+  public void transferStarting(final MediaTransferStartingEvent event) {
+    final ProgressPanel panel = panels.get(event.getMedia().getFile());
     event.getProgressListener().addPropertyChangeListener(ProgressListenerAdapter.TRANSFERRED, new PropertyChangeListener() {
       @Override
       public void propertyChange(final PropertyChangeEvent evt) {
@@ -124,7 +124,7 @@ public final class TransferMonitor extends JOptionPane {
           @Override
           public void run() {
             final Long transferred = (Long) evt.getNewValue();
-            panel.getPictureBar().setValue(transferred.intValue());
+            panel.getMediaBar().setValue(transferred.intValue());
           }
         });
       }
@@ -132,13 +132,13 @@ public final class TransferMonitor extends JOptionPane {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        pictureBarsPane.getViewport().scrollRectToVisible(panel.getBounds());        
+        mediaBarsPane.getViewport().scrollRectToVisible(panel.getBounds());        
       }
     });
   }
   
   @Subscribe
-  public void transferDone(final PictureTransferDoneEvent event) {
+  public void transferDone(final MediaTransferDoneEvent event) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -148,14 +148,14 @@ public final class TransferMonitor extends JOptionPane {
   }
 
   @Subscribe
-  public void transferFailed(final PictureTransferFailedEvent event) {
-    final JProgressBar pictureProgressBar = panels.get(event.getPicture().getFile()).getPictureBar();
+  public void transferFailed(final MediaTransferFailedEvent event) {
+    final JProgressBar mediaProgressBar = panels.get(event.getMedia().getFile()).getMediaBar();
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        pictureProgressBar.setValue(pictureProgressBar.getMaximum());
-        pictureProgressBar.setString(UI.BUNDLE.getString("error.generic.title"));
-        pictureProgressBar.setToolTipText(MessageFormat.format(UI.BUNDLE.getString("error.upload.failed"), event.getCause().getLocalizedMessage()));
+        mediaProgressBar.setValue(mediaProgressBar.getMaximum());
+        mediaProgressBar.setString(UI.BUNDLE.getString("error.generic.title"));
+        mediaProgressBar.setToolTipText(MessageFormat.format(UI.BUNDLE.getString("error.upload.failed"), event.getCause().getLocalizedMessage()));
       }
     });
   }
@@ -188,7 +188,7 @@ public final class TransferMonitor extends JOptionPane {
             @Override
             public void run() {
               dialog.setVisible(false);
-              pictureBarsBox.removeAll();
+              mediaBarsBox.removeAll();
             }
           });
           return null;
@@ -200,7 +200,7 @@ public final class TransferMonitor extends JOptionPane {
   static class ProgressPanel extends Box {
     private static final long serialVersionUID = 1L;
 
-    private final JProgressBar pictureBar;
+    private final JProgressBar mediaBar;
 
     public ProgressPanel(final long length, final String name) {
       super(BoxLayout.Y_AXIS);
@@ -209,18 +209,18 @@ public final class TransferMonitor extends JOptionPane {
       label.setToolTipText(name);
       this.setBackground(Color.WHITE);
       this.setOpaque(true);
-      this.pictureBar = new JProgressBar(SwingConstants.HORIZONTAL);
-      this.pictureBar.setStringPainted(true);
-      this.pictureBar.setMaximum((int) length);
-      this.pictureBar.setValue(0);
-      this.pictureBar.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+      this.mediaBar = new JProgressBar(SwingConstants.HORIZONTAL);
+      this.mediaBar.setStringPainted(true);
+      this.mediaBar.setMaximum((int) length);
+      this.mediaBar.setValue(0);
+      this.mediaBar.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
       this.add(label);
-      this.add(this.pictureBar);
+      this.add(this.mediaBar);
       this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     }
 
-    public JProgressBar getPictureBar() {
-      return pictureBar;
+    public JProgressBar getMediaBar() {
+      return mediaBar;
     }
   }
 }

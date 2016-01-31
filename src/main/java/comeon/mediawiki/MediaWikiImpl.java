@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.model.User;
 import comeon.model.Wiki;
 import comeon.ui.UI;
@@ -58,11 +58,11 @@ public final class MediaWikiImpl implements MediaWiki {
   /*
    * (non-Javadoc)
    * 
-   * @see comeon.commons.Commons#upload(comeon.model.Picture,
+   * @see comeon.commons.Commons#upload(comeon.model.Media,
    * in.yuvi.http.fluent.ProgressListener)
    */
   @Override
-  public void upload(final Picture picture, final ProgressListener listener) throws NotLoggedInException,
+  public void upload(final Media media, final ProgressListener listener) throws NotLoggedInException,
       FailedLoginException, FailedUploadException, IOException {
     synchronized (this) {
       if (!this.api.isLoggedIn) {
@@ -70,10 +70,10 @@ public final class MediaWikiImpl implements MediaWiki {
         this.login();
       }
     }
-    final InputStream stream = Files.asByteSource(picture.getFile()).openBufferedStream();
+    final InputStream stream = Files.asByteSource(media.getFile()).openBufferedStream();
     try {
       LOGGER.debug("Uploading");
-      final ApiResult result = this.api.upload(picture.getFile().getName(), stream, picture.getFile().length(), picture.getRenderedTemplate(),
+      final ApiResult result = this.api.upload(media.getFile().getName(), stream, media.getFile().length(), media.getRenderedTemplate(),
           MessageFormat.format(UI.BUNDLE.getString("upload.comment"), UI.BUNDLE.getString("comeon")), true, listener);
       final ApiResult error = result.getNode("/api/error");
       if (error.getDocument() != null) {

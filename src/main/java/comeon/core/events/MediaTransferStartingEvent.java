@@ -1,14 +1,14 @@
 package comeon.core.events;
 
 import comeon.core.ProgressListenerAdapter;
-import comeon.model.Picture;
+import comeon.model.Media;
 
-public final class PictureTransferStartingEvent extends AbstractPictureEvent {
+public final class MediaTransferStartingEvent extends AbstractMediaEvent {
 
   private final ProgressListenerAdapter progressListener;
   
-  public PictureTransferStartingEvent(final Picture picture, final ProgressListenerAdapter progressListener) {
-    super(picture);
+  public MediaTransferStartingEvent(final Media media, final ProgressListenerAdapter progressListener) {
+    super(media);
     this.progressListener = progressListener;
   }
   

@@ -1,4 +1,4 @@
-package comeon.ui.pictures.metadata;
+package comeon.ui.media.metadata;
 
 import java.text.CollationKey;
 import java.text.Collator;

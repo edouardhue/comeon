@@ -1,4 +1,4 @@
-package comeon.ui.pictures;
+package comeon.ui.media;
 
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
@@ -19,11 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Resources;
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.ui.UI;
 
-final class PictureEditPanel extends JPanel {
-  private static final Logger LOGGER = LoggerFactory.getLogger(PictureEditPanel.class);
+final class MediaEditPanel extends JPanel {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaEditPanel.class);
   
   private static final int TEMPLATE_TAB_INDEX = 0;
 
@@ -33,25 +33,25 @@ final class PictureEditPanel extends JPanel {
 
   private final JTabbedPane templatesPanel;
 
-  public PictureEditPanel(final PicturePanels panels) {
+  public MediaEditPanel(final MediaPanels panels) {
     super(new BorderLayout());
-    final PictureMetadataPanel metadataPanel = new PictureMetadataPanel(panels);
+    final MediaMetadataPanel metadataPanel = new MediaMetadataPanel(panels);
     this.add(metadataPanel, BorderLayout.WEST);
 
-    final JTextArea templateText = new AliasedTextArea(panels.getPicture().getTemplateText());
-    templateText.getDocument().addDocumentListener(new TemplateListener(panels.getPicture()));
+    final JTextArea templateText = new AliasedTextArea(panels.getMedia().getTemplateText());
+    templateText.getDocument().addDocumentListener(new TemplateListener(panels.getMedia()));
     final JScrollPane templatePanel = wrap(templateText);
 
-    final JTextArea renderedTemplate = new AliasedTextArea(panels.getPicture().getRenderedTemplate());
-    renderedTemplate.getDocument().addDocumentListener(new RenderedTemplateListener(panels.getPicture()));
+    final JTextArea renderedTemplate = new AliasedTextArea(panels.getMedia().getRenderedTemplate());
+    renderedTemplate.getDocument().addDocumentListener(new RenderedTemplateListener(panels.getMedia()));
     final JScrollPane renderedTemplatePanel = wrap(renderedTemplate);
 
     this.templatesPanel = new JTabbedPane(SwingConstants.TOP);
-    templatesPanel.insertTab(UI.BUNDLE.getString("picture.tab.template"), new ImageIcon(Resources.getResource("comeon/ui/template_small.png")), templatePanel, null, TEMPLATE_TAB_INDEX);
-    templatesPanel.insertTab(UI.BUNDLE.getString("picture.tab.page"), new ImageIcon(Resources.getResource("comeon/ui/rendered_small.png")), renderedTemplatePanel, null, RENDERED_TAB_INDEX);
+    templatesPanel.insertTab(UI.BUNDLE.getString("media.tab.template"), new ImageIcon(Resources.getResource("comeon/ui/template_small.png")), templatePanel, null, TEMPLATE_TAB_INDEX);
+    templatesPanel.insertTab(UI.BUNDLE.getString("media.tab.page"), new ImageIcon(Resources.getResource("comeon/ui/rendered_small.png")), renderedTemplatePanel, null, RENDERED_TAB_INDEX);
     templatesPanel.setSelectedComponent(renderedTemplatePanel);
     
-    panels.getPicture().addPropertyChangeListener(new PropertyChangeListener() {
+    panels.getMedia().addPropertyChangeListener(new PropertyChangeListener() {
       @Override
       public void propertyChange(final PropertyChangeEvent evt) {
         if ("renderedTemplate".equals(evt.getPropertyName()) && !evt.getNewValue().equals(renderedTemplate.getText())) {
@@ -73,10 +73,10 @@ final class PictureEditPanel extends JPanel {
   }
 
   private abstract class AbstractTemplateListener implements DocumentListener {
-    private final Picture picture;
+    private final Media media;
 
-    protected AbstractTemplateListener(final Picture picture) {
-      this.picture = picture;
+    protected AbstractTemplateListener(final Media media) {
+      this.media = media;
     }
 
     @Override
@@ -95,7 +95,7 @@ final class PictureEditPanel extends JPanel {
 
     private void update(final DocumentEvent e) {
       try {
-        this.doUpdate(picture, getText(e));
+        this.doUpdate(media, getText(e));
       } catch (final BadLocationException e1) {
         LOGGER.warn("Can't update template text", e1);
       }
@@ -105,28 +105,28 @@ final class PictureEditPanel extends JPanel {
       return e.getDocument().getText(0, e.getDocument().getLength());
     }
 
-    protected abstract void doUpdate(final Picture picture, final String text);
+    protected abstract void doUpdate(final Media media, final String text);
   }
 
   private final class TemplateListener extends AbstractTemplateListener {
-    private TemplateListener(final Picture picture) {
-      super(picture);
+    private TemplateListener(final Media media) {
+      super(media);
     }
 
     @Override
-    protected void doUpdate(final Picture picture, final String text) {
-      picture.setTemplateText(text);
+    protected void doUpdate(final Media media, final String text) {
+      media.setTemplateText(text);
     }
   }
 
   private final class RenderedTemplateListener extends AbstractTemplateListener {
-    private RenderedTemplateListener(final Picture picture) {
-      super(picture);
+    private RenderedTemplateListener(final Media media) {
+      super(media);
     }
 
     @Override
-    protected void doUpdate(final Picture picture, final String text) {
-      picture.setRenderedTemplate(text);
+    protected void doUpdate(final Media media, final String text) {
+      media.setRenderedTemplate(text);
     }
   }
 }

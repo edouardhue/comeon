@@ -19,7 +19,7 @@ import comeon.model.Template;
 public class AddModel {
   private final PropertyChangeSupport pcs;
 
-  private File[] picturesFiles;
+  private File[] mediaFiles;
 
   private Template template;
   
@@ -27,31 +27,31 @@ public class AddModel {
 
   private Path metadataFile;
 
-  private String pictureExpression;
+  private String mediaExpression;
 
   private String metadataExpression;
   
-  private String pictureRegexp;
+  private String mediaRegexp;
   
-  private String pictureSubstitution;
+  private String mediaSubstitution;
   
   private final CSVSettings csvSettings;
 
   public enum Properties {
-    PICTURES_FILES, TEMPLATE, USE_METADATA, METADATA_FILE, PICTURE_EXPRESSION, METADATA_EXPRESSION, PICTURE_REGEXP, PICTURE_SUBSTITUTION,
+    MEDIA_FILES, TEMPLATE, USE_METADATA, METADATA_FILE, MEDIA_EXPRESSION, METADATA_EXPRESSION, MEDIA_REGEXP, MEDIA_SUBSTITUTION,
     CSV_SEPARATOR, CSV_QUOTE, CSV_ESCAPE, CSV_SKIP_LINES, CSV_STRICT_QUOTES, CSV_IGNORE_LEADING_WHITESPACE, CSV_CHARSET
   }
 
   public AddModel() {
     this.pcs = new PropertyChangeSupport(this);
-    this.picturesFiles = new File[0];
+    this.mediaFiles = new File[0];
     this.template = null;
     this.useMetadata = Boolean.FALSE;
     this.metadataFile = null;
-    this.pictureExpression = null;
+    this.mediaExpression = null;
     this.metadataExpression = null;
-    this.pictureRegexp = ".*";
-    this.pictureSubstitution = "${0}";
+    this.mediaRegexp = ".*";
+    this.mediaSubstitution = "${0}";
     this.csvSettings = new CSVSettings();
   }
 
@@ -62,8 +62,8 @@ public class AddModel {
   public  ExternalMetadataSource<?> getExternalMetadataSource() {
     final ExternalMetadataSource<?> externalMetadataSource;
     if (useMetadata && metadataFile != null) {
-      final KeyTransformer keyTransformer = new KeyTransformer(pictureRegexp, pictureSubstitution);
-      externalMetadataSource = new CsvMetadataSource(pictureExpression, metadataExpression, metadataFile, csvSettings.separator,
+      final KeyTransformer keyTransformer = new KeyTransformer(mediaRegexp, mediaSubstitution);
+      externalMetadataSource = new CsvMetadataSource(mediaExpression, metadataExpression, metadataFile, csvSettings.separator,
           csvSettings.quote, csvSettings.escape, csvSettings.skipLines, csvSettings.strictQuotes, csvSettings.ignoreLeadingWhiteSpace, csvSettings.charset, keyTransformer);
     } else {
       externalMetadataSource = new NullMetadataSource();
@@ -71,14 +71,14 @@ public class AddModel {
     return externalMetadataSource;
   }
 
-  public File[] getPicturesFiles() {
-    return picturesFiles;
+  public File[] getMediaFiles() {
+    return mediaFiles;
   }
 
-  public void setPicturesFiles(final File[] picturesFiles) {
-    final File[] oldPicturesFile = this.picturesFiles;
-    this.picturesFiles = picturesFiles;
-    pcs.firePropertyChange(Properties.PICTURES_FILES.name(), oldPicturesFile, picturesFiles);
+  public void setMediaFiles(final File[] mediaFiles) {
+    final File[] oldMediaFile = this.mediaFiles;
+    this.mediaFiles = mediaFiles;
+    pcs.firePropertyChange(Properties.MEDIA_FILES.name(), oldMediaFile, mediaFiles);
   }
   
   public Template getTemplate() {
@@ -111,14 +111,14 @@ public class AddModel {
     pcs.firePropertyChange(Properties.METADATA_FILE.name(), oldMetadataFile, metadataFile);
   }
 
-  public String getPictureExpression() {
-    return pictureExpression;
+  public String getMediaExpression() {
+    return mediaExpression;
   }
 
-  public void setPictureExpression(final String pictureExpression) {
-    final String oldPictureExpression = this.pictureExpression;
-    this.pictureExpression = pictureExpression;
-    pcs.firePropertyChange(Properties.PICTURE_EXPRESSION.name(), oldPictureExpression, pictureExpression);
+  public void setMediaExpression(final String mediaExpression) {
+    final String oldMediaExpression = this.mediaExpression;
+    this.mediaExpression = mediaExpression;
+    pcs.firePropertyChange(Properties.MEDIA_EXPRESSION.name(), oldMediaExpression, mediaExpression);
   }
 
   public String getMetadataExpression() {
@@ -131,24 +131,24 @@ public class AddModel {
     pcs.firePropertyChange(Properties.METADATA_EXPRESSION.name(), oldMetadataExpression, metadataExpression);
   }
   
-  public String getPictureRegexp() {
-    return pictureRegexp;
+  public String getMediaRegexp() {
+    return mediaRegexp;
   }
   
-  public void setPictureRegexp(final String pictureRegexp) {
-    final String oldPictureRegexp = this.pictureRegexp;
-    this.pictureRegexp = pictureRegexp;
-    pcs.firePropertyChange(Properties.PICTURE_REGEXP.name(), oldPictureRegexp, pictureRegexp);
+  public void setMediaRegexp(final String mediaRegexp) {
+    final String oldMediaRegexp = this.mediaRegexp;
+    this.mediaRegexp = mediaRegexp;
+    pcs.firePropertyChange(Properties.MEDIA_REGEXP.name(), oldMediaRegexp, mediaRegexp);
   }
   
-  public String getPictureSubstitution() {
-    return pictureSubstitution;
+  public String getMediaSubstitution() {
+    return mediaSubstitution;
   }
   
-  public void setPictureSubstitution(final String pictureSubstitution) {
-    final String oldPictureSubstitution = this.pictureSubstitution;
-    this.pictureSubstitution = pictureSubstitution;
-    pcs.firePropertyChange(Properties.PICTURE_SUBSTITUTION.name(), oldPictureSubstitution, pictureSubstitution);
+  public void setMediaSubstitution(final String mediaSubstitution) {
+    final String oldMediaSubstitution = this.mediaSubstitution;
+    this.mediaSubstitution = mediaSubstitution;
+    pcs.firePropertyChange(Properties.MEDIA_SUBSTITUTION.name(), oldMediaSubstitution, mediaSubstitution);
   }
 
   public char getSeparator() {

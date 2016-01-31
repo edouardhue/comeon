@@ -1,4 +1,4 @@
-package comeon.ui.pictures;
+package comeon.ui.media;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

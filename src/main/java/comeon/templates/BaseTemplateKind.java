@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.model.Template;
 import comeon.model.TemplateKind;
 import comeon.model.User;
@@ -19,10 +19,10 @@ public abstract class BaseTemplateKind implements TemplateKind {
   }
   
   @Override
-  public final String render(final Template template, final String templateText, final User user, final Picture picture) {
+  public final String render(final Template template, final String templateText, final User user, final Media media) {
     final Map<String, Object> context = new HashMap<>();
     for (final PostProcessor processor : postProcessors) {
-      processor.process(user, picture, context);
+      processor.process(user, media, context);
     }
     return this.doRender(template, templateText, context);
   }

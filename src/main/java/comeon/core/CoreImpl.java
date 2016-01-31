@@ -20,9 +20,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import comeon.core.events.PictureTransferDoneEvent;
-import comeon.core.events.PictureTransferFailedEvent;
-import comeon.core.events.PictureTransferStartingEvent;
+import comeon.core.events.MediaTransferDoneEvent;
+import comeon.core.events.MediaTransferFailedEvent;
+import comeon.core.events.MediaTransferStartingEvent;
 import comeon.core.events.UploadDoneEvent;
 import comeon.core.events.UploadStartingEvent;
 import comeon.core.extmetadata.ExternalMetadataSource;
@@ -32,12 +32,12 @@ import comeon.mediawiki.FailedUploadException;
 import comeon.mediawiki.MediaWiki;
 import comeon.mediawiki.MediaWikiFactory;
 import comeon.mediawiki.NotLoggedInException;
-import comeon.model.Picture;
-import comeon.model.Picture.State;
+import comeon.model.Media;
+import comeon.model.Media.State;
 import comeon.model.Template;
 import comeon.model.Wiki;
-import comeon.ui.actions.PictureRemovedEvent;
-import comeon.ui.actions.PicturesAddedEvent;
+import comeon.ui.actions.MediaRemovedEvent;
+import comeon.ui.actions.MediaAddedEvent;
 import comeon.wikis.ActiveWikiChangeEvent;
 import comeon.wikis.Wikis;
 
@@ -45,7 +45,7 @@ import comeon.wikis.Wikis;
 public final class CoreImpl implements Core {
   private static final Logger LOGGER = LoggerFactory.getLogger(CoreImpl.class);
 
-  private final List<Picture> pictures;
+  private final List<Media> medias;
 
   private final ExecutorService pool;
 
@@ -53,7 +53,7 @@ public final class CoreImpl implements Core {
 
   private final EventBus bus;
 
-  private final PicturesBatchFactory picturesBatchFactory;
+  private final MediaUploadBatchFactory mediaUploadBatchFactory;
   
   private final MediaWikiFactory mediaWikiFactory;
   
@@ -63,13 +63,13 @@ public final class CoreImpl implements Core {
 
   @Inject
   private CoreImpl(final Wikis wikis, final ExecutorService pool, final EventBus bus,
-      final PicturesBatchFactory picturesBatchFactory, final MediaWikiFactory mediaWikiFactory) {
-    this.pictures = new ArrayList<>();
+      final MediaUploadBatchFactory mediaUploadBatchFactory, final MediaWikiFactory mediaWikiFactory) {
+    this.medias = new ArrayList<>();
     this.currentTasks = new ConcurrentLinkedQueue<>();
     this.pool = pool;
     this.bus = bus;
     this.wikis = wikis;
-    this.picturesBatchFactory = picturesBatchFactory;
+    this.mediaUploadBatchFactory = mediaUploadBatchFactory;
     this.mediaWikiFactory = mediaWikiFactory;
     final Wiki activeWiki = wikis.getActiveWiki();
     if (activeWiki == null) {
@@ -80,69 +80,69 @@ public final class CoreImpl implements Core {
   }
 
   @Override
-  public void addPictures(final File[] files, final Template defautTemplate,
+  public void addMedia(final File[] files, final Template defautTemplate,
       final ExternalMetadataSource<?> externalMetadataSource) {
     externalMetadataSource.loadMetadata();
-    final PicturesBatch picturesReader = picturesBatchFactory.makePicturesBatch(files, defautTemplate,
+    final MediaUploadBatch mediaReader = mediaUploadBatchFactory.makeMediaUploadBatch(files, defautTemplate,
         externalMetadataSource);
-    final List<Picture> newPictures = picturesReader.readFiles(wikis.getActiveWiki().getUser()).getPictures();
-    this.pictures.addAll(newPictures);
-    bus.post(new PicturesAddedEvent(Collections.unmodifiableList(newPictures)));
+    final List<Media> newMedia = mediaReader.readFiles(wikis.getActiveWiki().getUser()).getMedia();
+    this.medias.addAll(newMedia);
+    bus.post(new MediaAddedEvent(Collections.unmodifiableList(newMedia)));
   }
 
   @Override
-  public void removePicture(final Picture picture) {
-    pictures.remove(picture);
-    bus.post(new PictureRemovedEvent(picture));
+  public void removeMedia(final Media media) {
+    medias.remove(media);
+    bus.post(new MediaRemovedEvent(media));
   }
 
   @Override
-  public List<Picture> getPictures() {
-    return pictures;
+  public List<Media> getMedia() {
+    return medias;
   }
 
-  private boolean shouldUpload(final Picture picture) {
-    return !State.UploadedSuccessfully.equals(picture.getState());
+  private boolean shouldUpload(final Media media) {
+    return !State.UploadedSuccessfully.equals(media.getState());
   }
 
   @Override
-  public int countPicturesToBeUploaded() {
-    return filterPicturesToBeUploaded().size();
+  public int countMediaToBeUploaded() {
+    return filterMediaToBeUploaded().size();
   }
   
-  private List<Picture> filterPicturesToBeUploaded() {
-    final List<Picture> picturesToBeUploaded = new ArrayList<>(pictures.size());
-    for (final Picture picture : pictures) {
-      if (shouldUpload(picture)) {
-        picturesToBeUploaded.add(picture);
+  private List<Media> filterMediaToBeUploaded() {
+    final List<Media> mediaToBeUploaded = new ArrayList<>(medias.size());
+    for (final Media media : medias) {
+      if (shouldUpload(media)) {
+        mediaToBeUploaded.add(media);
       }
     }
-    return picturesToBeUploaded;
+    return mediaToBeUploaded;
   }
 
   private class UploadTask implements Callable<Void> {
     private final Logger taskLogger = LoggerFactory.getLogger(UploadTask.class);
     
-    private final Picture picture;
+    private final Media media;
     
-    public UploadTask(final Picture picture) {
-      this.picture = picture;
+    public UploadTask(final Media media) {
+      this.media = media;
     }
     
     @Override
     public Void call() throws Exception {
       try {
-        taskLogger.debug("Starting upload of {}", picture.getFileName());
+        taskLogger.debug("Starting upload of {}", media.getFileName());
         final ProgressListenerAdapter progressListener = new ProgressListenerAdapter();
-        bus.post(new PictureTransferStartingEvent(picture, progressListener));
-        activeMediaWiki.upload(picture, progressListener);
-        picture.setState(State.UploadedSuccessfully);
-        bus.post(new PictureTransferDoneEvent(picture));
-        taskLogger.debug("Finished upload of {}", picture.getFileName());
+        bus.post(new MediaTransferStartingEvent(media, progressListener));
+        activeMediaWiki.upload(media, progressListener);
+        media.setState(State.UploadedSuccessfully);
+        bus.post(new MediaTransferDoneEvent(media));
+        taskLogger.debug("Finished upload of {}", media.getFileName());
       } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
-        taskLogger.warn("Failed upload of {}", picture.getFileName(), e);
-        picture.setState(State.FailedUpload);
-        bus.post(new PictureTransferFailedEvent(picture, e));
+        taskLogger.warn("Failed upload of {}", media.getFileName(), e);
+        media.setState(State.FailedUpload);
+        bus.post(new MediaTransferFailedEvent(media, e));
       }
       return null;
     }
@@ -154,7 +154,7 @@ public final class CoreImpl implements Core {
         isEqual = false;
       } else if (obj instanceof UploadTask) {
         final UploadTask task = (UploadTask) obj;
-        isEqual = task.picture.equals(this.picture);
+        isEqual = task.media.equals(this.media);
       } else {
         isEqual = super.equals(obj);
       }
@@ -163,13 +163,13 @@ public final class CoreImpl implements Core {
   }
   
   @Override
-  public void uploadPictures() {
-    final List<Picture> picturesToBeUploaded = this.filterPicturesToBeUploaded();
-    LOGGER.info("Uploading {} pictures to {}.", picturesToBeUploaded.size(), activeMediaWiki.getName());
-    bus.post(new UploadStartingEvent(picturesToBeUploaded));
-    final List<Future<Void>> tasks = new ArrayList<>(picturesToBeUploaded.size());
-    for (final Picture picture : picturesToBeUploaded) {
-      final UploadTask task = new UploadTask(picture);
+  public void uploadMedia() {
+    final List<Media> mediaToBeUploaded = this.filterMediaToBeUploaded();
+    LOGGER.info("Uploading {} media to {}.", mediaToBeUploaded.size(), activeMediaWiki.getName());
+    bus.post(new UploadStartingEvent(mediaToBeUploaded));
+    final List<Future<Void>> tasks = new ArrayList<>(mediaToBeUploaded.size());
+    for (final Media media : mediaToBeUploaded) {
+      final UploadTask task = new UploadTask(media);
       final Future<Void> taskResult = pool.submit(task);
       tasks.add(taskResult);
     }
@@ -219,8 +219,8 @@ public final class CoreImpl implements Core {
       }
     }
     this.activeMediaWiki = mediaWikiFactory.build(wikis.getActiveWiki());
-    for (final Picture picture : pictures) {
-      picture.renderTemplate(wikis.getActiveWiki().getUser());
+    for (final Media media : medias) {
+      media.renderTemplate(wikis.getActiveWiki().getUser());
     }
   }
 }

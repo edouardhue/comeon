@@ -5,7 +5,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.Map;
 
-public final class Picture {
+public final class Media {
   private final PropertyChangeSupport pcs;
   
   private final File file;
@@ -24,7 +24,7 @@ public final class Picture {
   
   private State state;
 
-  public Picture(final File file, final String fileName, final Template template, final Map<String, Object> metadata,
+  public Media(final File file, final String fileName, final Template template, final Map<String, Object> metadata,
       final byte[] thumbnail) {
     super();
     this.pcs = new PropertyChangeSupport(this);
@@ -104,8 +104,8 @@ public final class Picture {
     final boolean isEqual;
     if (obj == null) {
       isEqual = false;
-    } else if (obj instanceof Picture) {
-      final Picture o = (Picture) obj;
+    } else if (obj instanceof Media) {
+      final Media o = (Media) obj;
       isEqual = this.file.equals(o.file);
     } else {
       isEqual = false;

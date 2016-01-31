@@ -19,7 +19,7 @@ import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
 import comeon.core.extmetadata.NullMetadataSource;
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.model.Template;
 import comeon.model.processors.GpsPreProcessor;
 import comeon.model.processors.IptcPreProcessor;
@@ -30,7 +30,7 @@ import comeon.model.processors.IptcPreProcessor;
  * @author Édouard Hue
  *
  */
-public class PicturesTest {
+public class MediaTest {
   private static final String SHORT_CAT_NAME = "Category:Women facing right and looking right";
 
   private static final String LONG_CAT_NAME_2 = "Category:Annual general meeting of Wikimédia France in October 2013";
@@ -40,7 +40,7 @@ public class PicturesTest {
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
   
-  private PicturesBatch.PictureReader reader;
+  private MediaUploadBatch.MediaReader reader;
   
   @Before
   public void createReader() throws IOException {
@@ -48,13 +48,13 @@ public class PicturesTest {
     Files.copy(Resources.newInputStreamSupplier(Resources.getResource("long-category-titles.jpg")), file);
     final Template mockTemplate = Mockito.mock(Template.class);
     Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
-    final PicturesBatch pics = new PicturesBatch(new File[0], mockTemplate, (ExecutorService) null, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
-    this.reader = pics.new PictureReader(file, null);
+    final MediaUploadBatch pics = new MediaUploadBatch(new File[0], mockTemplate, (ExecutorService) null, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
+    this.reader = pics.new MediaReader(file, null);
   }
 
   @Test
   public void testReadLongCategoryTitles() throws ImageProcessingException, IOException {
-    final Picture pic = reader.buildPicture();
+    final Media pic = reader.buildMedia();
     Assert.assertTrue(pic.getMetadata().containsKey("keywords"));
     final Set<String> keywords = Sets.newHashSet((String[]) pic.getMetadata().get("keywords"));
     Assert.assertFalse(keywords.contains(LONG_CAT_NAME_1));

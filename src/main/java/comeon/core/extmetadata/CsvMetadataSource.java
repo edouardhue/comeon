@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.bean.CsvToBean;
 
-import comeon.model.Picture;
+import comeon.model.Media;
 
 public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   private static final Logger LOGGER = LoggerFactory.getLogger(CsvMetadataSource.class);
@@ -27,7 +27,7 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   
   private final Path metadataFile;
 
-  private final String pictureExpression;
+  private final String mediaExpression;
   
   private final String metadataExpression;
   
@@ -47,9 +47,9 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   
   private final KeyTransformer keyTransformer;
   
-  public CsvMetadataSource(final String pictureExpression, final String metadataExpression, final Path metadataFile, final char separator, final char quote, final char escape,
+  public CsvMetadataSource(final String mediaExpression, final String metadataExpression, final Path metadataFile, final char separator, final char quote, final char escape,
       final int skipLines, final boolean strictQuotes, final boolean ignoreLeadingWhiteSpace, final Charset charset, final KeyTransformer keyTransformer) {
-    this.pictureExpression = pictureExpression;
+    this.mediaExpression = mediaExpression;
     this.metadataExpression = metadataExpression;
     this.metadataFile = metadataFile;
     this.separator = separator;
@@ -79,17 +79,17 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
   }
   
   @Override
-  public Object getPictureMetadata(final Picture picture, final Map<String, Object> pictureMetadata) {
+  public Object getMediaMetadata(final Media media, final Map<String, Object> mediaMetadata) {
     try {
-      final LazyDynaMap bean = new LazyDynaMap(pictureMetadata);
-      final String key = String.valueOf(PropertyUtils.getNestedProperty(bean, pictureExpression));
+      final LazyDynaMap bean = new LazyDynaMap(mediaMetadata);
+      final String key = String.valueOf(PropertyUtils.getNestedProperty(bean, mediaExpression));
       return metadata.get(keyTransformer.transform(key));
     } catch (final IllegalAccessException | InvocationTargetException | NestedNullException | NoSuchMethodException e) {
       try {
-        final String key = String.valueOf(PropertyUtils.getNestedProperty(picture, pictureExpression));
+        final String key = String.valueOf(PropertyUtils.getNestedProperty(media, mediaExpression));
         return metadata.get(keyTransformer.transform(key));
       } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e2) {
-        LOGGER.warn("Can't get property {} from picture", pictureExpression, e2);
+        LOGGER.warn("Can't get property {} from media", mediaExpression, e2);
         return null;
       }
     }

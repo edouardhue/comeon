@@ -2,9 +2,9 @@ package comeon.model.processors;
 
 import java.util.Map;
 
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.model.User;
 
 public interface PostProcessor {
-  void process(User user, Picture picture, Map<String, Object> context);
+  void process(User user, Media media, Map<String, Object> context);
 }

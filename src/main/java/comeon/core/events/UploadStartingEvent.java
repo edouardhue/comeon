@@ -2,17 +2,17 @@ package comeon.core.events;
 
 import java.util.List;
 
-import comeon.model.Picture;
+import comeon.model.Media;
 
 public final class UploadStartingEvent {
 
-  private final List<Picture> pictures;
+  private final List<Media> media;
 
-  public UploadStartingEvent(List<Picture> pictures) {
-    this.pictures = pictures;
+  public UploadStartingEvent(List<Media> media) {
+    this.media = media;
   }
 
-  public List<Picture> getPictures() {
-    return pictures;
+  public List<Media> getMedia() {
+    return media;
   }
 }

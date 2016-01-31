@@ -19,7 +19,7 @@ import comeon.ui.UI;
 import comeon.wikis.Wikis;
 
 @Singleton
-public final class UploadPicturesAction extends BaseAction {
+public final class UploadMediaAction extends BaseAction {
   private static final long serialVersionUID = 1L;
 
   static final ImageIcon ICON = new ImageIcon(Resources.getResource("comeon/ui/upload_huge.png"));
@@ -29,7 +29,7 @@ public final class UploadPicturesAction extends BaseAction {
   private final Wikis wikis;
   
   @Inject
-  public UploadPicturesAction(final Core core, final Wikis wikis) {
+  public UploadMediaAction(final Core core, final Wikis wikis) {
     super("upload");
     this.core = core;
     this.wikis = wikis;
@@ -38,8 +38,8 @@ public final class UploadPicturesAction extends BaseAction {
 
   @Override
   public void actionPerformed(final ActionEvent e) {
-    final int picturesToUpload = core.countPicturesToBeUploaded();
-    if (picturesToUpload == 0) {
+    final int mediaToUpload = core.countMediaToBeUploaded();
+    if (mediaToUpload == 0) {
       JOptionPane.showMessageDialog(
           SwingUtilities.getWindowAncestor((Component) e.getSource()),
           UI.BUNDLE.getString("action.upload.none"));
@@ -48,7 +48,7 @@ public final class UploadPicturesAction extends BaseAction {
           SwingUtilities.getWindowAncestor((Component) e.getSource()),
           MessageFormat.format(
               UI.BUNDLE.getString("action.upload.confirm"),
-              picturesToUpload, wikis.getActiveWiki().getName()),
+              mediaToUpload, wikis.getActiveWiki().getName()),
               UIManager.getString("OptionPane.titleText"),
               JOptionPane.OK_CANCEL_OPTION,
               JOptionPane.QUESTION_MESSAGE,
@@ -57,7 +57,7 @@ public final class UploadPicturesAction extends BaseAction {
         new SwingWorker<Void, Void>() {
           @Override
           protected Void doInBackground() throws Exception {
-            core.uploadPictures();
+            core.uploadMedia();
             return null;
           }
         }.execute();
@@ -66,20 +66,20 @@ public final class UploadPicturesAction extends BaseAction {
   }
 
   @Subscribe
-  public void handlePicturesAddedEvent(final PicturesAddedEvent event) {
-    this.enableIfPicturesAreAvailable();
+  public void handleMediaAddedEvent(final MediaAddedEvent event) {
+    this.enableIfMediaAreAvailable();
   }
 
   @Subscribe
-  public void handlePictureRemovedEvent(final PictureRemovedEvent event) {
-    this.enableIfPicturesAreAvailable();
+  public void handleMediaRemovedEvent(final MediaRemovedEvent event) {
+    this.enableIfMediaAreAvailable();
   }
   
-  private void enableIfPicturesAreAvailable() {
+  private void enableIfMediaAreAvailable() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        UploadPicturesAction.this.setEnabled(core.countPicturesToBeUploaded() > 0);
+        UploadMediaAction.this.setEnabled(core.countMediaToBeUploaded() > 0);
       }
     });
   }

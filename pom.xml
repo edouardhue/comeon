@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>comeon</groupId>
   <artifactId>comeon</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>ComeOn!</name>
   <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
@@ -206,6 +206,11 @@
       <artifactId>jul-to-slf4j</artifactId>
       <version>${version.slf4j}</version>
     </dependency>
+    <dependency>
+        <groupId>net.jthink</groupId>
+        <artifactId>jaudiotagger</artifactId>
+        <version>2.2.5</version>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -366,6 +371,16 @@
           <enabled>false</enabled>
         </snapshots>        
      </repository>
+    <repository>
+        <id>jaudiotagger-repository</id>
+        <url>https://dl.bintray.com/ijabz/maven</url>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+    </repository>
      <repository>
         <id>timboudreau</id>
         <url>http://timboudreau.com/builds/plugin/repository/everything</url>

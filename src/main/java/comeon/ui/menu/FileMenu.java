@@ -5,20 +5,20 @@ import javax.swing.JSeparator;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import comeon.ui.actions.AddPicturesAction;
+import comeon.ui.actions.AddMediaAction;
 import comeon.ui.actions.QuitAction;
-import comeon.ui.actions.UploadPicturesAction;
+import comeon.ui.actions.UploadMediaAction;
 
 @Singleton
 public final class FileMenu extends BaseMenu {
   private static final long serialVersionUID = 1L;
 
   @Inject
-  public FileMenu(final AddPicturesAction addPicturesAction, final UploadPicturesAction uploadPicturesAction,
+  public FileMenu(final AddMediaAction addMediaAction, final UploadMediaAction uploadMediaAction,
       final QuitAction quitAction) {
     super("file");
-    this.add(new JMenuItem(addPicturesAction));
-    this.add(new JMenuItem(uploadPicturesAction));
+    this.add(new JMenuItem(addMediaAction));
+    this.add(new JMenuItem(uploadMediaAction));
     this.add(new JSeparator());
     this.add(new JMenuItem(quitAction));
   }

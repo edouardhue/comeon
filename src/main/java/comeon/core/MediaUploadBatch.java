@@ -32,19 +32,19 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
 import comeon.core.extmetadata.ExternalMetadataSource;
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.model.Template;
 import comeon.model.User;
 import comeon.model.processors.PreProcessor;
 
-public final class PicturesBatch {
-  private static final Logger LOGGER = LoggerFactory.getLogger(PicturesBatch.class);
+public final class MediaUploadBatch {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaUploadBatch.class);
   
   private final File[] files;
 
   private final Template defaultTemplate;
 
-  private final List<Picture> pictures;
+  private final List<Media> medias;
 
   private final ExecutorService pool;
 
@@ -54,19 +54,19 @@ public final class PicturesBatch {
   
   private final ExternalMetadataSource<?> externalMetadataSource;
 
-  PicturesBatch(final File[] files, final Template defautTemplate, final ExecutorService pool, final Set<PreProcessor> preProcessors, final ExternalMetadataSource<?> externalMetadataSource) {
+  MediaUploadBatch(final File[] files, final Template defautTemplate, final ExecutorService pool, final Set<PreProcessor> preProcessors, final ExternalMetadataSource<?> externalMetadataSource) {
     this.files = files;
     this.defaultTemplate = defautTemplate;
     this.pool = pool;
-    this.pictures = Collections.synchronizedList(new ArrayList<Picture>(files.length));
+    this.medias = Collections.synchronizedList(new ArrayList<Media>(files.length));
     this.latch = new CountDownLatch(files.length);
     this.preProcessors = preProcessors;
     this.externalMetadataSource = externalMetadataSource;
   }
 
-  public PicturesBatch readFiles(final User user) {
+  public MediaUploadBatch readFiles(final User user) {
     for (final File file : files) {
-      pool.execute(new PictureReader(file, user));
+      pool.execute(new MediaReader(file, user));
     }
 
     try {
@@ -78,18 +78,18 @@ public final class PicturesBatch {
     return this;
   }
 
-  public List<Picture> getPictures() {
-    return pictures;
+  public List<Media> getMedia() {
+    return medias;
   }
 
-  final class PictureReader implements Runnable {
+  final class MediaReader implements Runnable {
     private static final String NON_WORD_CHARS = "[^\\w]";
 
     private final File file;
 
     private final User user;
 
-    PictureReader(final File file, final User user) {
+    MediaReader(final File file, final User user) {
       this.file = file;
       this.user = user;
     }
@@ -98,22 +98,22 @@ public final class PicturesBatch {
     public void run() {
       final String fileName = file.getAbsolutePath();
       try {
-        final Picture picture = buildPicture();
-        picture.renderTemplate(user);
-        picture.addPropertyChangeListener(new PropertyChangeListener() {
+        final Media media = buildMedia();
+        media.renderTemplate(user);
+        media.addPropertyChangeListener(new PropertyChangeListener() {
           @Override
           public void propertyChange(final PropertyChangeEvent evt) {
             if ("templateText".equals(evt.getPropertyName())) {
               pool.submit(new Runnable() {
                 @Override
                 public void run() {
-                  picture.renderTemplate(user);
+                  media.renderTemplate(user);
                 }
               });
             }
           }
         });
-        pictures.add(picture);
+        medias.add(media);
       } catch (final ImageProcessingException e) {
         LOGGER.warn("Can't read metadata from {}", fileName, e);
       } catch (final IOException e) {
@@ -123,7 +123,7 @@ public final class PicturesBatch {
       }
     }
     
-    Picture buildPicture() throws ImageProcessingException, IOException {
+    Media buildMedia() throws ImageProcessingException, IOException {
       final String fileName = file.getAbsolutePath();
       final Metadata rawMetadata = ImageMetadataReader.readMetadata(file);
       final ExifThumbnailDirectory thumbnailDirectory = rawMetadata.getDirectory(ExifThumbnailDirectory.class);
@@ -138,9 +138,9 @@ public final class PicturesBatch {
         copy(directory, metadata);
         preProcess(directory, metadata);
       }
-      final Picture picture = new Picture(file, fileName, defaultTemplate, metadata, thumbnail);
-      metadata.put(Core.EXTERNAL_METADATA_KEY, externalMetadataSource.getPictureMetadata(picture, metadata));
-      return picture;
+      final Media media = new Media(file, fileName, defaultTemplate, metadata, thumbnail);
+      metadata.put(Core.EXTERNAL_METADATA_KEY, externalMetadataSource.getMediaMetadata(media, metadata));
+      return media;
     }
 
     private void copy(final Directory directory, final Map<String, Object> metadata) {

@@ -2,7 +2,7 @@ package comeon.core.extmetadata;
 
 import java.util.Map;
 
-import comeon.model.Picture;
+import comeon.model.Media;
 
 public final class NullMetadataSource implements ExternalMetadataSource<Void> {
   @Override
@@ -10,7 +10,7 @@ public final class NullMetadataSource implements ExternalMetadataSource<Void> {
   }
 
   @Override
-  public Void getPictureMetadata(Picture picture, final Map<String, Object> pictureMetadata) {
+  public Void getMediaMetadata(Media media, final Map<String, Object> mediaMetadata) {
     return null;
   }
 }

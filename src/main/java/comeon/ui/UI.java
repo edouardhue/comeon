@@ -39,14 +39,14 @@ import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.core.Core;
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.templates.Templates;
-import comeon.ui.actions.PictureRemovedEvent;
-import comeon.ui.actions.PicturesAddedEvent;
+import comeon.ui.actions.MediaRemovedEvent;
+import comeon.ui.actions.MediaAddedEvent;
 import comeon.ui.add.AddModel;
-import comeon.ui.add.AddPicturesDialog;
+import comeon.ui.add.AddMediaDialog;
+import comeon.ui.media.MediaPanels;
 import comeon.ui.menu.MenuBar;
-import comeon.ui.pictures.PicturePanels;
 import comeon.ui.toolbar.Toolbar;
 
 @Singleton
@@ -101,7 +101,7 @@ public final class UI extends JFrame {
     
     this.add(toolbar, BorderLayout.NORTH);
     
-    final PictureTransferHandler transferHandler = new PictureTransferHandler(templates);
+    final MediaTransferHandler transferHandler = new MediaTransferHandler(templates);
     this.setTransferHandler(transferHandler);
   }
 
@@ -116,48 +116,48 @@ public final class UI extends JFrame {
   }
 
   @Subscribe
-  public void handlePicturesAddedEvent(final PicturesAddedEvent event) {
-    this.refreshPictures();
+  public void handleMediaAddedEvent(final MediaAddedEvent event) {
+    this.refreshMedia();
   }
 
   @Subscribe
-  public void handlePictureRemovedEvent(final PictureRemovedEvent event) {
-    this.refreshPictures();
+  public void handleMediaRemovedEvent(final MediaRemovedEvent event) {
+    this.refreshMedia();
   }
 
-  private void refreshPictures() {
+  private void refreshMedia() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         previews.removeAll();
         editContainer.removeAll();
         validate();
-        for (final Picture picture : core.getPictures()) {
-          add(picture);
+        for (final Media media : core.getMedia()) {
+          add(media);
         }
         validate();
       }
     });
   }
 
-  private void add(final Picture picture) {
-    final PicturePanels panels = new PicturePanels(picture);
+  private void add(final Media media) {
+    final MediaPanels panels = new MediaPanels(media);
     final JComponent previewPanel = panels.getPreviewPanel();
 
     this.previews.remove(previewsGlue);
     this.previews.add(previewPanel);
     this.previews.add(previewsGlue);
 
-    this.editContainer.add(panels.getEditPanel(), picture.getFileName());
+    this.editContainer.add(panels.getEditPanel(), media.getFileName());
 
-    previewPanel.addMouseListener(new PreviewPanelMouseAdapter(picture));
+    previewPanel.addMouseListener(new PreviewPanelMouseAdapter(media));
   }
 
   private final class PreviewPanelMouseAdapter extends MouseAdapter {
-    private final Picture picture;
+    private final Media media;
 
-    private PreviewPanelMouseAdapter(Picture picture) {
-      this.picture = picture;
+    private PreviewPanelMouseAdapter(Media media) {
+      this.media = media;
     }
 
     @Override
@@ -167,9 +167,9 @@ public final class UI extends JFrame {
           @Override
           public void run() {
             if (e.isControlDown()) {
-              core.removePicture(picture);
+              core.removeMedia(media);
             } else {
-              ((CardLayout) editContainer.getLayout()).show(editContainer, picture.getFileName());
+              ((CardLayout) editContainer.getLayout()).show(editContainer, media.getFileName());
             }
           }
         });
@@ -177,12 +177,12 @@ public final class UI extends JFrame {
     }
   }
   
-  private final class PictureTransferHandler extends TransferHandler {
+  private final class MediaTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 1L;
     
     private final Templates templates;
 
-    public PictureTransferHandler(final Templates templates) {
+    public MediaTransferHandler(final Templates templates) {
       this.templates = templates;
     }
 
@@ -208,13 +208,13 @@ public final class UI extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            final AddPicturesDialog dialog = new AddPicturesDialog(templates, preselectedFiles);
+            final AddMediaDialog dialog = new AddMediaDialog(templates, preselectedFiles);
             final int value = dialog.showDialog();
             if (value == JOptionPane.OK_OPTION) {
               final AddModel model = dialog.getModel();
-              final File[] files = model.getPicturesFiles();
+              final File[] files = model.getMediaFiles();
               if (files.length > 0) {
-                core.addPictures(files, model.getTemplate(), model.getExternalMetadataSource());
+                core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
               }
             }
           }

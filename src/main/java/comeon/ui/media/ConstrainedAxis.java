@@ -1,4 +1,4 @@
-package comeon.ui.pictures;
+package comeon.ui.media;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;

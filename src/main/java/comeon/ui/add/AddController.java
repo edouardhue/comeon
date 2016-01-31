@@ -20,7 +20,7 @@ import comeon.templates.Templates;
 
 class AddController implements PropertyChangeListener {
   
-  private final DefaultListModel<File> picturesListModel;
+  private final DefaultListModel<File> mediaListModel;
   
   private final DefaultComboBoxModel<String> metadataExpressionModel;
   
@@ -28,10 +28,10 @@ class AddController implements PropertyChangeListener {
   
   private AddModel model;
   
-  private AddPicturesPanel view;
+  private AddMediaPanel view;
 
   public AddController(final Templates templates) {
-    this.picturesListModel = new DefaultListModel<>();
+    this.mediaListModel = new DefaultListModel<>();
     this.metadataExpressionModel = new DefaultComboBoxModel<>();
     this.templateModel = new DefaultComboBoxModel<>();
     for (final Template template : templates.getTemplates()) {
@@ -47,12 +47,12 @@ class AddController implements PropertyChangeListener {
     }
   }
   
-  public void registerView(final AddPicturesPanel view) {
+  public void registerView(final AddMediaPanel view) {
     this.view = view;
   }
   
-  DefaultListModel<File> getPicturesListModel() {
-    return picturesListModel;
+  DefaultListModel<File> getMediaListModel() {
+    return mediaListModel;
   }
   
   public DefaultComboBoxModel<String> getMetadataExpressionModel() {
@@ -71,32 +71,32 @@ class AddController implements PropertyChangeListener {
     model.setMetadataFile(metadataFile);
   }
 
-  public void setPicturesFiles(final File[] picturesFiles) {
-    model.setPicturesFiles(picturesFiles);
+  public void setMediaFiles(final File[] mediaFiles) {
+    model.setMediaFiles(mediaFiles);
   }
   
-  public void setPictureExpression(final String pictureExpression) {
-    model.setPictureExpression(pictureExpression);
+  public void setMediaExpression(final String mediaExpression) {
+    model.setMediaExpression(mediaExpression);
   }
   
   public void setMetadataExpression(final String metadataExpression) {
     model.setMetadataExpression(metadataExpression);
   }
   
-  public String getPictureRegexp() {
-    return model.getPictureRegexp();
+  public String getMediaRegexp() {
+    return model.getMediaRegexp();
   }
   
-  public void setPictureRegexp(final String pictureRegexp) {
-    model.setPictureRegexp(pictureRegexp);
+  public void setMediaRegexp(final String mediaRegexp) {
+    model.setMediaRegexp(mediaRegexp);
   }
   
-  public void setPictureSubstitution(final String pictureSubstitution) {
-    model.setPictureSubstitution(pictureSubstitution);
+  public void setMediaSubstitution(final String mediaSubstitution) {
+    model.setMediaSubstitution(mediaSubstitution);
   }
   
-  public String getPictureSubstitution() {
-    return model.getPictureSubstitution();
+  public String getMediaSubstitution() {
+    return model.getMediaSubstitution();
   }
 
   public void setTemplate(final Template template) {
@@ -167,11 +167,11 @@ class AddController implements PropertyChangeListener {
       } else {
         view.deactivateMetadataZone();
       }
-    } else if (AddModel.Properties.PICTURES_FILES.name().equals(evt.getPropertyName())) {
-      picturesListModel.removeAllElements();
+    } else if (AddModel.Properties.MEDIA_FILES.name().equals(evt.getPropertyName())) {
+      mediaListModel.removeAllElements();
       final File[] files = (File[]) evt.getNewValue();
       for (final File file : files) {
-        picturesListModel.addElement(file);
+        mediaListModel.addElement(file);
       } 
     } else if (AddModel.Properties.METADATA_FILE.name().equals(evt.getPropertyName())) {
       final Path location = (Path) evt.getNewValue();

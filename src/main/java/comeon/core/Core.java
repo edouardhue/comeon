@@ -4,22 +4,22 @@ import java.io.File;
 import java.util.List;
 
 import comeon.core.extmetadata.ExternalMetadataSource;
-import comeon.model.Picture;
+import comeon.model.Media;
 import comeon.model.Template;
 
 public interface Core {
 
   String EXTERNAL_METADATA_KEY = "external";
 
-  void addPictures(File[] files, Template defautTemplate, ExternalMetadataSource<?> externalMetadataSource);
+  void addMedia(File[] files, Template defautTemplate, ExternalMetadataSource<?> externalMetadataSource);
 
-  void removePicture(Picture picture);
+  void removeMedia(Media media);
   
-  List<Picture> getPictures();
+  List<Media> getMedia();
 
-  int countPicturesToBeUploaded();
+  int countMediaToBeUploaded();
   
-  void uploadPictures();
+  void uploadMedia();
 
   void abort();
 }

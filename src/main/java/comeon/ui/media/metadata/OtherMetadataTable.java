@@ -1,4 +1,4 @@
-package comeon.ui.pictures.metadata;
+package comeon.ui.media.metadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;

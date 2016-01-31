@@ -1,4 +1,4 @@
-package comeon.ui.pictures.metadata;
+package comeon.ui.media.metadata;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

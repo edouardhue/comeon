@@ -13,10 +13,10 @@ import comeon.core.Core;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesChangedEvent;
 import comeon.ui.add.AddModel;
-import comeon.ui.add.AddPicturesDialog;
+import comeon.ui.add.AddMediaDialog;
 
 @Singleton
-public final class AddPicturesAction extends BaseAction {
+public final class AddMediaAction extends BaseAction {
 
   private static final long serialVersionUID = 1L;
   
@@ -25,8 +25,8 @@ public final class AddPicturesAction extends BaseAction {
   private final Core core;
 
   @Inject
-  public AddPicturesAction(final Templates templates, final Core core) {
-    super("addpictures");
+  public AddMediaAction(final Templates templates, final Core core) {
+    super("addmedia");
     this.templates = templates;
     this.core = core;
     if (templates.getTemplates().isEmpty()) {
@@ -39,13 +39,13 @@ public final class AddPicturesAction extends BaseAction {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        final AddPicturesDialog dialog = new AddPicturesDialog(templates);
+        final AddMediaDialog dialog = new AddMediaDialog(templates);
         final int value = dialog.showDialog();
         if (value == JOptionPane.OK_OPTION) {
           final AddModel model = dialog.getModel();
-          final File[] files = model.getPicturesFiles();
+          final File[] files = model.getMediaFiles();
           if (files.length > 0) {
-            core.addPictures(files, model.getTemplate(), model.getExternalMetadataSource());
+            core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
           }
         }
       }
