@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
-import com.drew.imaging.ImageProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
@@ -40,7 +39,7 @@ public class MediaTest {
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
   
-  private MediaUploadBatch.MediaReader reader;
+  private PictureReader reader;
   
   @Before
   public void createReader() throws IOException {
@@ -49,11 +48,11 @@ public class MediaTest {
     final Template mockTemplate = Mockito.mock(Template.class);
     Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
     final MediaUploadBatch pics = new MediaUploadBatch(new File[0], mockTemplate, (ExecutorService) null, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
-    this.reader = pics.new MediaReader(file, null);
+    this.reader = new PictureReader(pics, file, null);
   }
 
   @Test
-  public void testReadLongCategoryTitles() throws ImageProcessingException, IOException {
+  public void testReadLongCategoryTitles() throws IOException, MediaReaderException {
     final Media pic = reader.buildMedia();
     Assert.assertTrue(pic.getMetadata().containsKey("keywords"));
     final Set<String> keywords = Sets.newHashSet((String[]) pic.getMetadata().get("keywords"));
