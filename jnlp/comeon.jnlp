@@ -18,7 +18,7 @@
   <resources>
     <j2se version="1.7+"/>
          
-    <jar href="lib/comeon-2.0.0-SNAPSHOT.jar" main="true"/>
+    <jar href="lib/comeon-3.0.0-SNAPSHOT.jar" main="true"/>
     <jar href="lib/guice-no_aop-3.0.jar"/>
     <jar href="lib/javax.inject-1.jar"/>
     <jar href="lib/aopalliance-1.0.jar"/>
@@ -34,7 +34,7 @@
     <jar href="lib/velocity-1.7.jar"/>
     <jar href="lib/commons-collections-3.2.1.jar"/>
     <jar href="lib/commons-lang-2.4.jar"/>
-    <jar href="lib/commons-beanutils-core-1.8.3.jar"/>
+    <jar href="lib/commons-beanutils-1.9.2.jar"/>
     <jar href="lib/api-1.4-SNAPSHOT.jar"/>
     <jar href="lib/http.fluent-1.3.jar"/>
     <jar href="lib/httpclient-4.2.2.jar"/>
@@ -49,6 +49,7 @@
     <jar href="lib/simplevalidation-1.6.jar"/>
     <jar href="lib/nbstubs-1.6.jar"/>
     <jar href="lib/jul-to-slf4j-1.7.7.jar"/>
+    <jar href="lib/jaudiotagger-2.2.5.jar"/>
 
   </resources>
   <application-desc main-class="comeon.ComeOn"/>
