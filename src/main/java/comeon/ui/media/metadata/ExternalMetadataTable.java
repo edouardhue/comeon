@@ -38,14 +38,13 @@ public final class ExternalMetadataTable extends AbstractMetadataTable<Object> {
     }
     
     @Override
-    @SuppressWarnings("unchecked")
     protected List<Entry> getValues(Object content) {
       List<Entry> values;
       try {
-        final Map<String, Class<?>> properties = BeanUtils.describe(content);
+        final Map<String, String> properties = BeanUtils.describe(content);
         properties.remove(CLASS_PROPERTY_NAME);
         values = new ArrayList<>(properties.size());
-        for (final Map.Entry<String, Class<?>> property : properties.entrySet()) {
+        for (final Map.Entry<String, String> property : properties.entrySet()) {
           final String propertyName = property.getKey();
           final String propertyValue = BeanUtils.getProperty(content, propertyName);
           values.add(new Entry(propertyName, propertyValue));
