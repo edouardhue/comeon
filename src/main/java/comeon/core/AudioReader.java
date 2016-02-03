@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.apache.commons.beanutils.LazyDynaBean;
 import org.apache.commons.beanutils.LazyDynaClass;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.WrapDynaClass;
+import org.apache.commons.lang.WordUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
@@ -30,6 +32,29 @@ import comeon.model.User;
 
 public final class AudioReader extends AbstractMediaReader {
 
+  private static final EnumMap<FieldKey, String> FIELD_KEY_NAMES = new EnumMap<>(FieldKey.class);
+  
+  private static final LazyDynaClass TAG_DYNA_CLASS;
+  
+  static {
+    final List<DynaProperty> properties = new ArrayList<>(FieldKey.values().length);
+    
+    for (final FieldKey key : FieldKey.values()) {
+      if (!FieldKey.COVER_ART.equals(key)) {
+        final String name = toName(key);
+        FIELD_KEY_NAMES.put(key, name);
+        properties.add(new DynaProperty(name, String.class));
+      }
+    }
+    
+    TAG_DYNA_CLASS = new LazyDynaClass(Tag.class.getName(), null, properties.toArray(new DynaProperty[properties.size()]));
+    TAG_DYNA_CLASS.setReturnNull(true);
+  }
+  
+  private static final String toName(final FieldKey key) {
+    return WordUtils.uncapitalize(WordUtils.capitalizeFully(key.name().replace('_', ' ')).replace(" ", ""));
+  }
+  
   public AudioReader(final MediaUploadBatch mediaUploadBatch, final File file, final User user) {
     super(mediaUploadBatch, file, user);
   }
@@ -61,17 +86,9 @@ public final class AudioReader extends AbstractMediaReader {
   }
   
   private DynaBean copyTags(final Tag tag) {
-    final List<DynaProperty> properties = new ArrayList<>(FieldKey.values().length);
-    for (final FieldKey key : FieldKey.values()) {
-      if (!FieldKey.COVER_ART.equals(key)) {
-        properties.add(new DynaProperty(key.name(), String.class));
-      }
-    }
-    final LazyDynaClass clazz = new LazyDynaClass(tag.getClass().getName(), null, properties.toArray(new DynaProperty[properties.size()]));
-    clazz.setReturnNull(true);
-    final LazyDynaBean bean = new LazyDynaBean(clazz);
-    for (final DynaProperty property : properties) {
-      bean.set(property.getName(), tag.getFirst(property.getName()));
+    final LazyDynaBean bean = new LazyDynaBean(TAG_DYNA_CLASS);
+    for (final Map.Entry<FieldKey, String> entry : FIELD_KEY_NAMES.entrySet()) {
+      bean.set(entry.getValue(), tag.getFirst(entry.getKey()));
     }
     return bean;
   }
