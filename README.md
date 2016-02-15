@@ -13,9 +13,9 @@ For the moment, ComeOn! uses a custom fork of [the Java MediaWiki client API](ht
 
 Simply run
 ```shell
-mvn clean install
+mvn clean install -DskipTests=true
 ```
-on each. As java-mwapi requires a running MediaWiki instance during unit-tests (sic), you will probably have to skip tests for this project.
+on each. As java-mwapi requires a running MediaWiki instance during unit-tests (sic), you will have to skip tests for this project.
 
 ##  Running
 
