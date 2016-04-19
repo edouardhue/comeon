@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>comeon</groupId>
   <artifactId>comeon</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>ComeOn!</name>
   <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
@@ -37,7 +37,7 @@
   </scm>
 
   <properties>
-    <version.mwapi>1.4-SNAPSHOT</version.mwapi>
+    <version.mwapi>1.5-SNAPSHOT</version.mwapi>
     <version.mdextractor>2.6.2</version.mdextractor>
     <version.slf4j>1.7.7</version.slf4j>
     <version.guice>3.0</version.guice>
