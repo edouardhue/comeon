@@ -11,6 +11,7 @@
   </appender>
 
   <logger name="comeon" level="info" />
+  <logger name="org.apache.http.wire" level="error" />
 
   <root level="warn">
     <appender-ref ref="console" />

@@ -37,7 +37,7 @@ public final class IptcPreProcessor implements PreProcessor {
         final Date pictureDateWithTimezone = inFormatWithTimezone.parse(iptcTime + ":" + iptcDate);
         metadata.put(DATE, outFormat.format(pictureDateWithTimezone));
       } catch (final ParseException e2) {
-        LOGGER.warn("Can't handle date", e2);
+        LOGGER.info("Can't handle date", e2);
       }
     }
   }
