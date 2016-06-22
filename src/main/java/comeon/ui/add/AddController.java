@@ -173,23 +173,25 @@ class AddController implements PropertyChangeListener {
       for (final File file : files) {
         mediaListModel.addElement(file);
       } 
-    } else if (AddModel.Properties.METADATA_FILE.name().equals(evt.getPropertyName())) {
-      final Path location = (Path) evt.getNewValue();
-      try {
-        final String[] columns = this.peekMetadataFileHeader(location);
-        metadataExpressionModel.removeAllElements();
-        for (final String column : columns) {
-          metadataExpressionModel.addElement(column);
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            view.updateMetadataFileLocation(location.toString());
-          }
-        });
-      } catch (final IOException e) {
-        //TODO handle exception
+    }
+  }
+  
+  public void updateMetadataFileHeader() {
+    final Path location = model.getMetadataFile();
+    try {
+      final String[] columns = this.peekMetadataFileHeader(location);
+      metadataExpressionModel.removeAllElements();
+      for (final String column : columns) {
+        metadataExpressionModel.addElement(column);
       }
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          view.updateMetadataFileLocation(location.toString());
+        }
+      });
+    } catch (final IOException e) {
+      //TODO handle exception
     }
   }
   

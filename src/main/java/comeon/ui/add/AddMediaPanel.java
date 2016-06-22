@@ -438,6 +438,7 @@ class AddMediaPanel extends JPanel {
       final int returnVal = metadataFileChooser.showOpenDialog(JOptionPane.getRootFrame());
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         controller.setMetadataFile(Paths.get(metadataFileChooser.getSelectedFile().toURI()));
+        controller.updateMetadataFileHeader();
       }
     }
   }
