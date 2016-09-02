@@ -4,10 +4,10 @@ import javax.swing.table.TableColumn;
 
 public final class ComeOnTableColumn extends TableColumn {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public ComeOnTableColumn(final int modelIndex, final Object headerValue) {
-    super(modelIndex);
-    this.setHeaderValue(headerValue);
-  }
+    public ComeOnTableColumn(final int modelIndex, final Object headerValue) {
+        super(modelIndex);
+        this.setHeaderValue(headerValue);
+    }
 }

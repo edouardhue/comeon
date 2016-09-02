@@ -4,15 +4,15 @@ import in.yuvi.http.fluent.ProgressListener;
 
 @Deprecated
 public interface UploadMonitor {
-  void setBatchSize(int size);
+    void setBatchSize(int size);
 
-  void uploadStarting();
+    void uploadStarting();
 
-  ProgressListener itemStarting(int index, long length, String name);
+    ProgressListener itemStarting(int index, long length, String name);
 
-  void itemDone(int index);
-  
-  void itemFailed(int index, Exception cause);
+    void itemDone(int index);
 
-  void uploadDone();
+    void itemFailed(int index, Exception cause);
+
+    void uploadDone();
 }

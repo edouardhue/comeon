@@ -1,22 +1,21 @@
 package comeon.mediawiki;
 
+import comeon.model.Media;
 import in.yuvi.http.fluent.ProgressListener;
 
 import java.io.IOException;
 
-import comeon.model.Media;
-
 public interface MediaWiki {
 
-  boolean isLoggedIn();
-  
-  void login() throws NotLoggedInException, FailedLoginException;
+    boolean isLoggedIn();
 
-  void upload(Media media, ProgressListener listener) throws NotLoggedInException,
-      FailedLoginException, FailedUploadException, IOException;
+    void login() throws NotLoggedInException, FailedLoginException;
 
-  void logout() throws FailedLogoutException;
-  
-  String getName();
+    void upload(Media media, ProgressListener listener) throws NotLoggedInException,
+            FailedLoginException, FailedUploadException, IOException;
+
+    void logout() throws FailedLogoutException;
+
+    String getName();
 
 }

@@ -1,10 +1,11 @@
 package comeon.core.extmetadata;
 
-import java.util.Map;
-
 import comeon.model.Media;
 
+import java.util.Map;
+
 public interface ExternalMetadataSource<T> {
-  void loadMetadata();
-  T getMediaMetadata(Media media, Map<String, Object> mediaMetadata);
+    void loadMetadata();
+
+    T getMediaMetadata(Media media, Map<String, Object> mediaMetadata);
 }
