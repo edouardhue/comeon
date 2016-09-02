@@ -12,3 +12,6 @@
 target
 /veloTemplates
 velocity.log
+
+*.iml
+
