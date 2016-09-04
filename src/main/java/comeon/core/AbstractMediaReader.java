@@ -37,17 +37,9 @@ abstract class AbstractMediaReader implements Runnable {
             final Media media = buildMedia();
             media.getMetadata().put(Core.EXTERNAL_METADATA_KEY, getMediaUploadBatch().getMediaMetadata(media, media.getMetadata()));
             media.renderTemplate(user);
-            media.addPropertyChangeListener(new PropertyChangeListener() {
-                @Override
-                public void propertyChange(final PropertyChangeEvent evt) {
-                    if ("templateText".equals(evt.getPropertyName())) {
-                        mediaUploadBatch.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                media.renderTemplate(user);
-                            }
-                        });
-                    }
+            media.addPropertyChangeListener(evt -> {
+                if ("templateText".equals(evt.getPropertyName())) {
+                    mediaUploadBatch.execute(() -> media.renderTemplate(user));
                 }
             });
             mediaUploadBatch.add(media);

@@ -41,7 +41,7 @@ public final class AddMediaDialog extends JOptionPane {
 
     public int showDialog() {
         this.dialog.setVisible(true);
-        return ((Integer) this.getValue()).intValue();
+        return (Integer) this.getValue();
     }
 
     public AddModel getModel() {

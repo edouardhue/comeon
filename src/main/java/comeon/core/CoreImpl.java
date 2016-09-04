@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public final class CoreImpl implements Core {
@@ -92,17 +93,7 @@ public final class CoreImpl implements Core {
 
     @Override
     public int countMediaToBeUploaded() {
-        return filterMediaToBeUploaded().size();
-    }
-
-    private List<Media> filterMediaToBeUploaded() {
-        final List<Media> mediaToBeUploaded = new ArrayList<>(medias.size());
-        for (final Media media : medias) {
-            if (shouldUpload(media)) {
-                mediaToBeUploaded.add(media);
-            }
-        }
-        return mediaToBeUploaded;
+        return (int) medias.parallelStream().filter(this::shouldUpload).count();
     }
 
     private class UploadTask implements Callable<Void> {
@@ -149,15 +140,10 @@ public final class CoreImpl implements Core {
 
     @Override
     public void uploadMedia() {
-        final List<Media> mediaToBeUploaded = this.filterMediaToBeUploaded();
+        final List<Media> mediaToBeUploaded = medias.parallelStream().filter(this::shouldUpload).collect(Collectors.toList());
         LOGGER.info("Uploading {} media to {}.", mediaToBeUploaded.size(), activeMediaWiki.getName());
         bus.post(new UploadStartingEvent(mediaToBeUploaded));
-        final List<Future<Void>> tasks = new ArrayList<>(mediaToBeUploaded.size());
-        for (final Media media : mediaToBeUploaded) {
-            final UploadTask task = new UploadTask(media);
-            final Future<Void> taskResult = pool.submit(task);
-            tasks.add(taskResult);
-        }
+        final List<Future<Void>> tasks = mediaToBeUploaded.parallelStream().map(media -> pool.submit(new UploadTask(media))).collect(Collectors.toList());
         currentTasks.addAll(tasks);
         try {
             for (final Future<Void> task : tasks) {
@@ -187,11 +173,7 @@ public final class CoreImpl implements Core {
 
     @Override
     public void abort() {
-        for (final Future<Void> task : currentTasks) {
-            if (task.cancel(true)) {
-                currentTasks.remove(task);
-            }
-        }
+        currentTasks.parallelStream().filter(task -> task.cancel(true)).forEach(currentTasks::remove);
     }
 
     @Subscribe

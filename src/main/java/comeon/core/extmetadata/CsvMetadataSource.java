@@ -17,11 +17,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvMetadataSource.class);
 
-    private HashMap<String, Object> metadata;
+    private final HashMap<String, Object> metadata;
 
     private final Path metadataFile;
 
@@ -50,6 +52,7 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
         this.mediaExpression = mediaExpression;
         this.metadataExpression = metadataExpression;
         this.metadataFile = metadataFile;
+        this.metadata = new HashMap<>();
         this.separator = separator;
         this.quote = quote;
         this.escape = escape;
@@ -64,14 +67,21 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
     public void loadMetadata() {
         final CGLibMappingStrategy strategy = new CGLibMappingStrategy();
         final CsvToBean<Object> csvToBean = new CsvToBean<>();
+        this.metadata.clear();
         try (final CSVReader reader = new CSVReader(Files.newBufferedReader(metadataFile, charset), separator, quote, escape, skipLines, strictQuotes, ignoreLeadingWhiteSpace)) {
             final List<Object> beans = csvToBean.parse(strategy, reader);
-            this.metadata = new HashMap<>(beans.size());
-            for (final Object bean : beans) {
-                final String key = String.valueOf(PropertyUtils.getProperty(bean, metadataExpression));
-                this.metadata.put(key, bean);
-            }
-        } catch (final IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            this.metadata.putAll(beans.parallelStream().collect(Collectors.toConcurrentMap(
+                    bean -> {
+                        try {
+                            return String.valueOf(PropertyUtils.getProperty(bean, metadataExpression));
+                        } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                            LOGGER.error("Could not read property {} from {}", metadataExpression, bean);
+                            return null;
+                        }
+                    },
+                    Function.identity()
+            )));
+        } catch (final IOException e) {
             LOGGER.error("Could not read metadata file", e);
         }
     }

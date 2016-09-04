@@ -165,15 +165,12 @@ public final class ComeOn extends AbstractModule {
                 comeOn.checkPreferences();
             }
             final UI ui = assemble(comeOn);
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    final SplashScreen splash = SplashScreen.getSplashScreen();
-                    if (splash != null) {
-                        splash.close();
-                    }
-                    ui.setVisible(true);
+            SwingUtilities.invokeLater(() -> {
+                final SplashScreen splash = SplashScreen.getSplashScreen();
+                if (splash != null) {
+                    splash.close();
                 }
+                ui.setVisible(true);
             });
         } catch (final CmdLineException e) {
             final StringWriter usageBuffer = new StringWriter();

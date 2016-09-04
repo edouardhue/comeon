@@ -69,80 +69,48 @@ public final class TransferMonitor extends JOptionPane {
         for (final Media media : event.getMedia()) {
             final ProgressPanel panel = new ProgressPanel(media.getFile().length(), media.getFileName());
             panels.put(media.getFile(), panel);
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    mediaBarsBox.add(panel);
-                }
-            });
+            SwingUtilities.invokeLater(() -> mediaBarsBox.add(panel));
         }
         transferCounter.set(0);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                batchBar.setMaximum(event.getMedia().size());
-                batchBar.setValue(transferCounter.get());
-                dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                closeAction.setEnabled(false);
-                dialog.setVisible(true);
-            }
+        SwingUtilities.invokeLater(() -> {
+            batchBar.setMaximum(event.getMedia().size());
+            batchBar.setValue(transferCounter.get());
+            dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            closeAction.setEnabled(false);
+            dialog.setVisible(true);
         });
     }
 
     @Subscribe
     public void transferStarting(final MediaTransferStartingEvent event) {
         final ProgressPanel panel = panels.get(event.getMedia().getFile());
-        event.getProgressListener().addPropertyChangeListener(ProgressListenerAdapter.TRANSFERRED, new PropertyChangeListener() {
-            @Override
-            public void propertyChange(final PropertyChangeEvent evt) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        final Long transferred = (Long) evt.getNewValue();
-                        panel.getMediaBar().setValue(transferred.intValue());
-                    }
-                });
-            }
-        });
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                mediaBarsPane.getViewport().scrollRectToVisible(panel.getBounds());
-            }
-        });
+        event.getProgressListener().addPropertyChangeListener(ProgressListenerAdapter.TRANSFERRED, evt -> SwingUtilities.invokeLater(() -> {
+            final Long transferred = (Long) evt.getNewValue();
+            panel.getMediaBar().setValue(transferred.intValue());
+        }));
+        SwingUtilities.invokeLater(() -> mediaBarsPane.getViewport().scrollRectToVisible(panel.getBounds()));
     }
 
     @Subscribe
     public void transferDone(final MediaTransferDoneEvent event) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                batchBar.setValue(transferCounter.incrementAndGet());
-            }
-        });
+        SwingUtilities.invokeLater(() -> batchBar.setValue(transferCounter.incrementAndGet()));
     }
 
     @Subscribe
     public void transferFailed(final MediaTransferFailedEvent event) {
         final JProgressBar mediaProgressBar = panels.get(event.getMedia().getFile()).getMediaBar();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                mediaProgressBar.setValue(mediaProgressBar.getMaximum());
-                mediaProgressBar.setString(UI.BUNDLE.getString("error.generic.title"));
-                mediaProgressBar.setToolTipText(MessageFormat.format(UI.BUNDLE.getString("error.upload.failed"), event.getCause().getLocalizedMessage()));
-            }
+        SwingUtilities.invokeLater(() -> {
+            mediaProgressBar.setValue(mediaProgressBar.getMaximum());
+            mediaProgressBar.setString(UI.BUNDLE.getString("error.generic.title"));
+            mediaProgressBar.setToolTipText(MessageFormat.format(UI.BUNDLE.getString("error.upload.failed"), event.getCause().getLocalizedMessage()));
         });
     }
 
     @Subscribe
     public void uploadDone(final UploadDoneEvent event) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                TransferMonitor.this.dialog.setCursor(Cursor.getDefaultCursor());
-                TransferMonitor.this.closeAction.setEnabled(true);
-            }
+        SwingUtilities.invokeLater(() -> {
+            TransferMonitor.this.dialog.setCursor(Cursor.getDefaultCursor());
+            TransferMonitor.this.closeAction.setEnabled(true);
         });
     }
 
@@ -159,12 +127,9 @@ public final class TransferMonitor extends JOptionPane {
                 @Override
                 protected Void doInBackground() throws Exception {
                     panels.clear();
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            dialog.setVisible(false);
-                            mediaBarsBox.removeAll();
-                        }
+                    SwingUtilities.invokeLater(() -> {
+                        dialog.setVisible(false);
+                        mediaBarsBox.removeAll();
                     });
                     return null;
                 }

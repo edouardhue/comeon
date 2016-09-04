@@ -30,9 +30,7 @@ class AddController implements PropertyChangeListener {
         this.mediaListModel = new DefaultListModel<>();
         this.metadataExpressionModel = new DefaultComboBoxModel<>();
         this.templateModel = new DefaultComboBoxModel<>();
-        for (final Template template : templates.getTemplates()) {
-            this.templateModel.addElement(template);
-        }
+        templates.getTemplates().forEach(this.templateModel::addElement);
     }
 
     public void registerModel(final AddModel model) {
@@ -180,12 +178,7 @@ class AddController implements PropertyChangeListener {
             for (final String column : columns) {
                 metadataExpressionModel.addElement(column);
             }
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    view.updateMetadataFileLocation(location.toString());
-                }
-            });
+            SwingUtilities.invokeLater(() -> view.updateMetadataFileLocation(location.toString()));
         } catch (final IOException e) {
             //TODO handle exception
         }

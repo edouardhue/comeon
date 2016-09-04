@@ -32,31 +32,16 @@ public final class AbortAction extends AbstractAction {
                 return null;
             }
         }.execute();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                setEnabled(false);
-            }
-        });
+        SwingUtilities.invokeLater(() -> setEnabled(false));
     }
 
     @Subscribe
     public void uploadStarting(final UploadStartingEvent event) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                setEnabled(true);
-            }
-        });
+        SwingUtilities.invokeLater(() -> setEnabled(true));
     }
 
     @Subscribe
     public void uploadDone(final UploadDoneEvent event) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                setEnabled(false);
-            }
-        });
+        SwingUtilities.invokeLater(() -> setEnabled(false));
     }
 }

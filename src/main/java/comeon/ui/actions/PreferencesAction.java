@@ -32,26 +32,23 @@ public final class PreferencesAction extends BaseAction {
 
     @Override
     public void actionPerformed(final ActionEvent evt) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                final int value = dialog.showDialog();
-                if (value == JOptionPane.OK_OPTION) {
-                    try {
-                        controller.persist();
-                    } catch (final PreferencesSavingException e) {
-                        final List<Exception> causes = e.getCauses();
-                        final StringBuilder causeMessage = new StringBuilder(UI.BUNDLE.getString("prefs.error.save"));
-                        for (final Exception c : causes) {
-                            LOGGER.warn("Could not save preferences", c);
-                            causeMessage.append("\n* ");
-                            causeMessage.append(c.getLocalizedMessage());
-                        }
-                        JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), causeMessage.toString(), UI.BUNDLE.getString("error.generic.title"), JOptionPane.ERROR_MESSAGE);
+        SwingUtilities.invokeLater(() -> {
+            final int value = dialog.showDialog();
+            if (value == JOptionPane.OK_OPTION) {
+                try {
+                    controller.persist();
+                } catch (final PreferencesSavingException e) {
+                    final List<Exception> causes = e.getCauses();
+                    final StringBuilder causeMessage = new StringBuilder(UI.BUNDLE.getString("prefs.error.save"));
+                    for (final Exception c : causes) {
+                        LOGGER.warn("Could not save preferences", c);
+                        causeMessage.append("\n* ");
+                        causeMessage.append(c.getLocalizedMessage());
                     }
-                } else {
-                    controller.reload();
+                    JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), causeMessage.toString(), UI.BUNDLE.getString("error.generic.title"), JOptionPane.ERROR_MESSAGE);
                 }
+            } else {
+                controller.reload();
             }
         });
     }

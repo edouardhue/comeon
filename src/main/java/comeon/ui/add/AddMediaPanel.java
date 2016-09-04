@@ -99,7 +99,7 @@ class AddMediaPanel extends JPanel {
         final JButton pickMediaFilesButton = new JButton(new PickMediaFilesAction(controller));
 
         final JLabel templatesLabel = new JLabel(UI.BUNDLE.getString("addmedia.template.label"));
-        this.templates = new JComboBox<Template>(controller.getTemplateModel());
+        this.templates = new JComboBox<>(controller.getTemplateModel());
         this.templates.setRenderer(new DefaultListCellRenderer() {
             private static final long serialVersionUID = 1L;
 
@@ -112,12 +112,7 @@ class AddMediaPanel extends JPanel {
                 return label;
             }
         });
-        this.templates.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                templateChanged(e);
-            }
-        });
+        this.templates.addActionListener(this::templateChanged);
 
         final UseExternalMetadataCheckboxHandler checkboxHandler = new UseExternalMetadataCheckboxHandler(controller);
         this.metatadataCheckbox = new JCheckBox(checkboxHandler);
@@ -134,12 +129,7 @@ class AddMediaPanel extends JPanel {
         this.metadataExpression = new JComboBox<>(controller.getMetadataExpressionModel());
         this.metadataExpression.setPrototypeDisplayValue(Strings.repeat(PROTOTYPE_CHAR, MEDIUM_PROTOTYPE_LENGTH));
         this.metadataExpression.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.match.metadata"));
-        this.metadataExpression.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                metadataExpressionChanged(e);
-            }
-        });
+        this.metadataExpression.addActionListener(e -> metadataExpressionChanged(e));
 
         this.mediaExpression = new JTextField(MEDIUM_PROTOTYPE_LENGTH);
         this.mediaExpression.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.match.media"));
@@ -389,21 +379,16 @@ class AddMediaPanel extends JPanel {
         public void actionPerformed(final ActionEvent e) {
         }
 
-        ;
-
         @Override
         public void itemStateChanged(final ItemEvent e) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    switch (e.getStateChange()) {
-                        case ItemEvent.SELECTED:
-                            controller.setUseMetadata(true);
-                            break;
-                        case ItemEvent.DESELECTED:
-                            controller.setUseMetadata(false);
-                            break;
-                    }
+            SwingUtilities.invokeLater(() -> {
+                switch (e.getStateChange()) {
+                    case ItemEvent.SELECTED:
+                        controller.setUseMetadata(true);
+                        break;
+                    case ItemEvent.DESELECTED:
+                        controller.setUseMetadata(false);
+                        break;
                 }
             });
         }
@@ -527,21 +512,11 @@ class AddMediaPanel extends JPanel {
             skipLinesField.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.skipLines.tooltip"));
 
             final JCheckBox strictQuotesBox = new JCheckBox(UI.BUNDLE.getString("addmedia.metadata.csv.strictQuotes"), controller.isStrictQuotes());
-            strictQuotesBox.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(final ChangeEvent e) {
-                    controller.setStrictQuotes(strictQuotesBox.isSelected());
-                }
-            });
+            strictQuotesBox.addChangeListener(e -> controller.setStrictQuotes(strictQuotesBox.isSelected()));
             strictQuotesBox.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.strictQuotes.tooltip"));
 
             final JCheckBox ignoreLeadingWhiteSpaceBox = new JCheckBox(UI.BUNDLE.getString("addmedia.metadata.csv.ignoreLeadingWhiteSpace"), controller.isIgnoreLeadingWhiteSpace());
-            ignoreLeadingWhiteSpaceBox.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(final ChangeEvent e) {
-                    controller.setIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpaceBox.isSelected());
-                }
-            });
+            ignoreLeadingWhiteSpaceBox.addChangeListener(e -> controller.setIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpaceBox.isSelected()));
             ignoreLeadingWhiteSpaceBox.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.csv.ignoreLeadingWhiteSpace.tooltip"));
 
             final JLabel charsetLabel = new JLabel(UI.BUNDLE.getString("addmedia.metadata.csv.charset"));
@@ -553,13 +528,10 @@ class AddMediaPanel extends JPanel {
             charsetLabel.setLabelFor(charsetField);
             charsetField.setEditable(true);
             charsetField.setSelectedItem(controller.getCharset());
-            charsetField.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Object item = charsetField.getSelectedItem();
-                    if (item instanceof Charset) {
-                        controller.setCharset((Charset) item);
-                    }
+            charsetField.addActionListener(e -> {
+                final Object item = charsetField.getSelectedItem();
+                if (item instanceof Charset) {
+                    controller.setCharset((Charset) item);
                 }
             });
 

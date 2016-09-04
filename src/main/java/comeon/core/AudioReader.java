@@ -14,34 +14,41 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.images.Artwork;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public final class AudioReader extends AbstractMediaReader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AudioReader.class);
 
     private static final EnumMap<FieldKey, String> FIELD_KEY_NAMES = new EnumMap<>(FieldKey.class);
 
     private static final LazyDynaClass TAG_DYNA_CLASS;
 
     static {
-        final List<DynaProperty> properties = new ArrayList<>(FieldKey.values().length);
+        final DynaProperty[] properties = Arrays.stream(FieldKey.values())
+                .filter(Predicate.isEqual(FieldKey.COVER_ART).negate())
+                .map(AudioReader::toName)
+                .map(name -> new DynaProperty(name, String.class)).toArray(DynaProperty[]::new);
 
-        for (final FieldKey key : FieldKey.values()) {
-            if (!FieldKey.COVER_ART.equals(key)) {
-                final String name = toName(key);
-                FIELD_KEY_NAMES.put(key, name);
-                properties.add(new DynaProperty(name, String.class));
-            }
-        }
-
-        TAG_DYNA_CLASS = new LazyDynaClass(Tag.class.getName(), null, properties.toArray(new DynaProperty[properties.size()]));
+        TAG_DYNA_CLASS = new LazyDynaClass(Tag.class.getName(), null, properties);
         TAG_DYNA_CLASS.setReturnNull(true);
+
+        FIELD_KEY_NAMES.putAll(Arrays.stream(FieldKey.values())
+                .filter(Predicate.isEqual(FieldKey.COVER_ART).negate())
+                .collect(Collectors.toMap(key -> key, AudioReader::toName)));
+
     }
 
-    private static final String toName(final FieldKey key) {
+    private static String toName(final FieldKey key) {
         return WordUtils.uncapitalize(WordUtils.capitalizeFully(key.name().replace('_', ' ')).replace(" ", ""));
     }
 
@@ -77,24 +84,25 @@ public final class AudioReader extends AbstractMediaReader {
 
     private DynaBean copyTags(final Tag tag) {
         final LazyDynaBean bean = new LazyDynaBean(TAG_DYNA_CLASS);
-        for (final Map.Entry<FieldKey, String> entry : FIELD_KEY_NAMES.entrySet()) {
-            bean.set(entry.getValue(), tag.getFirst(entry.getKey()));
-        }
+        FIELD_KEY_NAMES.entrySet().forEach(e -> {
+            bean.set(e.getValue(), tag.getFirst(e.getKey()));
+        });
         return bean;
     }
 
     private DynaBean copyHeaders(final AudioHeader header) {
         final WrapDynaClass clazz = WrapDynaClass.createDynaClass(header.getClass());
         final LazyDynaBean bean = new LazyDynaBean();
-        for (final DynaProperty property : clazz.getDynaProperties()) {
-            if (!"class".equals(property.getName())) {
-                try {
-                    bean.set(property.getName(), PropertyUtils.getProperty(header, property.getName()));
-                } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    // Woops
-                }
-            }
-        }
+        Arrays.stream(clazz.getDynaProperties())
+                .map(DynaProperty::getName)
+                .filter(Predicate.isEqual("class").negate())
+                .forEach(name -> {
+                    try {
+                        bean.set(name, String.valueOf(PropertyUtils.getProperty(header, name)));
+                    } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        LOGGER.warn("Could not read property {} from {}", name, header);
+                    }
+                });
         return bean;
     }
 }

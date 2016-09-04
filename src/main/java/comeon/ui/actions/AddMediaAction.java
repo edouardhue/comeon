@@ -34,17 +34,14 @@ public final class AddMediaAction extends BaseAction {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                final AddMediaDialog dialog = new AddMediaDialog(templates);
-                final int value = dialog.showDialog();
-                if (value == JOptionPane.OK_OPTION) {
-                    final AddModel model = dialog.getModel();
-                    final File[] files = model.getMediaFiles();
-                    if (files.length > 0) {
-                        core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
-                    }
+        SwingUtilities.invokeLater(() -> {
+            final AddMediaDialog dialog = new AddMediaDialog(templates);
+            final int value = dialog.showDialog();
+            if (value == JOptionPane.OK_OPTION) {
+                final AddModel model = dialog.getModel();
+                final File[] files = model.getMediaFiles();
+                if (files.length > 0) {
+                    core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
                 }
             }
         });

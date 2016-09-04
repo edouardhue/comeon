@@ -71,11 +71,6 @@ public final class UploadMediaAction extends BaseAction {
     }
 
     private void enableIfMediaAreAvailable() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                UploadMediaAction.this.setEnabled(core.countMediaToBeUploaded() > 0);
-            }
-        });
+        SwingUtilities.invokeLater(() -> UploadMediaAction.this.setEnabled(core.countMediaToBeUploaded() > 0));
     }
 }

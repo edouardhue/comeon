@@ -44,10 +44,10 @@ public class MediaTest {
   @Before
   public void createReader() throws IOException {
     final File file = temp.newFile();
-    Files.copy(Resources.newInputStreamSupplier(Resources.getResource("long-category-titles.jpg")), file);
+    Resources.asByteSource(Resources.getResource("long-category-titles.jpg")).copyTo(Files.asByteSink(file));
     final Template mockTemplate = Mockito.mock(Template.class);
     Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
-    final MediaUploadBatch pics = new MediaUploadBatch(new File[0], mockTemplate, (ExecutorService) null, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
+    final MediaUploadBatch pics = new MediaUploadBatch(new File[0], mockTemplate, null, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
     this.reader = new PictureReader(pics, file, null);
   }
 

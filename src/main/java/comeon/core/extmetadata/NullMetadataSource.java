@@ -10,7 +10,7 @@ public final class NullMetadataSource implements ExternalMetadataSource<Void> {
     }
 
     @Override
-    public Void getMediaMetadata(Media media, final Map<String, Object> mediaMetadata) {
+    public Void getMediaMetadata(final Media media, final Map<String, Object> mediaMetadata) {
         return null;
     }
 }

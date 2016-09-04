@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 @Singleton
 public final class UI extends JFrame {
@@ -109,17 +110,14 @@ public final class UI extends JFrame {
     }
 
     private void refreshMedia() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                previews.removeAll();
-                editContainer.removeAll();
-                validate();
-                for (final Media media : core.getMedia()) {
-                    add(media);
-                }
-                validate();
+        SwingUtilities.invokeLater(() -> {
+            previews.removeAll();
+            editContainer.removeAll();
+            validate();
+            for (final Media media : core.getMedia()) {
+                add(media);
             }
+            validate();
         });
     }
 
@@ -146,14 +144,11 @@ public final class UI extends JFrame {
         @Override
         public void mouseClicked(final MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (e.isControlDown()) {
-                            core.removeMedia(media);
-                        } else {
-                            ((CardLayout) editContainer.getLayout()).show(editContainer, media.getFileName());
-                        }
+                SwingUtilities.invokeLater(() -> {
+                    if (e.isControlDown()) {
+                        core.removeMedia(media);
+                    } else {
+                        ((CardLayout) editContainer.getLayout()).show(editContainer, media.getFileName());
                     }
                 });
             }
@@ -180,25 +175,20 @@ public final class UI extends JFrame {
             try {
                 @SuppressWarnings("unchecked")
                 final List<File> files = (List<File>) support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-                final List<File> filteredFiles = new ArrayList<File>(files.size());
-                for (final File file : files) {
-                    if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg")) {
-                        filteredFiles.add(file);
-                    }
-                }
+                final List<File> filteredFiles = files
+                        .parallelStream()
+                        .filter(file -> file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg"))
+                        .collect(Collectors.toList());
                 final File[] preselectedFiles = filteredFiles.toArray(new File[filteredFiles.size()]);
 
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        final AddMediaDialog dialog = new AddMediaDialog(templates, preselectedFiles);
-                        final int value = dialog.showDialog();
-                        if (value == JOptionPane.OK_OPTION) {
-                            final AddModel model = dialog.getModel();
-                            final File[] files = model.getMediaFiles();
-                            if (files.length > 0) {
-                                core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
-                            }
+                SwingUtilities.invokeLater(() -> {
+                    final AddMediaDialog dialog = new AddMediaDialog(templates, preselectedFiles);
+                    final int value = dialog.showDialog();
+                    if (value == JOptionPane.OK_OPTION) {
+                        final AddModel model = dialog.getModel();
+                        final File[] files1 = model.getMediaFiles();
+                        if (files1.length > 0) {
+                            core.addMedia(files1, model.getTemplate(), model.getExternalMetadataSource());
                         }
                     }
                 });
