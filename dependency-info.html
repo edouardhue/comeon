@@ -74,7 +74,7 @@
                     
                 <ul class="nav nav-list">
                     <li class="nav-header">Project Documentation</li>
-                                                                                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                          
       <li>
   
                           <a href="project-info.html" title="Project Information">
@@ -84,9 +84,28 @@
                     
       <li>
   
+                          <a href="dependencies.html" title="Dependencies">
+          <i class="none"></i>
+        Dependencies</a>
+            </li>
+                    
+      <li class="active">
+  
+            <a href="#"><i class="none"></i>Dependency Information</a>
+          </li>
+                    
+      <li>
+  
                           <a href="index.html" title="About">
           <i class="none"></i>
         About</a>
+            </li>
+                    
+      <li>
+  
+                          <a href="license.html" title="Licenses">
+          <i class="none"></i>
+        Licenses</a>
             </li>
                     
       <li>
@@ -98,77 +117,30 @@
                     
       <li>
   
-                          <a href="distribution-management.html" title="Distribution Management">
+                          <a href="plugins.html" title="Plugins">
           <i class="none"></i>
-        Distribution Management</a>
-            </li>
-                    
-      <li class="active">
-  
-            <a href="#"><i class="none"></i>Dependency Information</a>
-          </li>
-                    
-      <li>
-  
-                          <a href="source-repository.html" title="Source Repository">
-          <i class="none"></i>
-        Source Repository</a>
+        Plugins</a>
             </li>
                     
       <li>
   
-                          <a href="mail-lists.html" title="Mailing Lists">
+                          <a href="team-list.html" title="Team">
           <i class="none"></i>
-        Mailing Lists</a>
+        Team</a>
             </li>
                     
       <li>
   
-                          <a href="issue-tracking.html" title="Issue Tracking">
+                          <a href="source-repository.html" title="Source Code Management">
           <i class="none"></i>
-        Issue Tracking</a>
+        Source Code Management</a>
             </li>
                     
       <li>
   
-                          <a href="integration.html" title="Continuous Integration">
+                          <a href="project-summary.html" title="Summary">
           <i class="none"></i>
-        Continuous Integration</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="plugins.html" title="Project Plugins">
-          <i class="none"></i>
-        Project Plugins</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="license.html" title="Project License">
-          <i class="none"></i>
-        Project License</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="team-list.html" title="Project Team">
-          <i class="none"></i>
-        Project Team</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="project-summary.html" title="Project Summary">
-          <i class="none"></i>
-        Project Summary</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="dependencies.html" title="Dependencies">
-          <i class="none"></i>
-        Dependencies</a>
+        Summary</a>
             </li>
               </ul>
         </li>
@@ -215,7 +187,7 @@
 <div class="source">
 <pre>'comeon:comeon:jar:3.5-SNAPSHOT'</pre></div></div>
 <div class="section">
-<h3><a name="Apache_Ant"></a>Apache Ant</h3><a name="Apache_Ant"></a>
+<h3><a name="Apache_Ivy"></a>Apache Ivy</h3><a name="Apache_Ivy"></a>
 <div class="source">
 <pre>&lt;dependency org=&quot;comeon&quot; name=&quot;comeon&quot; rev=&quot;3.5-SNAPSHOT&quot;&gt;
   &lt;artifact name=&quot;comeon&quot; type=&quot;jar&quot; /&gt;
@@ -227,17 +199,17 @@
 @Grab(group='comeon', module='comeon', version='3.5-SNAPSHOT')
 )</pre></div></div>
 <div class="section">
-<h3><a name="Grails"></a>Grails</h3><a name="Grails"></a>
+<h3><a name="GradleGrails"></a>Gradle/Grails</h3><a name="GradleGrails"></a>
 <div class="source">
 <pre>compile 'comeon:comeon:3.5-SNAPSHOT'</pre></div></div>
 <div class="section">
+<h3><a name="Scala_SBT"></a>Scala SBT</h3><a name="Scala_SBT"></a>
+<div class="source">
+<pre>libraryDependencies += &quot;comeon&quot; % &quot;comeon&quot; % &quot;3.5-SNAPSHOT&quot;</pre></div></div>
+<div class="section">
 <h3><a name="Leiningen"></a>Leiningen</h3><a name="Leiningen"></a>
 <div class="source">
-<pre>[comeon &quot;3.5-SNAPSHOT&quot;]</pre></div></div>
-<div class="section">
-<h3><a name="SBT"></a>SBT</h3><a name="SBT"></a>
-<div class="source">
-<pre>libraryDependencies += &quot;comeon&quot; %% &quot;comeon&quot; % &quot;3.5-SNAPSHOT&quot;</pre></div></div></div>
+<pre>[comeon &quot;3.5-SNAPSHOT&quot;]</pre></div></div></div>
                   </div>
             </div>
           </div>

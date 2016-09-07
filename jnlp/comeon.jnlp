@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
-    spec="1.0+"
+    spec="7.0+"
     codebase="http://edouardhue.github.io/comeon/jnlp"
     href="comeon.jnlp">
   <information>
@@ -11,12 +11,15 @@
 	<icon href="http://edouardhue.github.io/comeon/jnlp/../comeon_32_32.png" kind="shortcut" width="32" height="32"/>
 	<icon href="http://edouardhue.github.io/comeon/jnlp/../comeon_64_64.png" kind="splash" width="64" height="64"/>
     <offline-allowed/>
+    <shortcut online="false" install="false">
+        <desktop/>
+    </shortcut>
   </information>
   <security>
      <all-permissions/>
   </security>
   <resources>
-    <j2se version="1.8+" max-heap-size="2G" java-jvm-args="-XX:+UseParallelGC"/>
+    <java version="1.8+" max-heap-size="2G" java-vm-args="-XX:+UseParallelGC"/>
          
     <jar href="lib/comeon-3.5-SNAPSHOT.jar" main="true"/>
     <jar href="lib/guice-3.0-no_aop.jar"/>
