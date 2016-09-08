@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="$encoding"?>
 <jnlp
-    spec="$jnlpspec"
+    spec="7.0+"
     codebase="$jnlpCodebase"
     href="$outputFile">
   <information>
@@ -20,6 +20,9 @@
 	<icon href="$jnlpCodebase/../comeon_64_64.png" kind="splash" width="64" height="64"/>
 #if($offlineAllowed)
     <offline-allowed/>
+    <shortcut online="false" install="false">
+        <desktop/>
+    </shortcut>
 #end
   </information>
 #if($allPermissions)
@@ -28,7 +31,7 @@
   </security>
 #end
   <resources>
-    <j2se version="$j2seVersion"/>
+    <java version="1.8+" java-vm-args="-Xmx2g -XX:+UseParallelGC"/>
      $dependencies
   </resources>
   <application-desc main-class="$mainClass"/>
