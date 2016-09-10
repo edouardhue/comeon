@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp
     spec="7.0+"
-    codebase="http://edouardhue.github.io/comeon/jnlp"
+    codebase="https://edouardhue.github.io/comeon/jnlp"
     href="comeon.jnlp">
   <information>
     <title>ComeOn!</title>
     <vendor>Édouard Hue</vendor>
     <homepage href="https://github.com/edouardhue/comeon"/>
     <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
-	<icon href="http://edouardhue.github.io/comeon/jnlp/../comeon_32_32.png" kind="shortcut" width="32" height="32"/>
-	<icon href="http://edouardhue.github.io/comeon/jnlp/../comeon_64_64.png" kind="splash" width="64" height="64"/>
+	<icon href="https://edouardhue.github.io/comeon/jnlp/../comeon_32_32.png" kind="shortcut" width="32" height="32"/>
+	<icon href="https://edouardhue.github.io/comeon/jnlp/../comeon_64_64.png" kind="splash" width="64" height="64"/>
     <offline-allowed/>
     <shortcut online="false" install="false">
         <desktop/>
