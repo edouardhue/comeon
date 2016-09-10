@@ -11,7 +11,7 @@
         </map>
         <node name="Commons">
           <map>
-            <entry key="URL" value="http://commons.wikimedia.org/w/api.php"/>
+            <entry key="URL" value="https://commons.wikimedia.org/w/api.php"/>
           </map>
         </node>
       </node>

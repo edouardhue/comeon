@@ -43,7 +43,7 @@
         <version.guice>3.0</version.guice>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEndong>ISO-8859-1</project.build.resourceEndong>
-        <codebase>http://edouardhue.github.io/comeon/jnlp</codebase>
+        <codebase>https://edouardhue.github.io/comeon/jnlp</codebase>
     </properties>
 
     <build>
