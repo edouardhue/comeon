@@ -120,14 +120,6 @@ public final class ComeOn extends AbstractModule {
 
         bind(TransferMonitor.class);
 
-        bind(AddMediaAction.class);
-        bind(UploadMediaAction.class);
-        bind(AboutAction.class);
-        bind(PreferencesAction.class);
-        bind(QuitAction.class);
-        bind(HelpManualAction.class);
-        bind(AbortAction.class);
-
         bind(EventBus.class).toInstance(bus);
     }
 
@@ -198,6 +190,7 @@ public final class ComeOn extends AbstractModule {
         comeOn.bus.register(injector.getInstance(Core.class));
         comeOn.bus.register(injector.getInstance(AddMediaAction.class));
         comeOn.bus.register(injector.getInstance(UploadMediaAction.class));
+        comeOn.bus.register(injector.getInstance(ClearMediaAction.class));
         comeOn.bus.register(injector.getInstance(AbortAction.class));
         comeOn.bus.register(injector.getInstance(TransferMonitor.class));
         return ui;

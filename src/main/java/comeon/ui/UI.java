@@ -114,9 +114,7 @@ public final class UI extends JFrame {
             previews.removeAll();
             editContainer.removeAll();
             validate();
-            for (final Media media : core.getMedia()) {
-                add(media);
-            }
+            core.getMedia().forEach(this::add);
             validate();
         });
     }

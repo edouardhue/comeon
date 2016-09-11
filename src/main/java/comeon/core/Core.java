@@ -15,6 +15,8 @@ public interface Core {
 
     void removeMedia(Media media);
 
+    void removeAllMedia();
+
     List<Media> getMedia();
 
     int countMediaToBeUploaded();

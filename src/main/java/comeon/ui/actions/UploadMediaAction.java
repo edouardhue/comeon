@@ -1,6 +1,5 @@
 package comeon.ui.actions;
 
-import com.google.common.eventbus.Subscribe;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -14,19 +13,16 @@ import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 
 @Singleton
-public final class UploadMediaAction extends BaseAction {
+public final class UploadMediaAction extends MediaBaseAction {
     private static final long serialVersionUID = 1L;
 
     static final ImageIcon ICON = new ImageIcon(Resources.getResource("comeon/ui/upload_huge.png"));
-
-    private final Core core;
 
     private final Wikis wikis;
 
     @Inject
     public UploadMediaAction(final Core core, final Wikis wikis) {
-        super("upload");
-        this.core = core;
+        super("upload", core);
         this.wikis = wikis;
         this.setEnabled(false);
     }
@@ -60,17 +56,4 @@ public final class UploadMediaAction extends BaseAction {
         }
     }
 
-    @Subscribe
-    public void handleMediaAddedEvent(final MediaAddedEvent event) {
-        this.enableIfMediaAreAvailable();
-    }
-
-    @Subscribe
-    public void handleMediaRemovedEvent(final MediaRemovedEvent event) {
-        this.enableIfMediaAreAvailable();
-    }
-
-    private void enableIfMediaAreAvailable() {
-        SwingUtilities.invokeLater(() -> UploadMediaAction.this.setEnabled(core.countMediaToBeUploaded() > 0));
-    }
 }
