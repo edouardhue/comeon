@@ -174,21 +174,20 @@ public final class UI extends JFrame {
 
             try {
                 @SuppressWarnings("unchecked")
-                final List<File> files = (List<File>) support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-                final List<File> filteredFiles = files
+                final List<File> transferData = (List<File>) support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                final File[] preselectedFiles = transferData
                         .parallelStream()
                         .filter(file -> file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg"))
-                        .collect(Collectors.toList());
-                final File[] preselectedFiles = filteredFiles.toArray(new File[filteredFiles.size()]);
+                        .toArray(File[]::new);
 
                 SwingUtilities.invokeLater(() -> {
                     final AddMediaDialog dialog = new AddMediaDialog(templates, preselectedFiles);
                     final int value = dialog.showDialog();
                     if (value == JOptionPane.OK_OPTION) {
                         final AddModel model = dialog.getModel();
-                        final File[] files1 = model.getMediaFiles();
-                        if (files1.length > 0) {
-                            core.addMedia(files1, model.getTemplate(), model.getExternalMetadataSource());
+                        final File[] mediaFiles = model.getMediaFiles();
+                        if (mediaFiles.length > 0) {
+                            core.addMedia(mediaFiles, model.getTemplate(), model.getExternalMetadataSource());
                         }
                     }
                 });

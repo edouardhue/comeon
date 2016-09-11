@@ -43,17 +43,9 @@ final class MediaEditPanel extends JPanel {
         templatesPanel.insertTab(UI.BUNDLE.getString("media.tab.page"), new ImageIcon(Resources.getResource("comeon/ui/rendered_small.png")), renderedTemplatePanel, null, RENDERED_TAB_INDEX);
         templatesPanel.setSelectedComponent(renderedTemplatePanel);
 
-        panels.getMedia().addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(final PropertyChangeEvent evt) {
-                if ("renderedTemplate".equals(evt.getPropertyName()) && !evt.getNewValue().equals(renderedTemplate.getText())) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            renderedTemplate.setText(evt.getNewValue().toString());
-                        }
-                    });
-                }
+        panels.getMedia().addPropertyChangeListener(evt -> {
+            if ("renderedTemplate".equals(evt.getPropertyName()) && !evt.getNewValue().equals(renderedTemplate.getText())) {
+                SwingUtilities.invokeLater(() -> renderedTemplate.setText(evt.getNewValue().toString()));
             }
         });
 

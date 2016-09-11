@@ -24,17 +24,12 @@ public final class MediaPanels {
 
     public MediaPanels(final Media media) {
         this.media = media;
-        final ByteArrayInputStream input = new ByteArrayInputStream(media.getThumbnail());
-        try {
-            try {
-                final BufferedImage mediaThumbnail = ImageIO.read(input);
-                if (mediaThumbnail == null) {
-                    this.thumbnail = ImageIO.read(Resources.getResource("comeon/ui/default_thumbnail.png"));
-                } else {
-                    this.thumbnail = mediaThumbnail;
-                }
-            } finally {
-                input.close();
+        try (final ByteArrayInputStream input = new ByteArrayInputStream(media.getThumbnail())) {
+            final BufferedImage mediaThumbnail = ImageIO.read(input);
+            if (mediaThumbnail == null) {
+                this.thumbnail = ImageIO.read(Resources.getResource("comeon/ui/default_thumbnail.png"));
+            } else {
+                this.thumbnail = mediaThumbnail;
             }
         } catch (final IOException e) {
             LOGGER.warn("Can't load media thumbnail {}", media.getFileName(), e);

@@ -26,6 +26,6 @@ public final class PreferencesDialog extends JOptionPane {
 
     public int showDialog() {
         this.dialog.setVisible(true);
-        return ((Integer) this.getValue()).intValue();
+        return (Integer) this.getValue();
     }
 }

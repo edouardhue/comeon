@@ -8,8 +8,9 @@ public abstract class BaseListCellRenderer<T> extends DefaultListCellRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public final Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index,
-                                                        boolean isSelected, boolean cellHasFocus) {
+    public final Component getListCellRendererComponent(final JList<? extends Object> list, final Object value,
+                                                        final int index, final boolean isSelected,
+                                                        final boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         this.setFont(this.getFont().deriveFont(Font.PLAIN));
         this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));

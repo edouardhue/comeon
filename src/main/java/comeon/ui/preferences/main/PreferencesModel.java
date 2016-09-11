@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 public final class PreferencesModel {
@@ -39,12 +40,7 @@ public final class PreferencesModel {
     }
 
     private List<TemplateModel> buildTemplateModels(final Templates templates) {
-        final List<Template> templatesList = templates.getTemplates();
-        final List<TemplateModel> templateModels = new ArrayList<>(templatesList.size());
-        for (final Template template : templatesList) {
-            templateModels.add(new TemplateModel(template));
-        }
-        return templateModels;
+        return templates.getTemplates().parallelStream().map(TemplateModel::new).collect(Collectors.toList());
     }
 
     private List<WikiModel> buildWikiModels(final Wikis wikis) {
@@ -64,9 +60,7 @@ public final class PreferencesModel {
     private static <M> void updateModel(final List<M> data, final DefaultListModel<M> listModel) {
         listModel.removeAllElements();
         listModel.ensureCapacity(data.size());
-        for (final M element : data) {
-            listModel.addElement(element);
-        }
+        data.forEach(listModel::addElement);
         listModel.trimToSize();
     }
 

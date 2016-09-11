@@ -27,16 +27,6 @@ public final class Wiki {
 
     @Override
     public boolean equals(final Object obj) {
-        final boolean isEqual;
-
-        if (obj == null) {
-            isEqual = false;
-        } else if (obj instanceof Wiki) {
-            isEqual = this.name.equals(((Wiki) obj).name);
-        } else {
-            isEqual = false;
-        }
-
-        return isEqual;
+        return obj != null && obj instanceof Wiki && this.name.equals(((Wiki) obj).name);
     }
 }

@@ -28,18 +28,10 @@ public final class WikisListPanel extends ListPanel<WikiModel> {
         super(new WikiListCellRenderer(), subController, subPanel, subController.getMainController().getWikis(),
                 "wikis", new ImageIcon(Resources.getResource("comeon/ui/wiki_large.png")), WikiModel.getPrototype());
         this.activateAction = new ActivateAction();
-        list.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(final ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    final boolean isSomethingSelected = list.getSelectedIndex() >= 0;
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            activateAction.setEnabled(isSomethingSelected);
-                        }
-                    });
-                }
+        list.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                final boolean isSomethingSelected = list.getSelectedIndex() >= 0;
+                SwingUtilities.invokeLater(() -> activateAction.setEnabled(isSomethingSelected));
             }
         });
         list.getModel().addListDataListener(new ListDataListener() {
@@ -59,13 +51,10 @@ public final class WikisListPanel extends ListPanel<WikiModel> {
             }
 
             private void updateActivateActionStatus() {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        activateAction.setEnabled(list.getModel().getSize() > 1);
-                        if (list.getModel().getSize() == 1) {
-                            subController.getMainController().setActiveWiki(0);
-                        }
+                SwingUtilities.invokeLater(() -> {
+                    activateAction.setEnabled(list.getModel().getSize() > 1);
+                    if (list.getModel().getSize() == 1) {
+                        subController.getMainController().setActiveWiki(0);
                     }
                 });
             }

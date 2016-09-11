@@ -63,19 +63,13 @@ abstract class ListPanel<M extends Model> extends JPanel {
         this.list = new JList<>(model);
         this.list.setCellRenderer(renderer);
         this.list.setPrototypeCellValue(prototypeValue);
-        this.list.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(final ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    final boolean isSomethingSelected = list.getSelectedIndex() >= 0;
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            removeAction.setEnabled(isSomethingSelected && model.getSize() > 1);
-                            changeAction.setEnabled(isSomethingSelected);
-                        }
-                    });
-                }
+        this.list.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                final boolean isSomethingSelected = list.getSelectedIndex() >= 0;
+                SwingUtilities.invokeLater(() -> {
+                    removeAction.setEnabled(isSomethingSelected && model.getSize() > 1);
+                    changeAction.setEnabled(isSomethingSelected);
+                });
             }
         });
         model.addListDataListener(new ListDataListener() {
@@ -95,12 +89,7 @@ abstract class ListPanel<M extends Model> extends JPanel {
             }
 
             private void updateRemoveActionStatus() {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        removeAction.setEnabled(model.getSize() > 1);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> removeAction.setEnabled(model.getSize() > 1));
             }
         });
         this.list.addListSelectionListener(subController);
@@ -173,16 +162,13 @@ abstract class ListPanel<M extends Model> extends JPanel {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    subController.switchToBlankModel();
-                    final boolean result = validationPanel.showOkCancelDialog(UI.BUNDLE.getString(titleKey));
-                    if (result) {
-                        subController.addCurrentModel();
-                    } else {
-                        subController.rollback();
-                    }
+            SwingUtilities.invokeLater(() -> {
+                subController.switchToBlankModel();
+                final boolean result = validationPanel.showOkCancelDialog(UI.BUNDLE.getString(titleKey));
+                if (result) {
+                    subController.addCurrentModel();
+                } else {
+                    subController.rollback();
                 }
             });
         }
@@ -201,13 +187,10 @@ abstract class ListPanel<M extends Model> extends JPanel {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    final int result = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), UI.BUNDLE.getString(confirmKey), UI.BUNDLE.getString("action.prefs.remove.title"), JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
-                        subController.remove(list.getSelectedIndex());
-                    }
+            SwingUtilities.invokeLater(() -> {
+                final int result = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor((Component) e.getSource()), UI.BUNDLE.getString(confirmKey), UI.BUNDLE.getString("action.prefs.remove.title"), JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    subController.remove(list.getSelectedIndex());
                 }
             });
         }
@@ -226,15 +209,12 @@ abstract class ListPanel<M extends Model> extends JPanel {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    final boolean result = validationPanel.showOkCancelDialog(UI.BUNDLE.getString(titleKey));
-                    if (result) {
-                        subController.commit(list.getSelectedIndex());
-                    } else {
-                        subController.rollback();
-                    }
+            SwingUtilities.invokeLater(() -> {
+                final boolean result = validationPanel.showOkCancelDialog(UI.BUNDLE.getString(titleKey));
+                if (result) {
+                    subController.commit(list.getSelectedIndex());
+                } else {
+                    subController.rollback();
                 }
             });
         }

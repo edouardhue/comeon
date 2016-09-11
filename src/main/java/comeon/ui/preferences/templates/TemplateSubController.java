@@ -37,31 +37,22 @@ public final class TemplateSubController extends SubController<TemplateModel, Te
                 getModel().setDescription(text);
             }
         });
-        view.getCharsetField().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                @SuppressWarnings("unchecked")
-                final JComboBox<Charset> source = (JComboBox<Charset>) e.getSource();
-                final Charset newCharset = (Charset) source.getSelectedItem();
-                getModel().setCharset(newCharset);
-            }
+        view.getCharsetField().addActionListener(e -> {
+            @SuppressWarnings("unchecked")
+            final JComboBox<Charset> source = (JComboBox<Charset>) e.getSource();
+            final Charset newCharset = (Charset) source.getSelectedItem();
+            getModel().setCharset(newCharset);
         });
-        view.getKindField().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                @SuppressWarnings("unchecked")
-                final JComboBox<TemplateKind> source = (JComboBox<TemplateKind>) e.getSource();
-                final TemplateKind kind = (TemplateKind) source.getSelectedItem();
-                getModel().setKind(kind);
-            }
+        view.getKindField().addActionListener(e -> {
+            @SuppressWarnings("unchecked")
+            final JComboBox<TemplateKind> source = (JComboBox<TemplateKind>) e.getSource();
+            final TemplateKind kind = (TemplateKind) source.getSelectedItem();
+            getModel().setKind(kind);
         });
-        view.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(final PropertyChangeEvent evt) {
-                if (TemplateSubPanel.SELECTED_FILE_PROPERTY.equals(evt.getPropertyName())) {
-                    final File selectedFile = (File) evt.getNewValue();
-                    getModel().setFile(selectedFile.toPath());
-                }
+        view.addPropertyChangeListener(evt -> {
+            if (TemplateSubPanel.SELECTED_FILE_PROPERTY.equals(evt.getPropertyName())) {
+                final File selectedFile = (File) evt.getNewValue();
+                getModel().setFile(selectedFile.toPath());
             }
         });
     }
@@ -82,12 +73,7 @@ public final class TemplateSubController extends SubController<TemplateModel, Te
         if (TemplateModel.Properties.FILE.name().equals(evt.getPropertyName())) {
             final Path file = (Path) evt.getNewValue();
             getModel().setFile(file);
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    getView().getFileField().setText(file == null ? null : file.toString());
-                }
-            });
+            SwingUtilities.invokeLater(() -> getView().getFileField().setText(file == null ? null : file.toString()));
         }
     }
 
