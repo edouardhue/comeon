@@ -37,12 +37,11 @@
     </scm>
 
     <properties>
-        <version.mwapi>1.5-SNAPSHOT</version.mwapi>
+        <version.mwapi>1.5-comeon</version.mwapi>
         <version.mdextractor>2.6.2</version.mdextractor>
         <version.slf4j>1.7.7</version.slf4j>
         <version.guice>3.0</version.guice>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.resourceEndong>ISO-8859-1</project.build.resourceEndong>
         <codebase>https://edouardhue.github.io/comeon/jnlp</codebase>
     </properties>
 
@@ -200,7 +199,7 @@
         <dependency>
             <groupId>com.kenai</groupId>
             <artifactId>simplevalidation-standalone</artifactId>
-            <version>1.6</version>
+            <version>1.6-comeon</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
