@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
 public final class CoreImpl implements Core {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoreImpl.class);
 
-    private final List<Media> medias;
+    private final List<Media> media;
 
     private final ExecutorService pool;
 
@@ -45,14 +44,12 @@ public final class CoreImpl implements Core {
 
     private final Queue<Future<Void>> currentTasks;
 
-    private final ReadWriteLock mediasLock = new ReentrantReadWriteLock();
-
     private MediaWiki activeMediaWiki;
 
     @Inject
     private CoreImpl(final Wikis wikis, final ExecutorService pool, final EventBus bus,
                      final MediaUploadBatchFactory mediaUploadBatchFactory, final MediaWikiFactory mediaWikiFactory) {
-        this.medias = new ArrayList<>();
+        this.media = new ArrayList<>();
         this.currentTasks = new ConcurrentLinkedQueue<>();
         this.pool = pool;
         this.bus = bus;
@@ -74,44 +71,26 @@ public final class CoreImpl implements Core {
         final MediaUploadBatch mediaReader = mediaUploadBatchFactory.makeMediaUploadBatch(files, defautTemplate,
                 externalMetadataSource);
         final List<Media> newMedia = mediaReader.readFiles(wikis.getActiveWiki().getUser()).getMedia();
-        mediasLock.writeLock().lock();
-        try {
-            this.medias.addAll(newMedia);
-        } finally {
-            mediasLock.writeLock().unlock();
-        }
+        this.media.addAll(newMedia);
         bus.post(new MediaAddedEvent(Collections.unmodifiableList(newMedia)));
     }
 
     @Override
     public void removeMedia(final Media media) {
-        mediasLock.writeLock().lock();
-        try {
-            medias.remove(media);
-        } finally {
-            mediasLock.writeLock().unlock();
-        }
+        this.media.remove(media);
         bus.post(new MediaRemovedEvent(media));
     }
 
     @Override
     public void removeAllMedia() {
-        mediasLock.writeLock().lock();
-        try {
-            final Iterator<Media> it = medias.iterator();
-            while (it.hasNext()) {
-                final Media tbr = it.next();
-                it.remove();
-                bus.post(new MediaRemovedEvent(tbr));
-            }
-        } finally {
-            mediasLock.writeLock().unlock();
-        }
+        final List<Media> removedMedia = new ArrayList<>(this.media);
+        this.media.clear();
+        bus.post(new MediaRemovedEvent(removedMedia));
     }
 
     @Override
     public List<Media> getMedia() {
-        return Collections.unmodifiableList(medias);
+        return Collections.unmodifiableList(media);
     }
 
     private boolean shouldUpload(final Media media) {
@@ -120,12 +99,7 @@ public final class CoreImpl implements Core {
 
     @Override
     public int countMediaToBeUploaded() {
-        mediasLock.readLock().lock();
-        try {
-            return (int) medias.parallelStream().filter(this::shouldUpload).count();
-        } finally {
-            mediasLock.readLock().unlock();
-        }
+        return (int) media.parallelStream().filter(this::shouldUpload).count();
     }
 
     private class UploadTask implements Callable<Void> {
@@ -172,39 +146,34 @@ public final class CoreImpl implements Core {
 
     @Override
     public void uploadMedia() {
-        mediasLock.readLock().lock();
+        final List<Media> mediaToBeUploaded = media.parallelStream().filter(this::shouldUpload).collect(Collectors.toList());
+        LOGGER.info("Uploading {} media to {}.", mediaToBeUploaded.size(), activeMediaWiki.getName());
+        bus.post(new UploadStartingEvent(mediaToBeUploaded));
+        final List<Future<Void>> tasks = mediaToBeUploaded.parallelStream().map(media -> pool.submit(new UploadTask(media))).collect(Collectors.toList());
+        currentTasks.addAll(tasks);
         try {
-            final List<Media> mediaToBeUploaded = medias.parallelStream().filter(this::shouldUpload).collect(Collectors.toList());
-            LOGGER.info("Uploading {} media to {}.", mediaToBeUploaded.size(), activeMediaWiki.getName());
-            bus.post(new UploadStartingEvent(mediaToBeUploaded));
-            final List<Future<Void>> tasks = mediaToBeUploaded.parallelStream().map(media -> pool.submit(new UploadTask(media))).collect(Collectors.toList());
-            currentTasks.addAll(tasks);
-            try {
-                for (final Future<Void> task : tasks) {
-                    try {
-                        task.get();
-                    } catch (final CancellationException e) {
-                        LOGGER.debug("Task was cancelled", e);
-                    } catch (final ExecutionException e) {
-                        LOGGER.warn("Task execution failed", e);
-                    } finally {
-                        currentTasks.remove(task);
-                    }
-                }
-            } catch (final InterruptedException e) {
-                Thread.interrupted();
-                LOGGER.warn("We were interrupted while waiting for uploads to complete", e);
-            } finally {
+            for (final Future<Void> task : tasks) {
                 try {
-                    activeMediaWiki.logout();
-                } catch (final FailedLogoutException e) {
-                    LOGGER.warn("Couldn't close Mediawiki session properly", e);
+                    task.get();
+                } catch (final CancellationException e) {
+                    LOGGER.debug("Task was cancelled", e);
+                } catch (final ExecutionException e) {
+                    LOGGER.warn("Task execution failed", e);
+                } finally {
+                    currentTasks.remove(task);
                 }
-                bus.post(new UploadDoneEvent());
-                LOGGER.info("Upload done.");
             }
+        } catch (final InterruptedException e) {
+            Thread.interrupted();
+            LOGGER.warn("We were interrupted while waiting for uploads to complete", e);
         } finally {
-            mediasLock.readLock().unlock();
+            try {
+                activeMediaWiki.logout();
+            } catch (final FailedLogoutException e) {
+                LOGGER.warn("Couldn't close Mediawiki session properly", e);
+            }
+            bus.post(new UploadDoneEvent());
+            LOGGER.info("Upload done.");
         }
     }
 
@@ -223,7 +192,7 @@ public final class CoreImpl implements Core {
             }
         }
         this.activeMediaWiki = mediaWikiFactory.build(wikis.getActiveWiki());
-        for (final Media media : medias) {
+        for (final Media media : this.media) {
             media.renderTemplate(wikis.getActiveWiki().getUser());
         }
     }
