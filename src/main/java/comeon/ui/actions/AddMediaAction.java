@@ -6,14 +6,13 @@ import com.google.inject.Singleton;
 import comeon.core.Core;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesChangedEvent;
+import comeon.ui.CursorChangingWorker;
 import comeon.ui.add.AddMediaDialog;
 import comeon.ui.add.AddModel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Optional;
 
 @Singleton
 public final class AddMediaAction extends BaseAction {
@@ -37,29 +36,11 @@ public final class AddMediaAction extends BaseAction {
     @Override
     public void actionPerformed(final ActionEvent e) {
         // Ancestor may be null in presence of keywtrokes
-        final Optional<Window> window = Optional.ofNullable(SwingUtilities.getWindowAncestor((Component) e.getSource()));
         SwingUtilities.invokeLater(() -> {
             final AddMediaDialog dialog = new AddMediaDialog(templates);
             final int value = dialog.showDialog();
             if (value == JOptionPane.OK_OPTION) {
-                window.ifPresent(w -> w.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)));
-                final SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        final AddModel model = dialog.getModel();
-                        final File[] files = model.getMediaFiles();
-                        if (files.length > 0) {
-                            core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
-                        }
-                        return null;
-                    }
-                };
-                worker.addPropertyChangeListener(evt -> {
-                    if ("state".equals(evt.getPropertyName()) && SwingWorker.StateValue.DONE.equals(evt.getNewValue())) {
-                        SwingUtilities.invokeLater(() -> window.ifPresent(w -> w.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))));
-                    }
-                });
-                worker.execute();
+                new AdderWorker(dialog.getModel()).execute();
             }
         });
     }
@@ -67,5 +48,24 @@ public final class AddMediaAction extends BaseAction {
     @Subscribe
     public void handleTemplatesChanged(final TemplatesChangedEvent event) {
         this.setEnabled(!event.getTemplates().isEmpty());
+    }
+
+    private class AdderWorker extends CursorChangingWorker {
+
+        private final AddModel model;
+
+        private AdderWorker(final AddModel model ) {
+            this.model = model;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            final File[] files = model.getMediaFiles();
+            if (files.length > 0) {
+                core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
+            }
+            return null;
+        }
+
     }
 }

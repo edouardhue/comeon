@@ -27,10 +27,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -89,11 +87,20 @@ public final class UI extends JFrame {
         this.setTransferHandler(transferHandler);
     }
 
+    public static Window findInstance() {
+        return Arrays.stream(getWindows()).filter(w -> UI.class.equals(w.getClass())).findFirst().orElseThrow(NoSuchElementException::new);
+    }
+
     private static List<? extends Image> loadIcons() {
         try {
-            return ImmutableList.of(ImageIO.read(Resources.getResource("comeon_16_16.png")),
+            return ImmutableList.of(
+                    ImageIO.read(Resources.getResource("comeon_1024_1024.png")),
+                    ImageIO.read(Resources.getResource("comeon_512_512.png")),
+                    ImageIO.read(Resources.getResource("comeon_128_128.png")),
+                    ImageIO.read(Resources.getResource("comeon_256_256.png")),
                     ImageIO.read(Resources.getResource("comeon_48_48.png")),
-                    ImageIO.read(Resources.getResource("comeon_128_128.png")));
+                    ImageIO.read(Resources.getResource("comeon_16_16.png"))
+            );
         } catch (final IOException e) {
             return Collections.emptyList();
         }

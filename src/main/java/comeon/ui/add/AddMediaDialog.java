@@ -34,7 +34,7 @@ public final class AddMediaDialog extends JOptionPane {
         this.mediaPanel = new AddMediaPanel(controller);
         this.controller.registerView(mediaPanel);
         this.setMessage(this.mediaPanel);
-        this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("action.addmedia.title"));
+        this.dialog = this.createDialog(UI.findInstance(), UI.BUNDLE.getString("action.addmedia.title"));
         this.dialog.setIconImages(UI.ICON_IMAGES);
         this.model.setMediaFiles(preselectedFiles);
     }
