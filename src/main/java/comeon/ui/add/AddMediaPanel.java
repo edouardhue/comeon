@@ -2,14 +2,13 @@ package comeon.ui.add;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import comeon.core.Core;
 import comeon.model.Template;
 import comeon.ui.UI;
 import comeon.ui.actions.BaseAction;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -19,7 +18,6 @@ import javax.swing.text.Document;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -79,8 +77,8 @@ class AddMediaPanel extends JPanel {
         this.mediaFilesChooser = new JFileChooser();
         mediaFilesChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         mediaFilesChooser.setMultiSelectionEnabled(true);
-        final FileFilter picturesFileFilter = new FileNameExtensionFilter(UI.BUNDLE.getString("action.addmedia.filter.pictures"), "jpg", "jpeg");
-        final FileFilter audioFileFilter = new FileNameExtensionFilter(UI.BUNDLE.getString("action.addmedia.filter.audio"), "ogg", "flac", "wav");
+        final FileFilter picturesFileFilter = new FileNameExtensionFilter(UI.BUNDLE.getString("action.addmedia.filter.pictures"), Core.PICTURE_EXTENSIONS);
+        final FileFilter audioFileFilter = new FileNameExtensionFilter(UI.BUNDLE.getString("action.addmedia.filter.audio"), Core.AUDIO_EXTENSIONS);
         mediaFilesChooser.setAcceptAllFileFilterUsed(false);
         mediaFilesChooser.addChoosableFileFilter(picturesFileFilter);
         mediaFilesChooser.addChoosableFileFilter(audioFileFilter);

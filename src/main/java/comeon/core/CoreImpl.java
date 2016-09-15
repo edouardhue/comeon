@@ -179,7 +179,8 @@ public final class CoreImpl implements Core {
 
     @Override
     public void abort() {
-        currentTasks.parallelStream().filter(task -> task.cancel(true)).forEach(currentTasks::remove);
+        final List<Future<Void>> cancelledTasks = currentTasks.parallelStream().filter(task -> task.cancel(true)).collect(Collectors.toList());
+        currentTasks.removeAll(cancelledTasks);
     }
 
     @Subscribe

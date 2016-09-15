@@ -3,12 +3,11 @@ package comeon.core;
 import comeon.model.Media;
 import comeon.model.User;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
-abstract class AbstractMediaReader implements Runnable {
+abstract class AbstractMediaReader {
 
     private final MediaUploadBatch mediaUploadBatch;
 
@@ -30,8 +29,7 @@ abstract class AbstractMediaReader implements Runnable {
         return file;
     }
 
-    @Override
-    public final void run() {
+    public final void readFile() {
         final String fileName = file.getAbsolutePath();
         try {
             final Media media = buildMedia();
@@ -39,7 +37,13 @@ abstract class AbstractMediaReader implements Runnable {
             media.renderTemplate(user);
             media.addPropertyChangeListener(evt -> {
                 if ("templateText".equals(evt.getPropertyName())) {
-                    mediaUploadBatch.execute(() -> media.renderTemplate(user));
+                    new SwingWorker<Void, Void>() {
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            media.renderTemplate(user);
+                            return null;
+                        }
+                    }.execute();
                 }
             });
             mediaUploadBatch.add(media);
@@ -47,8 +51,6 @@ abstract class AbstractMediaReader implements Runnable {
             MediaUploadBatch.LOGGER.warn("Can't read metadata from {}", fileName, e);
         } catch (final IOException e) {
             MediaUploadBatch.LOGGER.warn("Can't read file {}", fileName, e);
-        } finally {
-            mediaUploadBatch.decreaseLatch();
         }
     }
 

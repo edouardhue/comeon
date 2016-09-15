@@ -1,10 +1,14 @@
 package comeon.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.Sets;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
+import comeon.core.extmetadata.NullMetadataSource;
+import comeon.model.Media;
+import comeon.model.Template;
+import comeon.model.processors.GpsPreProcessor;
+import comeon.model.processors.IptcPreProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,16 +16,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
-
-import comeon.core.extmetadata.NullMetadataSource;
-import comeon.model.Media;
-import comeon.model.Template;
-import comeon.model.processors.GpsPreProcessor;
-import comeon.model.processors.IptcPreProcessor;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * IPTC Keywords are limited to 64 bytes. Too bad !
@@ -47,7 +44,7 @@ public class MediaTest {
     Resources.asByteSource(Resources.getResource("long-category-titles.jpg")).copyTo(Files.asByteSink(file));
     final Template mockTemplate = Mockito.mock(Template.class);
     Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
-    final MediaUploadBatch pics = new MediaUploadBatch(new File[0], mockTemplate, null, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
+    final MediaUploadBatch pics = new MediaUploadBatch(new File[0], mockTemplate, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
     this.reader = new PictureReader(pics, file, null);
   }
 

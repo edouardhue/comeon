@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 
 public final class MediaUploadBatch {
     static final Logger LOGGER = LoggerFactory.getLogger(MediaUploadBatch.class);
@@ -24,35 +22,20 @@ public final class MediaUploadBatch {
 
     private final List<Media> medias;
 
-    private final ExecutorService pool;
-
-    private final CountDownLatch latch;
-
     private final Set<PreProcessor> preProcessors;
 
     private final ExternalMetadataSource<?> externalMetadataSource;
 
-    MediaUploadBatch(final File[] files, final Template defautTemplate, final ExecutorService pool, final Set<PreProcessor> preProcessors, final ExternalMetadataSource<?> externalMetadataSource) {
+    MediaUploadBatch(final File[] files, final Template defautTemplate, final Set<PreProcessor> preProcessors, final ExternalMetadataSource<?> externalMetadataSource) {
         this.files = files;
         this.defaultTemplate = defautTemplate;
-        this.pool = pool;
         this.medias = Collections.synchronizedList(new ArrayList<Media>(files.length));
-        this.latch = new CountDownLatch(files.length);
         this.preProcessors = preProcessors;
         this.externalMetadataSource = externalMetadataSource;
     }
 
     public MediaUploadBatch readFiles(final User user) {
-        for (final File file : files) {
-            this.execute(selectMediaReader(file, user));
-        }
-
-        try {
-            latch.await();
-        } catch (final InterruptedException e) {
-            Thread.interrupted();
-        }
-
+        Arrays.stream(files).parallel().map(f -> selectMediaReader(f, user)).forEach(r -> r.run());
         return this;
     }
 
@@ -67,11 +50,11 @@ public final class MediaUploadBatch {
     }
 
     private boolean isPicture(final File file) {
-        return file.getName().matches("(?i).*\\.jpe?g$");
+        return Arrays.stream(Core.PICTURE_EXTENSIONS).anyMatch(e -> file.getName().toLowerCase(Locale.ENGLISH).endsWith(e));
     }
 
     private boolean isAudio(final File file) {
-        return file.getName().matches("(?i).*\\.flac$");
+        return Arrays.stream(Core.AUDIO_EXTENSIONS).anyMatch(e -> file.getName().toLowerCase(Locale.ENGLISH).endsWith(e));
     }
 
     public List<Media> getMedia() {
@@ -80,14 +63,6 @@ public final class MediaUploadBatch {
 
     void add(final Media media) {
         this.medias.add(media);
-    }
-
-    void decreaseLatch() {
-        this.latch.countDown();
-    }
-
-    void execute(final Runnable r) {
-        pool.execute(r);
     }
 
     Template getDefaultTemplate() {

@@ -11,6 +11,10 @@ public interface Core {
 
     String EXTERNAL_METADATA_KEY = "external";
 
+    String[] PICTURE_EXTENSIONS = { "jpg", "jpeg" };
+
+    String[] AUDIO_EXTENSIONS = { "ogg", "flac", "wav" };
+
     void addMedia(File[] files, Template defautTemplate, ExternalMetadataSource<?> externalMetadataSource);
 
     void removeMedia(Media media);

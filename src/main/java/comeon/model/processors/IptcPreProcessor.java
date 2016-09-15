@@ -5,11 +5,12 @@ import com.drew.metadata.iptc.IptcDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.DateTimeException;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 public final class IptcPreProcessor implements PreProcessor {
 
@@ -19,25 +20,28 @@ public final class IptcPreProcessor implements PreProcessor {
 
     private static final String KEYWORDS = "keywords";
 
+    private static final DateTimeFormatter IPTC_DATE_TIME_PARSER = DateTimeFormatter.ofPattern("[uuuuMMdd]:[HHmmss[Z]]", Locale.ENGLISH);
+
+    private static final DateTimeFormatter METADATA_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("[uuuu-MM-dd] [HH:mm:ss]", Locale.ENGLISH);
+
     @Override
     public void process(final Directory directory, final Map<String, Object> metadata) {
         final String[] keywords = directory.getStringArray(IptcDirectory.TAG_KEYWORDS);
         metadata.put(KEYWORDS, keywords);
-        final String iptcDate = directory.getString(IptcDirectory.TAG_DIGITAL_DATE_CREATED);
-        final String iptcTime = directory.getString(IptcDirectory.TAG_DIGITAL_TIME_CREATED);
-        final SimpleDateFormat inFormatWithoutTimezone = new SimpleDateFormat("HHmmss:yyyyMMdd", Locale.ENGLISH);
-        final SimpleDateFormat inFormatWithTimezone = new SimpleDateFormat("HHmmssZ:yyyyMMdd", Locale.ENGLISH);
-        final SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+
+        final Optional<String> iptcDate = Optional.ofNullable(directory.getString(IptcDirectory.TAG_DIGITAL_DATE_CREATED));
+        final Optional<String> iptcTime = Optional.ofNullable(directory.getString(IptcDirectory.TAG_DIGITAL_TIME_CREATED));
+
+        final StringBuilder buf = new StringBuilder();
+        iptcDate.ifPresent(buf::append);
+        buf.append(':');
+        iptcTime.ifPresent(buf::append);
+
         try {
-            final Date pictureDateWithoutTimezone = inFormatWithoutTimezone.parse(iptcTime + ":" + iptcDate);
-            metadata.put(DATE, outFormat.format(pictureDateWithoutTimezone));
-        } catch (final ParseException e) {
-            try {
-                final Date pictureDateWithTimezone = inFormatWithTimezone.parse(iptcTime + ":" + iptcDate);
-                metadata.put(DATE, outFormat.format(pictureDateWithTimezone));
-            } catch (final ParseException e2) {
-                LOGGER.info("Can't handle date", e2);
-            }
+            final TemporalAccessor iptcDateTime = IPTC_DATE_TIME_PARSER.parse(buf);
+            metadata.put(DATE, METADATA_DATE_TIME_FORMATTER.format(iptcDateTime).trim());
+        } catch (final DateTimeException e) {
+            LOGGER.info("Can't handle date", e);
         }
     }
 
