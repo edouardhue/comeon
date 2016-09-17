@@ -78,7 +78,6 @@ public final class ComeOn extends AbstractModule {
         bind(Core.class).to(CoreImpl.class);
         bind(Templates.class).to(TemplatesImpl.class);
         bind(Wikis.class).to(WikisImpl.class);
-        bind(MediaUploadBatchFactory.class).to(DefaultMediaUploadBatchFactory.class);
         bind(MediaWikiFactory.class);
 
         Multibinder<PreProcessor> preProcessorsBinder = Multibinder.newSetBinder(binder(), PreProcessor.class);

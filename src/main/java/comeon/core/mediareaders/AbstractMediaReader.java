@@ -38,13 +38,7 @@ abstract class AbstractMediaReader implements MediaReader {
             media.renderTemplate(user);
             media.addPropertyChangeListener(evt -> {
                 if ("templateText".equals(evt.getPropertyName())) {
-                    new SwingWorker<Void, Void>() {
-                        @Override
-                        protected Void doInBackground() throws Exception {
-                            media.renderTemplate(user);
-                            return null;
-                        }
-                    }.execute();
+                    new TemplateRenderer(media).execute();
                 }
             });
             return Optional.of(media);
@@ -58,4 +52,18 @@ abstract class AbstractMediaReader implements MediaReader {
     }
 
     protected abstract Media buildMedia(final MediaUploadBatch context) throws MediaReaderException, IOException;
+
+    private class TemplateRenderer extends SwingWorker<Void, Void> {
+        private final Media media;
+
+        TemplateRenderer(final Media media) {
+            this.media = media;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            media.renderTemplate(user);
+            return null;
+        }
+    }
 }

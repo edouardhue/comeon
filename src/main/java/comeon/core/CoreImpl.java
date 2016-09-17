@@ -11,6 +11,7 @@ import comeon.model.Media;
 import comeon.model.Media.State;
 import comeon.model.Template;
 import comeon.model.Wiki;
+import comeon.model.processors.PreProcessor;
 import comeon.ui.actions.MediaAddedEvent;
 import comeon.ui.actions.MediaRemovedEvent;
 import comeon.wikis.ActiveWikiChangeEvent;
@@ -22,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -38,9 +37,9 @@ public final class CoreImpl implements Core {
 
     private final EventBus bus;
 
-    private final MediaUploadBatchFactory mediaUploadBatchFactory;
-
     private final MediaWikiFactory mediaWikiFactory;
+
+    private final Set<PreProcessor> preProcessors;
 
     private final Queue<Future<Void>> currentTasks;
 
@@ -48,14 +47,14 @@ public final class CoreImpl implements Core {
 
     @Inject
     private CoreImpl(final Wikis wikis, final ExecutorService pool, final EventBus bus,
-                     final MediaUploadBatchFactory mediaUploadBatchFactory, final MediaWikiFactory mediaWikiFactory) {
+                     final MediaWikiFactory mediaWikiFactory, final Set<PreProcessor> preProcessors) {
         this.media = new ArrayList<>();
         this.currentTasks = new ConcurrentLinkedQueue<>();
         this.pool = pool;
         this.bus = bus;
         this.wikis = wikis;
-        this.mediaUploadBatchFactory = mediaUploadBatchFactory;
         this.mediaWikiFactory = mediaWikiFactory;
+        this.preProcessors = preProcessors;
         final Wiki activeWiki = wikis.getActiveWiki();
         if (activeWiki == null) {
             throw new IllegalStateException("There must be one active wiki.");
@@ -68,9 +67,8 @@ public final class CoreImpl implements Core {
     public void addMedia(final File[] files, final Template defautTemplate,
                          final ExternalMetadataSource<?> externalMetadataSource) {
         externalMetadataSource.loadMetadata();
-        final MediaUploadBatch mediaReader = mediaUploadBatchFactory.makeMediaUploadBatch(files, defautTemplate,
-                externalMetadataSource);
-        final List<Media> newMedia = mediaReader.readFiles(wikis.getActiveWiki().getUser()).getMedia();
+        final MediaUploadBatch batch = new MediaUploadBatch(files, defautTemplate, preProcessors, externalMetadataSource);
+        final List<Media> newMedia = batch.readFiles(wikis.getActiveWiki().getUser()).getMedia();
         this.media.addAll(newMedia);
         bus.post(new MediaAddedEvent(Collections.unmodifiableList(newMedia)));
     }
@@ -149,7 +147,7 @@ public final class CoreImpl implements Core {
         final List<Media> mediaToBeUploaded = media.parallelStream().filter(this::shouldUpload).collect(Collectors.toList());
         LOGGER.info("Uploading {} media to {}.", mediaToBeUploaded.size(), activeMediaWiki.getName());
         bus.post(new UploadStartingEvent(mediaToBeUploaded));
-        final List<Future<Void>> tasks = mediaToBeUploaded.parallelStream().map(media -> pool.submit(new UploadTask(media))).collect(Collectors.toList());
+        final List<Future<Void>> tasks = mediaToBeUploaded.parallelStream().map(UploadTask::new).map(pool::submit).collect(Collectors.toList());
         currentTasks.addAll(tasks);
         try {
             for (final Future<Void> task : tasks) {

@@ -4,14 +4,11 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
 import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
-import com.google.common.base.Predicate;
 import comeon.core.MediaUploadBatch;
 import comeon.model.Media;
 import comeon.model.User;
-import comeon.model.processors.PreProcessor;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.DynaProperty;
 import org.apache.commons.beanutils.LazyDynaBean;
@@ -19,7 +16,8 @@ import org.apache.commons.beanutils.LazyDynaClass;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class PictureReader extends AbstractMediaReader {
 
@@ -53,40 +51,25 @@ public final class PictureReader extends AbstractMediaReader {
 
     private void copy(final Directory directory, final Map<String, Object> metadata) {
         final TagDescriptor<?> descriptor = MetadataHelper.getDescriptor(directory);
-        final List<DynaProperty> properties = new LinkedList<>();
-        for (final Tag tag : directory.getTags()) {
-            final DynaProperty property = new DynaProperty(tag.getTagName().replaceAll(NON_WORD_CHARS, ""), String.class);
-            properties.add(property);
-        }
-        final LazyDynaClass directoryClass = new LazyDynaClass(directory.getName(), null,
-                properties.toArray(new DynaProperty[properties.size()]));
+
+        final LazyDynaClass directoryClass = new LazyDynaClass(directory.getName(), null, directory.getTags()
+                .parallelStream()
+                .map(t -> new DynaProperty(t.getTagName().replaceAll(NON_WORD_CHARS, ""), String.class))
+                .toArray(DynaProperty[]::new));
         directoryClass.setReturnNull(true);
+
         final DynaBean directoryMetadata = new LazyDynaBean(directoryClass);
-        for (final Tag tag : directory.getTags()) {
-            directoryMetadata.set(tag.getTagName().replaceAll(NON_WORD_CHARS, ""),
-                    descriptor.getDescription(tag.getTagType()));
-        }
+        directory.getTags().parallelStream().forEach(t -> directoryMetadata.set(
+                t.getTagName().replaceAll(NON_WORD_CHARS, ""),
+                descriptor.getDescription(t.getTagType())
+        ));
         metadata.put(directory.getName().replaceAll(NON_WORD_CHARS, ""), directoryMetadata);
     }
 
     private void preProcess(final MediaUploadBatch context, final Directory directory, final Map<String, Object> metadata) {
-        final Set<PreProcessor> preProcessors = context.filterPreProcessors(new DirectoryPreProcessor(directory.getClass()));
-        for (final PreProcessor preProcessor : preProcessors) {
-            preProcessor.process(directory, metadata);
-        }
-    }
-
-    final static class DirectoryPreProcessor implements Predicate<PreProcessor> {
-        private final Class<? extends Directory> clazz;
-
-        public DirectoryPreProcessor(final Class<? extends Directory> clazz) {
-            this.clazz = clazz;
-        }
-
-        @Override
-        public boolean apply(final PreProcessor processor) {
-            return clazz.isAssignableFrom(processor.getSupportedClass());
-        }
+        context.getPreProcessors().stream()
+                .filter(p -> directory.getClass().isAssignableFrom(p.getSupportedClass()))
+                .forEach(p -> p.process(directory, metadata));
     }
 
 }

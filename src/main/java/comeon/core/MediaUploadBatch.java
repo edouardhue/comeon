@@ -1,7 +1,5 @@
 package comeon.core;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
 import comeon.core.extmetadata.ExternalMetadataSource;
 import comeon.core.mediareaders.AudioReader;
 import comeon.core.mediareaders.MediaReader;
@@ -72,7 +70,7 @@ public final class MediaUploadBatch {
         return externalMetadataSource.getMediaMetadata(media, mediaMetadata);
     }
 
-    public Set<PreProcessor> filterPreProcessors(final Predicate<PreProcessor> predicate) {
-        return Sets.filter(preProcessors, predicate);
+    public Set<PreProcessor> getPreProcessors() {
+        return Collections.unmodifiableSet(preProcessors);
     }
 }
