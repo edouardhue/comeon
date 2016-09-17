@@ -41,7 +41,7 @@ public final class CoreImpl implements Core {
 
     private final Set<PreProcessor> preProcessors;
 
-    private final Queue<Future<Void>> currentTasks;
+    private final Queue<Future<UploadReport>> currentTasks;
 
     private MediaWiki activeMediaWiki;
 
@@ -100,7 +100,7 @@ public final class CoreImpl implements Core {
         return (int) media.parallelStream().filter(this::shouldUpload).count();
     }
 
-    private class UploadTask implements Callable<Void> {
+    private class UploadTask implements Callable<UploadReport> {
         private final Logger taskLogger = LoggerFactory.getLogger(UploadTask.class);
 
         private final Media media;
@@ -110,7 +110,7 @@ public final class CoreImpl implements Core {
         }
 
         @Override
-        public Void call() throws Exception {
+        public UploadReport call() throws Exception {
             try {
                 taskLogger.debug("Starting upload of {}", media.getFileName());
                 final ProgressListenerAdapter progressListener = new ProgressListenerAdapter();
@@ -119,12 +119,13 @@ public final class CoreImpl implements Core {
                 media.setState(State.UploadedSuccessfully);
                 bus.post(new MediaTransferDoneEvent(media));
                 taskLogger.debug("Finished upload of {}", media.getFileName());
-            } catch (final NotLoggedInException | FailedLoginException | FailedUploadException | IOException e) {
+                return new UploadReport(media);
+            } catch (final Throwable e) {
                 taskLogger.warn("Failed upload of {}", media.getFileName(), e);
                 media.setState(State.FailedUpload);
                 bus.post(new MediaTransferFailedEvent(media, e));
+                return new UploadReport(media, e);
             }
-            return null;
         }
 
         @Override
@@ -147,12 +148,13 @@ public final class CoreImpl implements Core {
         final List<Media> mediaToBeUploaded = media.parallelStream().filter(this::shouldUpload).collect(Collectors.toList());
         LOGGER.info("Uploading {} media to {}.", mediaToBeUploaded.size(), activeMediaWiki.getName());
         bus.post(new UploadStartingEvent(mediaToBeUploaded));
-        final List<Future<Void>> tasks = mediaToBeUploaded.parallelStream().map(UploadTask::new).map(pool::submit).collect(Collectors.toList());
+        final List<Future<UploadReport>> tasks = mediaToBeUploaded.parallelStream().map(UploadTask::new).map(pool::submit).collect(Collectors.toList());
         currentTasks.addAll(tasks);
+        final List<UploadReport> reports = new ArrayList<>(tasks.size());
         try {
-            for (final Future<Void> task : tasks) {
+            for (final Future<UploadReport> task : tasks) {
                 try {
-                    task.get();
+                    reports.add(task.get());
                 } catch (final CancellationException e) {
                     LOGGER.debug("Task was cancelled", e);
                 } catch (final ExecutionException e) {
@@ -170,14 +172,14 @@ public final class CoreImpl implements Core {
             } catch (final FailedLogoutException e) {
                 LOGGER.warn("Couldn't close Mediawiki session properly", e);
             }
-            bus.post(new UploadDoneEvent());
+            bus.post(new UploadDoneEvent(reports));
             LOGGER.info("Upload done.");
         }
     }
 
     @Override
     public void abort() {
-        final List<Future<Void>> cancelledTasks = currentTasks.parallelStream().filter(task -> task.cancel(true)).collect(Collectors.toList());
+        final List<Future<UploadReport>> cancelledTasks = currentTasks.parallelStream().filter(task -> task.cancel(true)).collect(Collectors.toList());
         currentTasks.removeAll(cancelledTasks);
     }
 

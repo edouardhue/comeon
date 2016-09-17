@@ -4,14 +4,14 @@ import comeon.model.Media;
 
 public final class MediaTransferFailedEvent extends AbstractMediaEvent {
 
-    private final Exception cause;
+    private final Throwable cause;
 
-    public MediaTransferFailedEvent(final Media media, final Exception cause) {
+    public MediaTransferFailedEvent(final Media media, final Throwable cause) {
         super(media);
         this.cause = cause;
     }
 
-    public Exception getCause() {
+    public Throwable getCause() {
         return cause;
     }
 

@@ -192,6 +192,7 @@ public final class ComeOn extends AbstractModule {
         comeOn.bus.register(injector.getInstance(ClearMediaAction.class));
         comeOn.bus.register(injector.getInstance(AbortAction.class));
         comeOn.bus.register(injector.getInstance(TransferMonitor.class));
+        comeOn.bus.register(injector.getInstance(UploaderReporter.class));
         return ui;
     }
 
