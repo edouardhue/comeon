@@ -1,4 +1,4 @@
-package comeon.core;
+package comeon.core.mediareaders;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -8,6 +8,7 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.google.common.base.Predicate;
+import comeon.core.MediaUploadBatch;
 import comeon.model.Media;
 import comeon.model.User;
 import comeon.model.processors.PreProcessor;
@@ -24,11 +25,11 @@ public final class PictureReader extends AbstractMediaReader {
 
     private static final String NON_WORD_CHARS = "[^\\w]";
 
-    public PictureReader(final MediaUploadBatch mediaUploadBatch, final File file, final User user) {
-        super(mediaUploadBatch, file, user);
+    public PictureReader(final File file, final User user) {
+        super(file, user);
     }
 
-    protected final Media buildMedia() throws MediaReaderException, IOException {
+    protected final Media buildMedia(final MediaUploadBatch context) throws MediaReaderException, IOException {
         final String fileName = getFile().getAbsolutePath();
         try {
             final Metadata rawMetadata = ImageMetadataReader.readMetadata(getFile());
@@ -42,9 +43,9 @@ public final class PictureReader extends AbstractMediaReader {
             final Map<String, Object> metadata = new HashMap<>(rawMetadata.getDirectoryCount());
             for (final Directory directory : rawMetadata.getDirectories()) {
                 copy(directory, metadata);
-                preProcess(directory, metadata);
+                preProcess(context, directory, metadata);
             }
-            return new Media(getFile(), fileName, getMediaUploadBatch().getDefaultTemplate(), metadata, thumbnail);
+            return new Media(getFile(), fileName, context.getDefaultTemplate(), metadata, thumbnail);
         } catch (final ImageProcessingException e) {
             throw new MediaReaderException(e);
         }
@@ -68,8 +69,8 @@ public final class PictureReader extends AbstractMediaReader {
         metadata.put(directory.getName().replaceAll(NON_WORD_CHARS, ""), directoryMetadata);
     }
 
-    private void preProcess(final Directory directory, final Map<String, Object> metadata) {
-        final Set<PreProcessor> preProcessors = getMediaUploadBatch().filterPreProcessors(new DirectoryPreProcessor(directory.getClass()));
+    private void preProcess(final MediaUploadBatch context, final Directory directory, final Map<String, Object> metadata) {
+        final Set<PreProcessor> preProcessors = context.filterPreProcessors(new DirectoryPreProcessor(directory.getClass()));
         for (final PreProcessor preProcessor : preProcessors) {
             preProcessor.process(directory, metadata);
         }

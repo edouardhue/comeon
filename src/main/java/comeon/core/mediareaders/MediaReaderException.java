@@ -1,4 +1,4 @@
-package comeon.core;
+package comeon.core.mediareaders;
 
 public final class MediaReaderException extends Exception {
 

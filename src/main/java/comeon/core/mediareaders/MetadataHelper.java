@@ -1,4 +1,4 @@
-package comeon.core;
+package comeon.core.mediareaders;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;

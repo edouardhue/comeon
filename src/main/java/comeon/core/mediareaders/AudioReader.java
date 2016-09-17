@@ -1,5 +1,6 @@
-package comeon.core;
+package comeon.core.mediareaders;
 
+import comeon.core.MediaUploadBatch;
 import comeon.model.Media;
 import comeon.model.User;
 import org.apache.commons.beanutils.*;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -52,12 +52,12 @@ public final class AudioReader extends AbstractMediaReader {
         return WordUtils.uncapitalize(WordUtils.capitalizeFully(key.name().replace('_', ' ')).replace(" ", ""));
     }
 
-    public AudioReader(final MediaUploadBatch mediaUploadBatch, final File file, final User user) {
-        super(mediaUploadBatch, file, user);
+    public AudioReader(final File file, final User user) {
+        super(file, user);
     }
 
     @Override
-    protected Media buildMedia() throws MediaReaderException, IOException {
+    protected Media buildMedia(final MediaUploadBatch context) throws MediaReaderException, IOException {
         final String fileName = getFile().getAbsolutePath();
         try {
             final AudioFile audioFile = AudioFileIO.read(getFile());
@@ -76,7 +76,7 @@ public final class AudioReader extends AbstractMediaReader {
             metadata.put("Tags", copyTags(tag));
             metadata.put("Headers", copyHeaders(header));
 
-            return new Media(getFile(), fileName, getMediaUploadBatch().getDefaultTemplate(), metadata, thumbnail);
+            return new Media(getFile(), fileName, context.getDefaultTemplate(), metadata, thumbnail);
         } catch (final CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
             throw new MediaReaderException(e);
         }
@@ -84,9 +84,7 @@ public final class AudioReader extends AbstractMediaReader {
 
     private DynaBean copyTags(final Tag tag) {
         final LazyDynaBean bean = new LazyDynaBean(TAG_DYNA_CLASS);
-        FIELD_KEY_NAMES.entrySet().forEach(e -> {
-            bean.set(e.getValue(), tag.getFirst(e.getKey()));
-        });
+        FIELD_KEY_NAMES.entrySet().forEach(e -> bean.set(e.getValue(), tag.getFirst(e.getKey())));
         return bean;
     }
 

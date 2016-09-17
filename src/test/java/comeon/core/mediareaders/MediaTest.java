@@ -1,9 +1,10 @@
-package comeon.core;
+package comeon.core.mediareaders;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import comeon.core.MediaUploadBatch;
 import comeon.core.extmetadata.NullMetadataSource;
 import comeon.model.Media;
 import comeon.model.Template;
@@ -37,20 +38,23 @@ public class MediaTest {
   public TemporaryFolder temp = new TemporaryFolder();
   
   private PictureReader reader;
+
+  private File file;
   
   @Before
   public void createReader() throws IOException {
-    final File file = temp.newFile();
+    file = temp.newFile();
     Resources.asByteSource(Resources.getResource("long-category-titles.jpg")).copyTo(Files.asByteSink(file));
-    final Template mockTemplate = Mockito.mock(Template.class);
-    Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
-    final MediaUploadBatch pics = new MediaUploadBatch(new File[0], mockTemplate, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
-    this.reader = new PictureReader(pics, file, null);
+    this.reader = new PictureReader(file, null);
   }
 
   @Test
   public void testReadLongCategoryTitles() throws IOException, MediaReaderException {
-    final Media pic = reader.buildMedia();
+    final Template mockTemplate = Mockito.mock(Template.class);
+    Mockito.when(mockTemplate.getTemplateText()).thenReturn("");
+    final MediaUploadBatch pics = new MediaUploadBatch(new File[0], mockTemplate, Sets.newHashSet(new IptcPreProcessor(), new GpsPreProcessor()), new NullMetadataSource());
+
+    final Media pic = reader.buildMedia(pics);
     Assert.assertTrue(pic.getMetadata().containsKey("keywords"));
     final Set<String> keywords = Sets.newHashSet((String[]) pic.getMetadata().get("keywords"));
     Assert.assertFalse(keywords.contains(LONG_CAT_NAME_1));
