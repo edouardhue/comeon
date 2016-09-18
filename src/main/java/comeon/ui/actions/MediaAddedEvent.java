@@ -1,18 +1,18 @@
 package comeon.ui.actions;
 
+import comeon.core.MediaUploadBatch;
 import comeon.model.Media;
 
 import java.util.List;
 
 public final class MediaAddedEvent {
-    private final List<Media> medias;
+    private final MediaUploadBatch batch;
 
-    public MediaAddedEvent(final List<Media> medias) {
-        this.medias = medias;
+    public MediaAddedEvent(final MediaUploadBatch batch) {
+        this.batch = batch;
     }
 
-    public List<Media> getMedia() {
-        return medias;
+    public MediaUploadBatch getBatch() {
+        return batch;
     }
-
 }

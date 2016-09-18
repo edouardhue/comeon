@@ -127,7 +127,7 @@ class AddMediaPanel extends JPanel {
         this.metadataExpression = new JComboBox<>(controller.getMetadataExpressionModel());
         this.metadataExpression.setPrototypeDisplayValue(Strings.repeat(PROTOTYPE_CHAR, MEDIUM_PROTOTYPE_LENGTH));
         this.metadataExpression.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.match.metadata"));
-        this.metadataExpression.addActionListener(e -> metadataExpressionChanged(e));
+        this.metadataExpression.addActionListener(this::metadataExpressionChanged);
 
         this.mediaExpression = new JTextField(MEDIUM_PROTOTYPE_LENGTH);
         this.mediaExpression.setToolTipText(UI.BUNDLE.getString("addmedia.metadata.match.media"));

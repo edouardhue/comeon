@@ -12,8 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -40,7 +38,7 @@ public final class TransferMonitor extends JOptionPane {
     private final AtomicInteger transferCounter;
 
     @Inject
-    public TransferMonitor(final AbortAction abortAction, final UI ui) {
+    public TransferMonitor(final AbortAction abortAction, final BrowseToReportAction reportAction, final UI ui) {
         super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, UploadMediaAction.ICON, null);
         this.getInputMap(JOptionPane.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed ESCAPE"), "none");
         this.batchBar = new JProgressBar(SwingConstants.HORIZONTAL);
@@ -50,14 +48,14 @@ public final class TransferMonitor extends JOptionPane {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.setMessage(new Object[]{batchBar, mediaBarsPane});
         final Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-        this.dialog = this.createDialog(JOptionPane.getRootFrame(), UI.BUNDLE.getString("upload.title"));
+        this.dialog = this.createDialog(ui, UI.BUNDLE.getString("upload.title"));
         this.dialog.setResizable(true);
         this.dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.dialog.setIconImages(UI.ICON_IMAGES);
         this.dialog.setSize(new Dimension(screenSize.width / 2, screenSize.height / 2));
         this.dialog.setLocationRelativeTo(ui);
         this.closeAction = new CloseAction();
-        this.setOptions(new Object[]{new JButton(closeAction), new JButton(abortAction)});
+        this.setOptions(new Object[]{new JButton(closeAction), new JButton(abortAction), new JButton(reportAction)});
         this.panels = new HashMap<>();
         this.transferCounter = new AtomicInteger(0);
         this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "abort");

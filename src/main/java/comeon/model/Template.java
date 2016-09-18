@@ -1,5 +1,8 @@
 package comeon.model;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -64,5 +67,15 @@ public class Template {
             }
             return buffer.toString();
         }
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", name)
+                .append("file", file)
+                .append("charset", charset)
+                .append("kind", kind)
+                .toString();
     }
 }

@@ -6,7 +6,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.core.events.*;
 import comeon.core.extmetadata.ExternalMetadataSource;
-import comeon.mediawiki.*;
+import comeon.mediawiki.FailedLogoutException;
+import comeon.mediawiki.MediaWiki;
+import comeon.mediawiki.MediaWikiFactory;
 import comeon.model.Media;
 import comeon.model.Media.State;
 import comeon.model.Template;
@@ -20,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 public final class CoreImpl implements Core {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoreImpl.class);
 
-    private final List<Media> media;
+    private final Set<Media> media;
 
     private final ExecutorService pool;
 
@@ -43,18 +44,22 @@ public final class CoreImpl implements Core {
 
     private final Queue<Future<UploadReport>> currentTasks;
 
+    private final UploaderReporter reporter;
+
     private MediaWiki activeMediaWiki;
 
     @Inject
     private CoreImpl(final Wikis wikis, final ExecutorService pool, final EventBus bus,
-                     final MediaWikiFactory mediaWikiFactory, final Set<PreProcessor> preProcessors) {
-        this.media = new ArrayList<>();
+                     final MediaWikiFactory mediaWikiFactory, final Set<PreProcessor> preProcessors,
+                     final UploaderReporter reporter) {
+        this.media = new HashSet<>();
         this.currentTasks = new ConcurrentLinkedQueue<>();
         this.pool = pool;
         this.bus = bus;
         this.wikis = wikis;
         this.mediaWikiFactory = mediaWikiFactory;
         this.preProcessors = preProcessors;
+        this.reporter = reporter;
         final Wiki activeWiki = wikis.getActiveWiki();
         if (activeWiki == null) {
             throw new IllegalStateException("There must be one active wiki.");
@@ -68,9 +73,9 @@ public final class CoreImpl implements Core {
                          final ExternalMetadataSource<?> externalMetadataSource) {
         externalMetadataSource.loadMetadata();
         final MediaUploadBatch batch = new MediaUploadBatch(files, defautTemplate, preProcessors, externalMetadataSource);
-        final List<Media> newMedia = batch.readFiles(wikis.getActiveWiki().getUser()).getMedia();
+        final Set<Media> newMedia = batch.readFiles(wikis.getActiveWiki().getUser()).getMedia();
         this.media.addAll(newMedia);
-        bus.post(new MediaAddedEvent(Collections.unmodifiableList(newMedia)));
+        bus.post(new MediaAddedEvent(batch));
     }
 
     @Override
@@ -87,8 +92,8 @@ public final class CoreImpl implements Core {
     }
 
     @Override
-    public List<Media> getMedia() {
-        return Collections.unmodifiableList(media);
+    public Set<Media> getMedia() {
+        return Collections.unmodifiableSet(media);
     }
 
     private boolean shouldUpload(final Media media) {
@@ -172,7 +177,7 @@ public final class CoreImpl implements Core {
             } catch (final FailedLogoutException e) {
                 LOGGER.warn("Couldn't close Mediawiki session properly", e);
             }
-            bus.post(new UploadDoneEvent(reports));
+            bus.post(new UploadDoneEvent(reports, reporter.findLoggingFileLocation().orElse(null)));
             LOGGER.info("Upload done.");
         }
     }

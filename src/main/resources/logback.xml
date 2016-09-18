@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-    <resetJUL>true</resetJUL>
-  </contextListener>
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
 
-  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%-5level [%thread]: %message%n</pattern>
-    </encoder>
-  </appender>
+    <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss" timeReference="contextBirth"/>
 
-  <logger name="comeon" level="info" />
-  <logger name="org.apache.http.wire" level="error" />
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level [%thread]: %message%n</pattern>
+        </encoder>
+    </appender>
 
-  <root level="warn">
-    <appender-ref ref="console" />
-  </root>
+    <appender name="UPLOAD_REPORTER" class="ch.qos.logback.core.FileAppender">
+        <file>${user.home}/.comeon/comeon-${bySecond}.log</file>
+        <encoder>
+            <pattern>%-4relative %message%n%ex{short}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="comeon" level="info"/>
+    <logger name="org.apache.http.wire" level="error"/>
+
+    <logger name="UPLOAD_REPORTER" additivity="false" level="info">
+        <appender-ref ref="UPLOAD_REPORTER"/>
+    </logger>
+
+    <root level="warn">
+        <appender-ref ref="console"/>
+    </root>
 </configuration>

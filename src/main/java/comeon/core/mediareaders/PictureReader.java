@@ -43,7 +43,7 @@ public final class PictureReader extends AbstractMediaReader {
                 copy(directory, metadata);
                 preProcess(context, directory, metadata);
             }
-            return new Media(getFile(), fileName, context.getDefaultTemplate(), metadata, thumbnail);
+            return new Media(getFile(), fileName, context.getTemplate(), metadata, thumbnail);
         } catch (final ImageProcessingException e) {
             throw new MediaReaderException(e);
         }

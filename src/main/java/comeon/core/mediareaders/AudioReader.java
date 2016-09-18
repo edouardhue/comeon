@@ -76,7 +76,7 @@ public final class AudioReader extends AbstractMediaReader {
             metadata.put("Tags", copyTags(tag));
             metadata.put("Headers", copyHeaders(header));
 
-            return new Media(getFile(), fileName, context.getDefaultTemplate(), metadata, thumbnail);
+            return new Media(getFile(), fileName, context.getTemplate(), metadata, thumbnail);
         } catch (final CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException e) {
             throw new MediaReaderException(e);
         }

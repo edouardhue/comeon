@@ -5,7 +5,7 @@ import comeon.model.Media;
 import comeon.model.Template;
 
 import java.io.File;
-import java.util.List;
+import java.util.Set;
 
 public interface Core {
 
@@ -21,7 +21,7 @@ public interface Core {
 
     void removeAllMedia();
 
-    List<Media> getMedia();
+    Set<Media> getMedia();
 
     int countMediaToBeUploaded();
 

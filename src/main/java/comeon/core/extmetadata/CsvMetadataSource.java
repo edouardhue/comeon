@@ -6,6 +6,8 @@ import comeon.model.Media;
 import org.apache.commons.beanutils.LazyDynaMap;
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,5 +103,22 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
                 return null;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("metadataFile", metadataFile)
+                .append("mediaExpression", mediaExpression)
+                .append("metadataExpression", metadataExpression)
+                .append("separator", separator)
+                .append("quote", quote)
+                .append("escape", escape)
+                .append("skipLines", skipLines)
+                .append("strictQuotes", strictQuotes)
+                .append("ignoreLeadingWhiteSpace", ignoreLeadingWhiteSpace)
+                .append("charset", charset)
+                .append("keyTransformer", keyTransformer)
+                .toString();
     }
 }

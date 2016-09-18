@@ -11,32 +11,35 @@ import comeon.model.processors.PreProcessor;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class MediaUploadBatch {
 
     private final File[] files;
 
-    private final Template defaultTemplate;
+    private final Template template;
 
-    private final List<Media> medias;
+    private final Set<Media> media;
 
     private final Set<PreProcessor> preProcessors;
 
     private final ExternalMetadataSource<?> externalMetadataSource;
 
-    public MediaUploadBatch(final File[] files, final Template defautTemplate, final Set<PreProcessor> preProcessors, final ExternalMetadataSource<?> externalMetadataSource) {
+    public MediaUploadBatch(final File[] files, final Template template, final Set<PreProcessor> preProcessors, final ExternalMetadataSource<?> externalMetadataSource) {
         this.files = files;
-        this.defaultTemplate = defautTemplate;
-        this.medias = Collections.synchronizedList(new ArrayList<Media>(files.length));
+        this.template = template;
+        this.media = new HashSet<>();
         this.preProcessors = preProcessors;
         this.externalMetadataSource = externalMetadataSource;
     }
 
     public MediaUploadBatch readFiles(final User user) {
-        Arrays.stream(files).parallel()
+        media.addAll(Arrays.stream(files).parallel()
                 .map(f -> selectMediaReader(f, user))
                 .map(r -> r.readMedia(this))
-                .forEach(o -> o.ifPresent(medias::add));
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList()));
         return this;
     }
 
@@ -58,12 +61,12 @@ public final class MediaUploadBatch {
         return Arrays.stream(Core.AUDIO_EXTENSIONS).anyMatch(e -> file.getName().toLowerCase(Locale.ENGLISH).endsWith(e));
     }
 
-    public List<Media> getMedia() {
-        return medias;
+    public Set<Media> getMedia() {
+        return Collections.unmodifiableSet(media);
     }
 
-    public Template getDefaultTemplate() {
-        return defaultTemplate;
+    public Template getTemplate() {
+        return template;
     }
 
     public Object getExternalMetadata(Media media, Map<String, Object> mediaMetadata) {
@@ -72,5 +75,9 @@ public final class MediaUploadBatch {
 
     public Set<PreProcessor> getPreProcessors() {
         return Collections.unmodifiableSet(preProcessors);
+    }
+
+    public ExternalMetadataSource<?> getExternalMetadataSource() {
+        return externalMetadataSource;
     }
 }
