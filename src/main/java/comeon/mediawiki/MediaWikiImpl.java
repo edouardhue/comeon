@@ -60,7 +60,7 @@ public final class MediaWikiImpl implements MediaWiki {
      * in.yuvi.http.fluent.ProgressListener)
      */
     @Override
-    public void upload(final Media media, final ProgressListener listener) throws NotLoggedInException,
+    public ImageInfo upload(final Media media, final ProgressListener listener) throws NotLoggedInException,
             FailedLoginException, FailedUploadException, IOException {
         synchronized (this) {
             if (!this.api.isLoggedIn) {
@@ -71,20 +71,34 @@ public final class MediaWikiImpl implements MediaWiki {
         final InputStream stream = Files.asByteSource(media.getFile()).openBufferedStream();
         try {
             LOGGER.debug("Uploading");
-            final ApiResult result = this.api.upload(media.getFile().getName(), stream, media.getFile().length(), media.getRenderedTemplate(),
+            final ApiResult uploadResult = this.api.upload(media.getFile().getName(), stream, media.getFile().length(), media.getRenderedTemplate(),
                     MessageFormat.format(UI.BUNDLE.getString("upload.comment"), UI.BUNDLE.getString("comeon")), true, listener);
-            final ApiResult error = result.getNode("/api/error");
+            final ApiResult error = uploadResult.getNode("/api/error");
             if (error.getDocument() != null) {
                 final String code = error.getString("@code");
                 final String info = error.getString("@info");
                 throw new FailedUploadException(code, info);
             }
-            final List<ApiResult> warnings = result.getNodes("/api/warning");
+            final List<ApiResult> warnings = uploadResult.getNodes("/api/warning");
             if (warnings != null && !warnings.isEmpty()) {
                 for (final ApiResult warning : warnings) {
                     final String code = warning.getString("@code");
                     final String info = warning.getString("@info");
                     LOGGER.warn("Upload warning. MediaWiki says: {}: {}", code, info);
+                }
+            }
+            final ApiResult upload = uploadResult.getNode("/api/upload");
+            if (upload.getDocument() == null) {
+                throw new FailedUploadException(null, "missing upload element");
+            } else {
+                final String result = upload.getString("@result");
+                if ("Success".equals(result)) {
+                    final String canonicalTitle = upload.getString("imageinfo/@canonicaltitle");
+                    final String url = upload.getString("imageinfo/@url");
+                    final String descriptionUrl = upload.getString("imageinfo/@descriptionurl");
+                    return new ImageInfo(canonicalTitle, url, descriptionUrl);
+                } else {
+                    throw new FailedUploadException(result, null);
                 }
             }
         } catch (final IOException e) {

@@ -1,5 +1,8 @@
 package comeon.core.extmetadata;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,5 +35,13 @@ public final class KeyTransformer {
             transformed = input;
         }
         return transformed;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("regex", regex)
+                .append("substitution", substitution)
+                .toString();
     }
 }

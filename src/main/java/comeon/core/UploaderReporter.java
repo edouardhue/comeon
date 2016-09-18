@@ -20,7 +20,8 @@ public class UploaderReporter {
 
     @Subscribe
     public void logMediaAddition(final MediaAddedEvent event) {
-        LOGGER.info("MEDIA ADDED\n\tTEMPLATE {}\n\tEXT. METADATA {}", event.getBatch().getTemplate(), event.getBatch().getExternalMetadataSource());
+        LOGGER.info("MEDIA ADDED\n\tTEMPLATE {}\n\tEXT. METADATA {}", event.getBatch().getTemplate(),
+                event.getBatch().getExternalMetadataSource());
         event.getBatch().getMedia().forEach(this::log);
     }
 
@@ -34,7 +35,15 @@ public class UploaderReporter {
     }
 
     private void log(final UploadReport report) {
-        LOGGER.info("UPLOAD COMPLETED\n\tFILE {}\n\tSTATE {}", report.getMedia().getFile(), report.getMedia().getState(), report.getCause());
+        switch (report.getMedia().getState()) {
+            case UploadedSuccessfully:
+                LOGGER.info("UPLOADED\n\tFILE {}\n\tURL {}\n\tDESC URL {}", report.getMedia().getFile(),
+                        report.getInfo().getUrl(), report.getInfo().getDescriptionUrl());
+                break;
+            case FailedUpload:
+                LOGGER.info("UPLOAD FAILED\n\tFILE {}", report.getMedia().getFile(), report.getCause());
+                break;
+        }
     }
 
     public Optional<String> findLoggingFileLocation() {

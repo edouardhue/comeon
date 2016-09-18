@@ -11,7 +11,7 @@ public interface MediaWiki {
 
     void login() throws NotLoggedInException, FailedLoginException;
 
-    void upload(Media media, ProgressListener listener) throws NotLoggedInException,
+    ImageInfo upload(Media media, ProgressListener listener) throws NotLoggedInException,
             FailedLoginException, FailedUploadException, IOException;
 
     void logout() throws FailedLogoutException;

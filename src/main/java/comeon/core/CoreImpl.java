@@ -7,6 +7,7 @@ import com.google.inject.Singleton;
 import comeon.core.events.*;
 import comeon.core.extmetadata.ExternalMetadataSource;
 import comeon.mediawiki.FailedLogoutException;
+import comeon.mediawiki.ImageInfo;
 import comeon.mediawiki.MediaWiki;
 import comeon.mediawiki.MediaWikiFactory;
 import comeon.model.Media;
@@ -120,11 +121,11 @@ public final class CoreImpl implements Core {
                 taskLogger.debug("Starting upload of {}", media.getFileName());
                 final ProgressListenerAdapter progressListener = new ProgressListenerAdapter();
                 bus.post(new MediaTransferStartingEvent(media, progressListener));
-                activeMediaWiki.upload(media, progressListener);
+                final ImageInfo info = activeMediaWiki.upload(media, progressListener);
                 media.setState(State.UploadedSuccessfully);
                 bus.post(new MediaTransferDoneEvent(media));
                 taskLogger.debug("Finished upload of {}", media.getFileName());
-                return new UploadReport(media);
+                return new UploadReport(media, info);
             } catch (final Throwable e) {
                 taskLogger.warn("Failed upload of {}", media.getFileName(), e);
                 media.setState(State.FailedUpload);
