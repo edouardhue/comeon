@@ -94,9 +94,8 @@ public final class TemplatesImpl implements Templates {
         try {
             final Charset charset = Charset.forName(node.get(PreferencesKeys.CHARSET.name(), null));
             final Path file = Paths.get(node.get(PreferencesKeys.FILE.name(), null));
-            final String templateText = Template.read(file, charset);
             final TemplateKind kind = templateKinds.get(node.get(PreferencesKeys.KIND.name(), VelocityTemplate.class.getSimpleName()));
-            final Template template = new Template(templateName, description, file, charset, templateText, kind);
+            final Template template = new Template(templateName, description, file, charset, kind);
             templates.add(template);
         } catch (final IllegalArgumentException | NullPointerException | IOException e) {
             LOGGER.warn("Got exception, removing template {}", templateName, e);

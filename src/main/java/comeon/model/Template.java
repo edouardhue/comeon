@@ -18,19 +18,18 @@ public class Template {
 
     private final Charset charset;
 
-    private final String templateText;
+    private String templateText;
 
     private final TemplateKind kind;
 
     public Template(final String name, final String description, final Path file, final Charset charset,
-                    final String templateText, final TemplateKind kind) {
-        super();
+                    final TemplateKind kind) throws IOException {
         this.name = name;
         this.description = description;
         this.file = file;
         this.charset = charset;
-        this.templateText = templateText;
         this.kind = kind;
+        this.load();
     }
 
     public String getName() {
@@ -57,15 +56,15 @@ public class Template {
         return kind;
     }
 
-    public static String read(final Path path, final Charset charset) throws IOException {
-        try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
-            final StringBuilder buffer = new StringBuilder((int) Files.size(path));
+    public void load() throws IOException {
+        try (final BufferedReader reader = Files.newBufferedReader(file, charset)) {
+            final StringBuilder buffer = new StringBuilder((int) Files.size(file));
             String line;
             while ((line = reader.readLine()) != null) {
                 buffer.append(line);
                 buffer.append('\n');
             }
-            return buffer.toString();
+            this.templateText = buffer.toString();
         }
     }
 

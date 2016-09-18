@@ -102,8 +102,7 @@ public final class TemplateModel implements Model {
     }
 
     public Template asTemplate() throws IOException {
-        final String templateText = Template.read(file, charset);
-        return new Template(name, description, file, charset, templateText, kind);
+        return new Template(name, description, file, charset, kind);
     }
 
     public static TemplateModel getPrototype() {

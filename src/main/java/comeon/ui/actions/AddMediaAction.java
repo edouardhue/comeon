@@ -60,6 +60,7 @@ public final class AddMediaAction extends BaseAction {
 
         @Override
         protected Void doInBackground() throws Exception {
+            model.getTemplate().load();
             final File[] files = model.getMediaFiles();
             if (files.length > 0) {
                 core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
