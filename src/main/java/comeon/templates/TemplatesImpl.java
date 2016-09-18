@@ -16,10 +16,12 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 @Singleton
 public final class TemplatesImpl implements Templates {
@@ -65,8 +67,9 @@ public final class TemplatesImpl implements Templates {
 
     @Override
     public List<TemplateKind> getTemplateKinds() {
-        // TODO use a predictable sort
-        return new ArrayList<>(templateKinds.values());
+        return templateKinds.values().stream()
+                .sorted((o1, o2) -> o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName()))
+                .collect(Collectors.toList());
     }
 
     @Override
