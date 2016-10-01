@@ -34,7 +34,8 @@ public final class MediaUploadBatch {
     }
 
     public MediaUploadBatch readFiles(final User user) {
-        media.addAll(Arrays.stream(files).parallel()
+        // FIXME Use a parallel stream. Requires custom ForkJoinPool thread factory.
+        media.addAll(Arrays.stream(files)
                 .map(f -> selectMediaReader(f, user))
                 .map(r -> r.readMedia(this))
                 .filter(Optional::isPresent)

@@ -153,7 +153,8 @@ public final class CoreImpl implements Core {
         final List<Media> mediaToBeUploaded = media.parallelStream().filter(this::shouldUpload).collect(Collectors.toList());
         LOGGER.info("Uploading {} media to {}.", mediaToBeUploaded.size(), activeMediaWiki.getName());
         bus.post(new UploadStartingEvent(mediaToBeUploaded));
-        final List<Future<UploadReport>> tasks = mediaToBeUploaded.parallelStream().map(UploadTask::new).map(pool::submit).collect(Collectors.toList());
+        // FIXME Use a parallel stream. Requires custom ForkJoinPool thread factory.
+        final List<Future<UploadReport>> tasks = mediaToBeUploaded.stream().map(UploadTask::new).map(pool::submit).collect(Collectors.toList());
         currentTasks.addAll(tasks);
         final List<UploadReport> reports = new ArrayList<>(tasks.size());
         try {
