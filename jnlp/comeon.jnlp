@@ -20,6 +20,7 @@
     </security>
     <resources>
         <java version="1.8+" java-vm-args="-Xmx2g -XX:+UseParallelGC"/>
+        <property name="java.util.concurrent.ForkJoinPool.common.threadFactory" value="java.util.concurrent.ForkJoinPool.DefaultForkJoinWorkerThreadFactory"/>
             
     <jar href="lib/comeon-3.5-SNAPSHOT.jar" main="true"/>
     <jar href="lib/guice-3.0-no_aop.jar"/>
