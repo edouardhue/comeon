@@ -17,6 +17,10 @@
                 <ribbonOrientation>right</ribbonOrientation>
                 <ribbonColor>red</ribbonColor>
             </gitHub>
+            <piwik>
+                <piwikUrl>analytics.wikimedia.fr</piwikUrl>
+                <idsite>11</idsite>
+            </piwik>
             <profile>pre-release</profile>
             <topBarEnabled>true</topBarEnabled>
             <sideBarEnabled>false</sideBarEnabled>
