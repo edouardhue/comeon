@@ -7,7 +7,7 @@
         <title>ComeOn!</title>
         <vendor>Édouard Hue</vendor>
         <homepage href="https://github.com/edouardhue/comeon"/>
-        <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
+        <description>ComeOn! - A tool to upload pictures to Wikimedia Commons</description>
         <icon href="https://edouardhue.github.io/comeon/jnlp/../comeon_32_32.png" kind="shortcut" width="32" height="32"/>
         <icon href="https://edouardhue.github.io/comeon/jnlp/../comeon_64_64.png" kind="splash" width="64" height="64"/>
         <offline-allowed/>
@@ -20,7 +20,6 @@
     </security>
     <resources>
         <java version="1.8+" java-vm-args="-Xmx2g -XX:+UseParallelGC"/>
-        <property name="java.util.concurrent.ForkJoinPool.common.threadFactory" value="java.util.concurrent.ForkJoinPool.DefaultForkJoinWorkerThreadFactory"/>
             
     <jar href="lib/comeon-3.5-SNAPSHOT.jar" main="true"/>
     <jar href="lib/guice-3.0-no_aop.jar"/>
