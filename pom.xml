@@ -7,7 +7,7 @@
     <version>3.5-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>ComeOn!</name>
-    <description>ComeOn - A tool to upload pictures to Wikimedia Commons</description>
+    <description>ComeOn! - A tool to upload pictures to Wikimedia Commons</description>
     <url>https://github.com/edouardhue/comeon</url>
     <inceptionYear>2013</inceptionYear>
 
