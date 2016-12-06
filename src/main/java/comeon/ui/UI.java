@@ -11,7 +11,7 @@ import comeon.templates.Templates;
 import comeon.ui.actions.MediaAddedEvent;
 import comeon.ui.actions.MediaRemovedEvent;
 import comeon.ui.add.AddMediaDialog;
-import comeon.ui.add.AddModel;
+import comeon.ui.add.AdderWorker;
 import comeon.ui.media.MediaPanels;
 import comeon.ui.menu.MenuBar;
 import comeon.ui.toolbar.Toolbar;
@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Singleton
 public final class UI extends JFrame {
@@ -189,11 +188,7 @@ public final class UI extends JFrame {
                     final AddMediaDialog dialog = new AddMediaDialog(templates, preselectedFiles);
                     final int value = dialog.showDialog();
                     if (value == JOptionPane.OK_OPTION) {
-                        final AddModel model = dialog.getModel();
-                        final File[] mediaFiles = model.getMediaFiles();
-                        if (mediaFiles.length > 0) {
-                            core.addMedia(mediaFiles, model.getTemplate(), model.getExternalMetadataSource());
-                        }
+                        new AdderWorker(dialog.getModel(), core).execute();
                     }
                 });
                 return true;

@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -66,25 +67,35 @@ public final class CsvMetadataSource implements ExternalMetadataSource<Object> {
     }
 
     @Override
-    public void loadMetadata() {
+    public void loadMetadata() throws IOException, DuplicateKeyException {
+        final List<Object> beans = this.readBeans();
+        this.metadata.clear();
+        this.metadata.putAll(beans.parallelStream().collect(Collectors.toConcurrentMap(
+                this::getKey,
+                Function.identity(),
+                throwingMerger()
+        )));
+    }
+
+    private <T> BinaryOperator<T> throwingMerger() {
+        return (u,v) -> { throw new DuplicateKeyException(getKey(u)); };
+    }
+
+    private String getKey(final Object bean) {
+        try {
+            return String.valueOf(PropertyUtils.getProperty(bean, metadataExpression));
+        } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LOGGER.error("Could not read property {} from {}", metadataExpression, bean);
+            return null;
+        }
+    }
+
+    List<Object> readBeans() throws IOException {
         final CGLibMappingStrategy strategy = new CGLibMappingStrategy();
         final CsvToBean<Object> csvToBean = new CsvToBean<>();
-        this.metadata.clear();
-        try (final CSVReader reader = new CSVReader(Files.newBufferedReader(metadataFile, charset), separator, quote, escape, skipLines, strictQuotes, ignoreLeadingWhiteSpace)) {
-            final List<Object> beans = csvToBean.parse(strategy, reader);
-            this.metadata.putAll(beans.parallelStream().collect(Collectors.toConcurrentMap(
-                    bean -> {
-                        try {
-                            return String.valueOf(PropertyUtils.getProperty(bean, metadataExpression));
-                        } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                            LOGGER.error("Could not read property {} from {}", metadataExpression, bean);
-                            return null;
-                        }
-                    },
-                    Function.identity()
-            )));
-        } catch (final IOException e) {
-            LOGGER.error("Could not read metadata file", e);
+        try (final CSVReader reader = new CSVReader(Files.newBufferedReader(metadataFile, charset),
+                separator, quote, escape, skipLines, strictQuotes, ignoreLeadingWhiteSpace)) {
+            return csvToBean.parse(strategy, reader);
         }
     }
 

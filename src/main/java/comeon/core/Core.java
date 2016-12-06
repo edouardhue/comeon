@@ -5,6 +5,7 @@ import comeon.model.Media;
 import comeon.model.Template;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 public interface Core {
@@ -15,7 +16,7 @@ public interface Core {
 
     String[] AUDIO_EXTENSIONS = { "ogg", "flac", "wav" };
 
-    void addMedia(File[] files, Template defautTemplate, ExternalMetadataSource<?> externalMetadataSource);
+    void addMedia(final File[] files, final Template defautTemplate, final ExternalMetadataSource<?> externalMetadataSource) throws IOException;
 
     void removeMedia(Media media);
 

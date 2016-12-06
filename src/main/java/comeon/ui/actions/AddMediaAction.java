@@ -6,13 +6,11 @@ import com.google.inject.Singleton;
 import comeon.core.Core;
 import comeon.templates.Templates;
 import comeon.templates.TemplatesChangedEvent;
-import comeon.ui.CursorChangingWorker;
 import comeon.ui.add.AddMediaDialog;
-import comeon.ui.add.AddModel;
+import comeon.ui.add.AdderWorker;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
 
 @Singleton
 public final class AddMediaAction extends BaseAction {
@@ -35,12 +33,11 @@ public final class AddMediaAction extends BaseAction {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        // Ancestor may be null in presence of keywtrokes
         SwingUtilities.invokeLater(() -> {
             final AddMediaDialog dialog = new AddMediaDialog(templates);
             final int value = dialog.showDialog();
             if (value == JOptionPane.OK_OPTION) {
-                new AdderWorker(dialog.getModel()).execute();
+                new AdderWorker(dialog.getModel(), core).execute();
             }
         });
     }
@@ -50,23 +47,4 @@ public final class AddMediaAction extends BaseAction {
         this.setEnabled(!event.getTemplates().isEmpty());
     }
 
-    private class AdderWorker extends CursorChangingWorker {
-
-        private final AddModel model;
-
-        private AdderWorker(final AddModel model ) {
-            this.model = model;
-        }
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            model.getTemplate().load();
-            final File[] files = model.getMediaFiles();
-            if (files.length > 0) {
-                core.addMedia(files, model.getTemplate(), model.getExternalMetadataSource());
-            }
-            return null;
-        }
-
-    }
 }

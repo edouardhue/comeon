@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.core.events.*;
+import comeon.core.extmetadata.DuplicateKeyException;
 import comeon.core.extmetadata.ExternalMetadataSource;
 import comeon.mediawiki.FailedLogoutException;
 import comeon.mediawiki.MediaWiki;
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -70,7 +72,7 @@ public final class CoreImpl implements Core {
 
     @Override
     public void addMedia(final File[] files, final Template defautTemplate,
-                         final ExternalMetadataSource<?> externalMetadataSource) {
+                         final ExternalMetadataSource<?> externalMetadataSource) throws IOException, DuplicateKeyException {
         externalMetadataSource.loadMetadata();
         final MediaUploadBatch batch = new MediaUploadBatch(files, defautTemplate, preProcessors, externalMetadataSource);
         final Set<Media> newMedia = batch.readFiles(wikis.getActiveWiki().getUser()).getMedia();
