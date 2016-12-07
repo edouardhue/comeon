@@ -8,10 +8,12 @@ import java.util.Map;
 
 public final class GpsPreProcessor implements PreProcessor {
 
+    public static final String GEOLOCATION = "geolocation";
+
     @Override
     public void process(final Directory directory, final Map<String, Object> metadata) {
         final GeoLocation geolocation = ((GpsDirectory) directory).getGeoLocation();
-        metadata.put("geolocation", geolocation);
+        metadata.put(GEOLOCATION, geolocation);
     }
 
     @Override

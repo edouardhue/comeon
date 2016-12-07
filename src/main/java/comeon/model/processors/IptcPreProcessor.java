@@ -16,9 +16,9 @@ public final class IptcPreProcessor implements PreProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IptcPreProcessor.class);
 
-    private static final String DATE = "date";
+    public static final String DATE = "date";
 
-    private static final String KEYWORDS = "keywords";
+    public static final String KEYWORDS = "keywords";
 
     private static final DateTimeFormatter IPTC_DATE_TIME_PARSER = DateTimeFormatter.ofPattern("[uuuuMMdd]:[HHmmss[Z]]", Locale.ENGLISH);
 
