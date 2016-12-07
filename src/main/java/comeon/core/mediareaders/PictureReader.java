@@ -59,7 +59,7 @@ public final class PictureReader extends AbstractMediaReader {
         directoryClass.setReturnNull(true);
 
         final DynaBean directoryMetadata = new LazyDynaBean(directoryClass);
-        directory.getTags().parallelStream().forEach(t -> directoryMetadata.set(
+        directory.getTags().stream().forEach(t -> directoryMetadata.set(
                 t.getTagName().replaceAll(NON_WORD_CHARS, ""),
                 descriptor.getDescription(t.getTagType())
         ));
