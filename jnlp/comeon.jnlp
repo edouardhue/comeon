@@ -21,37 +21,43 @@
     <resources>
         <java version="1.8+" java-vm-args="-Xmx2g -XX:+UseParallelGC"/>
             
-    <jar href="lib/comeon-3.5-SNAPSHOT.jar" main="true"/>
+    <jar href="lib/comeon-3.5.1.jar" main="true"/>
     <jar href="lib/guice-3.0-no_aop.jar"/>
     <jar href="lib/javax.inject-1.jar"/>
     <jar href="lib/aopalliance-1.0.jar"/>
     <jar href="lib/guice-multibindings-3.0.jar"/>
-    <jar href="lib/metadata-extractor-2.6.2.jar"/>
+    <jar href="lib/metadata-extractor-2.9.1.jar"/>
     <jar href="lib/xmpcore-5.1.2.jar"/>
-    <jar href="lib/slf4j-api-1.7.7.jar"/>
-    <jar href="lib/jcl-over-slf4j-1.7.7.jar"/>
-    <jar href="lib/log4j-over-slf4j-1.7.7.jar"/>
-    <jar href="lib/logback-classic-1.0.13.jar"/>
-    <jar href="lib/logback-core-1.0.13.jar"/>
-    <jar href="lib/guava-16.0.1.jar"/>
+    <jar href="lib/slf4j-api-1.7.25.jar"/>
+    <jar href="lib/jcl-over-slf4j-1.7.25.jar"/>
+    <jar href="lib/log4j-over-slf4j-1.7.25.jar"/>
+    <jar href="lib/logback-classic-1.2.2.jar"/>
+    <jar href="lib/logback-core-1.2.2.jar"/>
+    <jar href="lib/guava-22.0.jar"/>
+    <jar href="lib/jsr305-1.3.9.jar"/>
+    <jar href="lib/error_prone_annotations-2.0.18.jar"/>
+    <jar href="lib/j2objc-annotations-1.1.jar"/>
+    <jar href="lib/animal-sniffer-annotations-1.14.jar"/>
     <jar href="lib/velocity-1.7.jar"/>
     <jar href="lib/commons-collections-3.2.1.jar"/>
     <jar href="lib/commons-lang-2.4.jar"/>
     <jar href="lib/commons-beanutils-1.9.2.jar"/>
-    <jar href="lib/api-1.5-comeon.jar"/>
-    <jar href="lib/http.fluent-1.3.jar"/>
-    <jar href="lib/httpclient-4.2.2.jar"/>
-    <jar href="lib/httpcore-4.2.2.jar"/>
-    <jar href="lib/commons-codec-1.6.jar"/>
-    <jar href="lib/httpmime-4.2.2.jar"/>
-    <jar href="lib/args4j-2.0.26.jar"/>
-    <jar href="lib/opencsv-2.3.jar"/>
-    <jar href="lib/cglib-3.1.jar"/>
-    <jar href="lib/asm-4.2.jar"/>
+    <jar href="lib/api-1.6_comeon.jar"/>
+    <jar href="lib/http.fluent-1.5_comeon.jar"/>
+    <jar href="lib/httpclient-4.5.3.jar"/>
+    <jar href="lib/httpcore-4.4.6.jar"/>
+    <jar href="lib/commons-codec-1.9.jar"/>
+    <jar href="lib/httpmime-4.5.3.jar"/>
+    <jar href="lib/args4j-2.33.jar"/>
+    <jar href="lib/opencsv-2.4.jar"/>
+    <jar href="lib/cglib-3.2.5.jar"/>
+    <jar href="lib/asm-5.2.jar"/>
+    <jar href="lib/ant-1.9.6.jar"/>
+    <jar href="lib/ant-launcher-1.9.6.jar"/>
     <jar href="lib/simplevalidation-standalone-1.6-comeon.jar"/>
     <jar href="lib/simplevalidation-1.6-comeon.jar"/>
     <jar href="lib/nbstubs-1.6-comeon.jar"/>
-    <jar href="lib/jul-to-slf4j-1.7.7.jar"/>
+    <jar href="lib/jul-to-slf4j-1.7.25.jar"/>
     <jar href="lib/jaudiotagger-2.2.5.jar"/>
 
     </resources>
