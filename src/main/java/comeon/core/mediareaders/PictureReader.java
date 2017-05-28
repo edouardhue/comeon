@@ -31,10 +31,14 @@ public final class PictureReader extends AbstractMediaReader {
         final String fileName = getFile().getAbsolutePath();
         try {
             final Metadata rawMetadata = ImageMetadataReader.readMetadata(getFile());
-            final ExifThumbnailDirectory thumbnailDirectory = rawMetadata.getDirectory(ExifThumbnailDirectory.class);
             final byte[] thumbnail;
-            if (thumbnailDirectory != null && thumbnailDirectory.hasThumbnailData()) {
-                thumbnail = thumbnailDirectory.getThumbnailData();
+            if (rawMetadata.containsDirectoryOfType(ExifThumbnailDirectory.class)) {
+                final ExifThumbnailDirectory thumbnailDirectory = rawMetadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
+                if (thumbnailDirectory.hasThumbnailData()) {
+                    thumbnail = thumbnailDirectory.getThumbnailData();
+                } else {
+                    thumbnail = new byte[0];
+                }
             } else {
                 thumbnail = new byte[0];
             }

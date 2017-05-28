@@ -88,14 +88,14 @@ public class MediaTest {
         Assert.assertEquals("Édouard Hue", PropertyUtils.getProperty(metadata.get("ExifIFD0"), "Artist"));
         Assert.assertEquals("Édouard Hue", PropertyUtils.getProperty(metadata.get("ExifIFD0"), "Copyright"));
 
-        Assert.assertEquals("Titre", PropertyUtils.getProperty(metadata.get("Iptc"), "ObjectName"));
-        Assert.assertEquals("Édouard Hue", PropertyUtils.getProperty(metadata.get("Iptc"), "Byline"));
-        Assert.assertEquals("Q1", PropertyUtils.getProperty(metadata.get("Iptc"), "Sublocation"));
-        Assert.assertEquals("Édouard Hue", PropertyUtils.getProperty(metadata.get("Iptc"), "CopyrightNotice"));
-        Assert.assertEquals("Description", PropertyUtils.getProperty(metadata.get("Iptc"), "CaptionAbstract"));
+        Assert.assertEquals("Titre", PropertyUtils.getProperty(metadata.get("IPTC"), "ObjectName"));
+        Assert.assertEquals("Édouard Hue", PropertyUtils.getProperty(metadata.get("IPTC"), "Byline"));
+        Assert.assertEquals("Q1", PropertyUtils.getProperty(metadata.get("IPTC"), "Sublocation"));
+        Assert.assertEquals("Édouard Hue", PropertyUtils.getProperty(metadata.get("IPTC"), "CopyrightNotice"));
+        Assert.assertEquals("Description", PropertyUtils.getProperty(metadata.get("IPTC"), "CaptionAbstract"));
 
-        Assert.assertEquals("20mm", PropertyUtils.getProperty(metadata.get("Xmp"), "Lens"));
-        Assert.assertEquals("1280614195", PropertyUtils.getProperty(metadata.get("Xmp"), "SerialNumber"));
+        Assert.assertEquals("20mm", PropertyUtils.getProperty(metadata.get("XMP"), "Lens"));
+        Assert.assertEquals("1280614195", PropertyUtils.getProperty(metadata.get("XMP"), "SerialNumber"));
 
         Assert.assertEquals("https://creativecommons.org/licenses/by-sa/4.0/", PropertyUtils.getProperty(metadata.get("Photoshop"), "URL"));
     }

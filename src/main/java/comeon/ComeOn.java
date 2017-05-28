@@ -7,7 +7,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
-import comeon.core.*;
+import comeon.core.Core;
+import comeon.core.CoreImpl;
+import comeon.core.UploaderReporter;
+import comeon.core.WithPreferences;
 import comeon.mediawiki.MediaWikiFactory;
 import comeon.model.TemplateKind;
 import comeon.model.processors.*;
@@ -28,11 +31,9 @@ import comeon.ui.preferences.wikis.WikiSubPanel;
 import comeon.ui.toolbar.Toolbar;
 import comeon.wikis.Wikis;
 import comeon.wikis.WikisImpl;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
@@ -43,8 +44,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.security.AccessControlException;
-import java.security.Security;
+import java.net.ProxySelector;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -66,11 +66,16 @@ public final class ComeOn extends AbstractModule {
         this.preferences = Preferences.userNodeForPackage(ComeOn.class);
     }
 
-    private DefaultHttpClient configureHttpClient() {
-        final ClientConnectionManager connectionManager = new PoolingClientConnectionManager();
-        final DefaultHttpClient client = new DefaultHttpClient(connectionManager);
+    private CloseableHttpClient configureHttpClient() {
         final String userAgentString = UI.BUNDLE.getString("useragent");
-        client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgentString);
+        final ProxySelector proxySelector = ProxySelector.getDefault();
+        LOGGER.debug("Using proxy selector: {}", proxySelector);
+        final SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(proxySelector);
+        final CloseableHttpClient client = HttpClientBuilder
+                .create()
+                .setUserAgent(userAgentString)
+                .setRoutePlanner(routePlanner)
+                .build();
         LOGGER.info("ComeOn! uses \"{}\" as User-Agent", userAgentString);
         return client;
     }
@@ -95,7 +100,7 @@ public final class ComeOn extends AbstractModule {
         MapBinder<String, TemplateKind> templateKinds = MapBinder.newMapBinder(binder(), String.class, TemplateKind.class);
         templateKinds.addBinding(VelocityTemplate.class.getSimpleName()).to(VelocityTemplate.class);
 
-        bind(AbstractHttpClient.class).toInstance(configureHttpClient());
+        bind(CloseableHttpClient.class).toInstance(configureHttpClient());
 
         bind(UI.class);
 

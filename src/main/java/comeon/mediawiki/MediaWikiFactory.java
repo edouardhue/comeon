@@ -3,15 +3,15 @@ package comeon.mediawiki;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.model.Wiki;
-import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.mediawiki.api.MWApi;
 
 @Singleton
 public final class MediaWikiFactory {
-    private final AbstractHttpClient httpClient;
+    private final CloseableHttpClient httpClient;
 
     @Inject
-    public MediaWikiFactory(AbstractHttpClient httpClient) {
+    public MediaWikiFactory(CloseableHttpClient httpClient) {
         super();
         this.httpClient = httpClient;
     }
