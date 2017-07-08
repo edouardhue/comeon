@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>comeon</groupId>
     <artifactId>comeon</artifactId>
-    <version>3.5.1</version>
+    <version>3.5.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>ComeOn!</name>
     <description>ComeOn! - A tool to upload pictures to Wikimedia Commons</description>
