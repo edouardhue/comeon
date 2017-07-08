@@ -15,7 +15,7 @@
     <appender name="UPLOAD_REPORTER" class="ch.qos.logback.core.FileAppender">
         <file>${user.home}/.comeon/comeon-${bySecond}.log</file>
         <encoder>
-            <pattern>%-4relative %message%n%ex{short}</pattern>
+            <pattern>%date %message%n%ex{short}</pattern>
         </encoder>
     </appender>
 
