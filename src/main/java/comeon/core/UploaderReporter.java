@@ -7,7 +7,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Singleton;
 import comeon.core.events.UploadDoneEvent;
 import comeon.model.Media;
-import comeon.ui.actions.MediaAddedEvent;
+import comeon.core.events.MediaAddedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

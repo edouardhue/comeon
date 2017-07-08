@@ -19,6 +19,7 @@ import comeon.templates.TemplatesImpl;
 import comeon.templates.velocity.VelocityTemplate;
 import comeon.ui.UI;
 import comeon.ui.actions.*;
+import comeon.ui.media.TransferMonitor;
 import comeon.ui.menu.EditMenu;
 import comeon.ui.menu.FileMenu;
 import comeon.ui.menu.HelpMenu;

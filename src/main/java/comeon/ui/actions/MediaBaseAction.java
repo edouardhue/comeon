@@ -2,6 +2,8 @@ package comeon.ui.actions;
 
 import com.google.common.eventbus.Subscribe;
 import comeon.core.Core;
+import comeon.core.events.MediaAddedEvent;
+import comeon.core.events.MediaRemovedEvent;
 
 import javax.swing.*;
 

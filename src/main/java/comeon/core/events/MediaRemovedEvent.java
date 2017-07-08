@@ -1,4 +1,4 @@
-package comeon.ui.actions;
+package comeon.core.events;
 
 import comeon.model.Media;
 

@@ -16,7 +16,7 @@ import java.text.MessageFormat;
 public final class UploadMediaAction extends MediaBaseAction {
     private static final long serialVersionUID = 1L;
 
-    static final ImageIcon ICON = new ImageIcon(Resources.getResource("comeon/ui/upload_huge.png"));
+    private static final ImageIcon ICON = new ImageIcon(Resources.getResource("comeon/ui/upload_huge.png"));
 
     private final Wikis wikis;
 

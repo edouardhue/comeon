@@ -1,12 +1,15 @@
-package comeon.ui.actions;
+package comeon.ui.media;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import comeon.core.ProgressListenerAdapter;
 import comeon.core.events.*;
 import comeon.model.Media;
 import comeon.ui.UI;
+import comeon.ui.actions.AbortAction;
+import comeon.ui.actions.BrowseToReportAction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Singleton
 public final class TransferMonitor extends JOptionPane {
     private static final long serialVersionUID = 1L;
+
+    private static final ImageIcon ICON = new ImageIcon(Resources.getResource("comeon/ui/upload_huge.png"));
 
     private final JDialog dialog;
 
@@ -39,7 +44,7 @@ public final class TransferMonitor extends JOptionPane {
 
     @Inject
     public TransferMonitor(final AbortAction abortAction, final BrowseToReportAction reportAction, final UI ui) {
-        super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, UploadMediaAction.ICON, null);
+        super(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, ICON, null);
         this.getInputMap(JOptionPane.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed ESCAPE"), "none");
         this.batchBar = new JProgressBar(SwingConstants.HORIZONTAL);
         this.batchBar.setStringPainted(true);
@@ -86,7 +91,6 @@ public final class TransferMonitor extends JOptionPane {
             final Long transferred = (Long) evt.getNewValue();
             panel.getMediaBar().setValue(transferred.intValue());
         }));
-        SwingUtilities.invokeLater(() -> mediaBarsPane.getViewport().scrollRectToVisible(panel.getBounds()));
     }
 
     @Subscribe
