@@ -5,7 +5,7 @@ A tool to upload pictures to Wikimedia Commons with extended support for JPEG me
 
 ## Building
 
-Building ComeOn! and its dependencies requires Oracle JDK 8 and Maven 3. Running ComeOn! requires Oracle Java 7 and, for the braves, a working WebStart plugin.
+Building ComeOn! and its dependencies requires Oracle JDK 8 and Maven 3. Running ComeOn! requires Oracle Java 8 and, for the braves, a working WebStart plugin.
 
 For the moment, ComeOn! uses a custom fork of [the Java MediaWiki client API](https://github.com/wikimedia/java-mwapi) and depends on the barely-maintained [Simple Validation library from Project Kenai](https://kenai.com/projects/simplevalidation/). You will need to clone and Maven-install both these repositories :
 * https://github.com/edouardhue/java-mwapi
@@ -19,7 +19,7 @@ on each. As java-mwapi requires a running MediaWiki instance during unit-tests (
 
 ##  Running
 
-ComeOn! may be launched with Java WebStart from [http://edouardhue.github.io/comeon/jnlp-report.html]. This requires at least Java 7, but 8 is ok. The developer not having any decent code signing certificate, the Java plugin will refuse to run ComeOn! until you lower its security level (see configuration panel or wherever your operating system hides this) and acknowledge each security warning.
+ComeOn! may be launched with Java WebStart from [http://edouardhue.github.io/comeon/jnlp-report.html]. This requires at least Java 8. The developer not having any decent code signing certificate, the Java plugin will refuse to run ComeOn! until you lower its security level (see configuration panel or wherever your operating system hides this) and acknowledge each security warning.
 
 ### First run
 
